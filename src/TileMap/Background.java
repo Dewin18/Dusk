@@ -13,7 +13,6 @@ public class Background
 
     public Background(String s)
     {
-
         try
         {
             image = ImageIO.read(getClass().getResourceAsStream(s));
@@ -29,5 +28,4 @@ public class Background
     {
         g.drawImage(image, 0, 0, GamePanel.WIDTH, GamePanel.HEIGHT, null);
     }
-
 }

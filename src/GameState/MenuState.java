@@ -23,27 +23,20 @@ public class MenuState extends GameState
     public MenuState(GameStateManager gsm)
     {
         this.gsm = gsm;
-        
-        //TODO
-        
+
         bg = new Background("/Backgrounds/dark.png");
-       // background.setVector(-0.1, 0);
-        
+
         titleColor = new Color(128, 0, 0);
         titleFont = new Font("Century Gothic", Font.PLAIN, 28);
 
         try
         {
-
             bg = new Background("/Backgrounds/dark.png");
-
-            //bg.setVector(-0.1, 0);
 
             titleColor = new Color(128, 0, 0);
             titleFont = new Font("Century Gothic", Font.PLAIN, 18);
 
             font = new Font("Arial", Font.PLAIN, 25);
-
         }
         catch (Exception e)
         {
@@ -63,7 +56,6 @@ public class MenuState extends GameState
 
     public void draw(Graphics2D g)
     {
-
         // draw bg
         bg.draw(g);
 
@@ -134,7 +126,7 @@ public class MenuState extends GameState
 
     public void keyReleased(int k)
     {
-        
+
     }
 
 }

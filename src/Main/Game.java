@@ -13,7 +13,6 @@ public class Game {
 		window.pack();
 		window.setLocationRelativeTo(null);
 		window.setVisible(true);
-		
 	}
 	
 }
