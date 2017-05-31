@@ -23,20 +23,15 @@ public class MenuState extends GameState
     public MenuState(GameStateManager gsm)
     {
         this.gsm = gsm;
-
-        bg = new Background("/Backgrounds/dark.png");
-
+        
         titleColor = new Color(128, 0, 0);
-        titleFont = new Font("Century Gothic", Font.PLAIN, 28);
+        titleFont = new Font("Century Gothic", Font.PLAIN, 18);
+
+        font = new Font("Arial", Font.PLAIN, 25);
 
         try
         {
             bg = new Background("/Backgrounds/dark.png");
-
-            titleColor = new Color(128, 0, 0);
-            titleFont = new Font("Century Gothic", Font.PLAIN, 18);
-
-            font = new Font("Arial", Font.PLAIN, 25);
         }
         catch (Exception e)
         {
