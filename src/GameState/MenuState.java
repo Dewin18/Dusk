@@ -23,17 +23,14 @@ public class MenuState extends GameState
     public MenuState(GameStateManager gsm)
     {
         this.gsm = gsm;
-<<<<<<< HEAD
-=======
         
         //TODO
         
-        background = new Background("res/dark.png", 1);
+        bg = new Background("/Backgrounds/dark.png");
        // background.setVector(-0.1, 0);
         
         titleColor = new Color(128, 0, 0);
         titleFont = new Font("Century Gothic", Font.PLAIN, 28);
->>>>>>> 5307ec3ad4c946bc751ce03943c1d0177c3dbbd6
 
         try
         {
