@@ -15,13 +15,12 @@ public class Background
     {
         try
         {
-            image = ImageIO.read(getClass().getResourceAsStream(s));
+            image = ImageIO.read(getClass().getResourceAsStream(s));           
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-
     }
 
     public void draw(Graphics2D g)
