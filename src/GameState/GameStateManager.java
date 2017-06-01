@@ -1,10 +1,8 @@
 package GameState;
 
-import java.util.ArrayList;
-
 public class GameStateManager {
 	
-	private ArrayList<GameState> gameStates;
+	private GameState[] gameStates;
 	private int currentState;
 	
 	public static final int MENUSTATE = 0;
@@ -12,33 +10,35 @@ public class GameStateManager {
 	
 	public GameStateManager() {
 		
-		gameStates = new ArrayList<GameState>();
+		gameStates = new GameState[12];
 		
 		currentState = MENUSTATE;
-		gameStates.add(new MenuState(this));
-		gameStates.add(new Level1State(this));
-		
+		loadState(currentState);
 	}
 	
 	public void setState(int state) {
+		unloadState(currentState);
 		currentState = state;
-		gameStates.get(currentState).init();
+		loadState(currentState);
 	}
-	
+
+	private void loadState(int state) {
+		if(state == MENUSTATE)
+			gameStates[state] = new MenuState(this);
+		else if(state == LEVEL1STATE)
+			gameStates[state] = new Level1State(this);
+	}
+
+	private void unloadState(int state) {
+		gameStates[state] = null;
+	}
+
 	public void update() {
-		gameStates.get(currentState).update();
+		if(gameStates[currentState] != null) gameStates[currentState].update();
 	}
 	
 	public void draw(java.awt.Graphics2D g) {
-		gameStates.get(currentState).draw(g);
-	}
-	
-	public void keyPressed(int k) {
-		gameStates.get(currentState).keyPressed(k);
-	}
-	
-	public void keyReleased(int k) {
-		gameStates.get(currentState).keyReleased(k);
+		if(gameStates[currentState] != null) gameStates[currentState].draw(g);
 	}
 	
 }

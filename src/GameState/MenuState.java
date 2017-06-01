@@ -1,5 +1,6 @@
 package GameState;
 
+import Handlers.KeyHandler;
 import TileMap.Background;
 
 import java.awt.*;
@@ -7,8 +8,7 @@ import java.awt.event.KeyEvent;
 
 import Main.GamePanel;
 
-public class MenuState extends GameState
-{
+public class MenuState extends GameState {
 
     private Background bg;
 
@@ -20,42 +20,27 @@ public class MenuState extends GameState
 
     private Font font;
 
-    public MenuState(GameStateManager gsm)
-    {
+    public MenuState(GameStateManager gsm) {
         this.gsm = gsm;
-
         bg = new Background("/Backgrounds/dark.png");
-
         titleColor = new Color(128, 0, 0);
         titleFont = new Font("Century Gothic", Font.PLAIN, 28);
-
-        try
-        {
+        try {
             bg = new Background("/Backgrounds/dark.png");
 
             titleColor = new Color(128, 0, 0);
             titleFont = new Font("Century Gothic", Font.PLAIN, 18);
 
             font = new Font("Arial", Font.PLAIN, 25);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
-    public void init()
-    {
+    public void init() {
     }
 
-    public void update()
-    {
-
-    }
-
-    public void draw(Graphics2D g)
-    {
+    public void draw(Graphics2D g) {
         // draw bg
         bg.draw(g);
 
@@ -68,14 +53,10 @@ public class MenuState extends GameState
 
         // draw menu options
         g.setFont(font);
-        for (int i = 0; i < options.length; i++)
-        {
-            if (i == currentChoice)
-            {
+        for (int i = 0; i < options.length; i++) {
+            if (i == currentChoice) {
                 g.setColor(Color.GREEN);
-            }
-            else
-            {
+            } else {
                 g.setColor(Color.LIGHT_GRAY);
             }
             g.drawString(options[i], (int) (GamePanel.WIDTH / 2.5),
@@ -84,49 +65,35 @@ public class MenuState extends GameState
 
     }
 
-    private void select()
-    {
-        if (currentChoice == 0)
-        {
+    private void select() {
+        if (currentChoice == 0) {
             gsm.setState(GameStateManager.LEVEL1STATE);
         }
-        if (currentChoice == 1)
-        {
+        if (currentChoice == 1) {
             // help
         }
-        if (currentChoice == 2)
-        {
+        if (currentChoice == 2) {
             System.exit(0);
         }
     }
 
-    public void keyPressed(int k)
-    {
-        if (k == KeyEvent.VK_ENTER)
-        {
-            select();
-        }
-        if (k == KeyEvent.VK_UP)
-        {
+    public void handleInput() {
+        if (KeyHandler.hasJustBeenPressed(KeyHandler.ENTER)) select();
+        if (KeyHandler.hasJustBeenPressed(KeyHandler.UP)) {
             currentChoice--;
-            if (currentChoice == -1)
-            {
+            if (currentChoice == -1) {
                 currentChoice = options.length - 1;
             }
         }
-        if (k == KeyEvent.VK_DOWN)
-        {
+        if (KeyHandler.hasJustBeenPressed(KeyHandler.DOWN)) {
             currentChoice++;
-            if (currentChoice == options.length)
-            {
+            if (currentChoice == options.length) {
                 currentChoice = 0;
             }
         }
     }
 
-    public void keyReleased(int k)
-    {
-
+    public void update() {
+        handleInput();
     }
-
 }

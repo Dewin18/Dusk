@@ -3,10 +3,13 @@ package Main;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.event.*;
+import java.security.Key;
+import java.util.Arrays;
 
 import javax.swing.JPanel;
 
 import GameState.GameStateManager;
+import Handlers.KeyHandler;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener
 {
@@ -25,8 +28,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     private BufferedImage image;
     private Graphics2D g;
 
-    // game state manager
+    // manager
     private GameStateManager gsm;
+    private KeyHandler keyHandler;
 
     public GamePanel()
     {
@@ -56,7 +60,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
         running = true;
 
         gsm = new GameStateManager();
-
     }
 
     public void run()
@@ -99,6 +102,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     private void update()
     {
         gsm.update();
+        KeyHandler.update();
     }
 
     private void draw()
@@ -119,12 +123,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
 
     public void keyPressed(KeyEvent key)
     {
-        gsm.keyPressed(key.getKeyCode());
+        //gsm.keyPressed(key.getKeyCode());
+        KeyHandler.keySet(key.getKeyCode(), true);
+        System.out.println(Arrays.toString(KeyHandler.keyState));
     }
 
     public void keyReleased(KeyEvent key)
     {
-        gsm.keyReleased(key.getKeyCode());
+        //gsm.keyReleased(key.getKeyCode());
+        KeyHandler.keySet(key.getKeyCode(), false);
     }
 
 }
