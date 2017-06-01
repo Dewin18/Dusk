@@ -1,6 +1,7 @@
 package GameState;
 
 import Handlers.KeyHandler;
+import Handlers.Keys;
 import TileMap.Background;
 
 import java.awt.*;
@@ -78,14 +79,14 @@ public class MenuState extends GameState {
     }
 
     public void handleInput() {
-        if (KeyHandler.hasJustBeenPressed(KeyHandler.ENTER)) select();
-        if (KeyHandler.hasJustBeenPressed(KeyHandler.UP)) {
+        if (KeyHandler.hasJustBeenPressed(Keys.ENTER)) select();
+        if (KeyHandler.hasJustBeenPressed(Keys.UP)) {
             currentChoice--;
             if (currentChoice == -1) {
                 currentChoice = options.length - 1;
             }
         }
-        if (KeyHandler.hasJustBeenPressed(KeyHandler.DOWN)) {
+        if (KeyHandler.hasJustBeenPressed(Keys.DOWN)) {
             currentChoice++;
             if (currentChoice == options.length) {
                 currentChoice = 0;

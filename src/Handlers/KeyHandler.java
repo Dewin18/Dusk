@@ -3,33 +3,22 @@ package Handlers;
 import java.awt.event.KeyEvent;
 
 public class KeyHandler {
-    public static final int NUM_KEYS = 10;
+    public static final int NUM_KEYS = Keys.KEY_COUNT;
 
-    public static boolean keyState[] = new boolean[NUM_KEYS];
-    public static boolean prevKeyState[] = new boolean[NUM_KEYS];
-
-    public static int UP = 0;
-    public static int LEFT = 1;
-    public static int DOWN = 2;
-    public static int RIGHT = 3;
-    public static int JUMP = 4;
-    public static int ATTACK = 5;
-    public static int DASH = 6;
-    public static int _SOMEOTHERBUTTON = 7;
-    public static int ENTER = 8;
-    public static int ESCAPE = 9;
+    private static boolean keyState[] = new boolean[NUM_KEYS];
+    private static boolean prevKeyState[] = new boolean[NUM_KEYS];
 
     public static void keySet(int i, boolean b) {
-        if(i == KeyEvent.VK_UP) keyState[UP] = b;
-        else if(i == KeyEvent.VK_LEFT) keyState[LEFT] = b;
-        else if(i == KeyEvent.VK_DOWN) keyState[DOWN] = b;
-        else if(i == KeyEvent.VK_RIGHT) keyState[RIGHT] = b;
-        else if(i == KeyEvent.VK_SPACE) keyState[JUMP] = b;
-        else if(i == KeyEvent.VK_A) keyState[ATTACK] = b;
-        else if(i == KeyEvent.VK_S) keyState[DASH] = b;
-        else if(i == KeyEvent.VK_D) keyState[_SOMEOTHERBUTTON] = b;
-        else if(i == KeyEvent.VK_ENTER) keyState[ENTER] = b;
-        else if(i == KeyEvent.VK_ESCAPE) keyState[ESCAPE] = b;
+        if(i == KeyEvent.VK_UP) keyState[Keys.UP] = b;
+        else if(i == KeyEvent.VK_LEFT) keyState[Keys.LEFT] = b;
+        else if(i == KeyEvent.VK_DOWN) keyState[Keys.DOWN] = b;
+        else if(i == KeyEvent.VK_RIGHT) keyState[Keys.RIGHT] = b;
+        else if(i == KeyEvent.VK_SPACE) keyState[Keys.JUMP] = b;
+        else if(i == KeyEvent.VK_A) keyState[Keys.ATTACK] = b;
+        else if(i == KeyEvent.VK_S) keyState[Keys.DASH] = b;
+        else if(i == KeyEvent.VK_D) keyState[Keys._SOMEOTHERBUTTON] = b;
+        else if(i == KeyEvent.VK_ENTER) keyState[Keys.ENTER] = b;
+        else if(i == KeyEvent.VK_ESCAPE) keyState[Keys.ESCAPE] = b;
     }
 
     public static void update() {

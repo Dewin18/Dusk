@@ -2,10 +2,13 @@ package GameState;
 
 import Entity.Player;
 import Handlers.KeyHandler;
+import Handlers.Keys;
 import Main.GamePanel;
 import TileMap.*;
 
+import javax.sound.midi.Soundbank;
 import java.awt.*;
+import java.util.Arrays;
 
 public class Level1State extends GameState {
 	
@@ -24,17 +27,16 @@ public class Level1State extends GameState {
         tileMap.setPosition(0, 0);
 
         player = new Player(tileMap);
-        player.setPosition(150, 100);
+        player.setPosition(150, 175);
 	}
 	
 	
 	public void update() {
-	    handleInput();
-	    player.update();
+		player.update();
+		//handleInput();
     }
 	
 	public void draw(Graphics2D g) {
-		
 		// clear screen
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
@@ -45,11 +47,7 @@ public class Level1State extends GameState {
 	}
 
 	public void handleInput() {
-        player.setVelocity((KeyHandler.keyState[KeyHandler.LEFT] ? -1 : 0)
-                        + (KeyHandler.keyState[KeyHandler.RIGHT] ? 1 : 0),
-                (KeyHandler.keyState[KeyHandler.UP] ? -1 : 0)
-                + (KeyHandler.keyState[KeyHandler.DOWN] ? 1 : 0));
-    }
+	}
 	
 }
 

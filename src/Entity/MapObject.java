@@ -4,7 +4,6 @@ import TileMap.TileMap;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-
 public class MapObject {
 
     // tile map stuff
@@ -13,12 +12,8 @@ public class MapObject {
     protected double xmap;
     protected double ymap;
 
-    // position and movement
+    // Position
     protected double[] position = new double[2];
-    protected double[] velocity = new double[2];
-    protected double jumpSpeed;
-    protected double fallSpeed;
-    protected double gravity = 0.5;
 
     // dimenstions
     protected int width;
@@ -27,6 +22,8 @@ public class MapObject {
     // collision box
     protected int colWidth;
     protected int colHeight;
+    protected double colOffset = 0.0;
+
 
     // animation
     // TODO
@@ -43,12 +40,11 @@ public class MapObject {
         this.position[1] = y;
     }
 
-    public void setVelocity(double x, double y) {
-        this.velocity[0] = x;
-        this.velocity[1] = y;
-    }
-
     public void draw(Graphics2D g) {
         g.drawImage(sprite, (int)position[0], (int)position[1], null);
+    }
+
+    public double[] getPosition() {
+        return this.position;
     }
 }

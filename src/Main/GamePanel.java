@@ -28,6 +28,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     private BufferedImage image;
     private Graphics2D g;
 
+
     // manager
     private GameStateManager gsm;
     private KeyHandler keyHandler;
@@ -117,15 +118,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
         g2.dispose();
     }
 
-    public void keyTyped(KeyEvent key)
-    {
-    }
+    public void keyTyped(KeyEvent key) {}
 
     public void keyPressed(KeyEvent key)
     {
         //gsm.keyPressed(key.getKeyCode());
         KeyHandler.keySet(key.getKeyCode(), true);
-        System.out.println(Arrays.toString(KeyHandler.keyState));
     }
 
     public void keyReleased(KeyEvent key)
