@@ -1,13 +1,14 @@
 package Entity;
 
 import TileMap.TileMap;
+import TileMap.Vector2;
 
 public class MovingObject extends MapObject{
 
     // Movement
-    protected double[] velocity = new double[2];
-    protected double[] oldPosition = new double[2];
-    protected double[] oldVelocity = new double[2];
+    protected Vector2 velocity;
+    protected Vector2 oldPosition;
+    protected Vector2 oldVelocity;
     protected double jumpSpeed;
     protected double walkSpeed;
     protected double gravity = 0.5;
@@ -29,8 +30,8 @@ public class MovingObject extends MapObject{
     }
 
     public void setVelocity(double x, double y) {
-        this.velocity[0] = x;
-        this.velocity[1] = y;
+        this.velocity.x = x;
+        this.velocity.y = y;
     }
 
     public void updatePhysics() {
@@ -41,11 +42,11 @@ public class MovingObject extends MapObject{
         pushedLeftWall = isPushingLeftWall;
         pushedRightWall = isPushingRightWall;
 
-        position[0] += velocity[0];
-        position[1] += velocity[1];
+        position.x += velocity.x;
+        position.y += velocity.y;
 
-        if(position[1] >= 175) {
-            position[1] = 175;
+        if(position.y >= 175) {
+            position.y = 175;
             isOnGround = true;
         } else {
             isOnGround = false;

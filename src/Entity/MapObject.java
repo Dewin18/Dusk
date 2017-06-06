@@ -1,6 +1,7 @@
 package Entity;
 
 import TileMap.TileMap;
+import TileMap.Vector2;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -13,7 +14,7 @@ public class MapObject {
     protected double ymap;
 
     // Position
-    protected double[] position = new double[2];
+    protected Vector2 position;
 
     // dimenstions
     protected int width;
@@ -36,15 +37,15 @@ public class MapObject {
     }
 
     public void setPosition(double x, double y) {
-        this.position[0] = x;
-        this.position[1] = y;
+        this.position.x = x;
+        this.position.y = y;
     }
 
     public void draw(Graphics2D g) {
-        g.drawImage(sprite, (int)position[0], (int)position[1], null);
+        g.drawImage(sprite, (int)position.x, (int)position.y, null);
     }
 
-    public double[] getPosition() {
+    public Vector2 getPosition() {
         return this.position;
     }
 }

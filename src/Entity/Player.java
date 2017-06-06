@@ -59,7 +59,7 @@ public class Player extends MovingObject{
                     currentState = WALKING;
                     break;
                 } else if (KeyHandler.isPressed(Keys.JUMP)) {
-                    velocity[1] = jumpSpeed;
+                    velocity.y = jumpSpeed;
                     currentState = JUMPING;
                     break;
                 }
@@ -71,14 +71,14 @@ public class Player extends MovingObject{
                     setVelocity(0, 0);
                     break;
                 } else if (KeyHandler.isPressed(Keys.RIGHT)) {
-                    if (isPushingRightWall) velocity[0] = 0;
-                    else velocity[0] = walkSpeed;
+                    if (isPushingRightWall) velocity.x = 0;
+                    else velocity.x = walkSpeed;
                 } else if (KeyHandler.isPressed(Keys.LEFT)) {
-                    if (isPushingLeftWall) velocity[0] = 0;
-                    else velocity[0] = -walkSpeed;
+                    if (isPushingLeftWall) velocity.x = 0;
+                    else velocity.x = -walkSpeed;
                 }
                 if (KeyHandler.isPressed(Keys.JUMP)) {
-                    velocity[1] = jumpSpeed;
+                    velocity.y = jumpSpeed;
                     currentState = JUMPING;
                     break;
                 } else if (!isOnGround) {
@@ -88,29 +88,29 @@ public class Player extends MovingObject{
                 break;
 
             case JUMPING:
-                velocity[1] += gravity;
-                velocity[1] = Math.min(velocity[1], maxFallingSpeed);
+                velocity.y += gravity;
+                velocity.y = Math.min(velocity.y, maxFallingSpeed);
                 if (isOnGround) {
                     if (KeyHandler.isPressed(Keys.LEFT) == KeyHandler.isPressed(Keys.RIGHT)) {
                         currentState = STANDING;
                         setVelocity(0, 0);
                     } else {
                         currentState = WALKING;
-                        velocity[1] = 0;
+                        velocity.y = 0;
                     }
                 }
-                if (!KeyHandler.isPressed(Keys.JUMP) && velocity[1] < 0) {
-                    velocity[1] = Math.max(velocity[1], minJumpingSpeed);
+                if (!KeyHandler.isPressed(Keys.JUMP) && velocity.y < 0) {
+                    velocity.y = Math.max(velocity.y, minJumpingSpeed);
                 }
                 if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT)) {
-                    velocity[0] = 0;
+                    velocity.x = 0;
                     break;
                 } else if (KeyHandler.isPressed(Keys.RIGHT)) {
-                    if (isPushingRightWall) velocity[0] = 0;
-                    else velocity[0] = walkSpeed;
+                    if (isPushingRightWall) velocity.x = 0;
+                    else velocity.x = walkSpeed;
                 } else if (KeyHandler.isPressed(Keys.LEFT)) {
-                    if (isPushingLeftWall) velocity[0] = 0;
-                    else velocity[0] = -walkSpeed;
+                    if (isPushingLeftWall) velocity.x = 0;
+                    else velocity.x = -walkSpeed;
                 }
 
                 break;

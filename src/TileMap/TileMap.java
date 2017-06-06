@@ -51,7 +51,6 @@ public class TileMap {
 	public void loadTiles(String s) {
 		
 		try {
-
 			tileset = ImageIO.read(
 				getClass().getResourceAsStream(s)
 			);
@@ -66,14 +65,14 @@ public class TileMap {
 							tileSize,
 							tileSize
 						);
-				tiles[0][col] = new Tile(subimage, Tile.NORMAL);
+				tiles[0][col] = new Tile(subimage, TileType.EMPTY);
 				subimage = tileset.getSubimage(
 							col * tileSize,
 							tileSize,
 							tileSize,
 							tileSize
 						);
-				tiles[1][col] = new Tile(subimage, Tile.BLOCKED);
+				tiles[1][col] = new Tile(subimage, TileType.BLOCKED);
 			}
 			
 		}
@@ -120,7 +119,7 @@ public class TileMap {
 	public int getWidth() { return width; }
 	public int getHeight() { return height; }
 	
-	public int getType(int row, int col) {
+	public TileType getType(int row, int col) {
 		int rc = map[row][col];
 		int r = rc / numTilesAcross;
 		int c = rc % numTilesAcross;
