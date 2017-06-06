@@ -3,11 +3,11 @@ package Entity;
 import Handlers.KeyHandler;
 import Handlers.Keys;
 import TileMap.TileMap;
+import TileMap.Vector2;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.security.Key;
 import java.util.Arrays;
 
 import static Entity.CharacterState.*;
@@ -38,6 +38,10 @@ public class Player extends MovingObject{
         } catch (IOException e1) {
             e1.printStackTrace();
         }
+    }
+
+    public void initPlayer(Vector2 position) {
+        setPosition(position);
 
         // set up speeds
         jumpSpeed = -4;
@@ -45,6 +49,10 @@ public class Player extends MovingObject{
         minJumpingSpeed = -1;
         maxFallingSpeed = 2;
         gravity = 0.2;
+
+        // set up collision box
+        collisionBox = new CollisionBox(position, new Vector2(tileSize/2, tileSize/2));
+        collisionOffset = collisionBox.halfSize;
     }
 
     public void update() {
@@ -117,6 +125,6 @@ public class Player extends MovingObject{
         }
         updatePhysics();
 
-        //System.out.println(isOnGround + "     " + Arrays.toString(position) + "     " + Arrays.toString(velocity) + "     " + currentState);
+        //System.out.println(isOnGround + "     " + position.toString() + "     " + velocity.toString() + "     " + currentState);
     }
 }

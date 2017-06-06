@@ -11,8 +11,7 @@ import Main.GamePanel;
 public class TileMap {
 	
 	// position
-	private double x;
-	private double y;
+	private Vector2 position = new Vector2(0,0);
 	
 	// bounds
 	private int xmin;
@@ -49,7 +48,6 @@ public class TileMap {
 	}
 	
 	public void loadTiles(String s) {
-		
 		try {
 			tileset = ImageIO.read(
 				getClass().getResourceAsStream(s)
@@ -74,16 +72,12 @@ public class TileMap {
 						);
 				tiles[1][col] = new Tile(subimage, TileType.BLOCKED);
 			}
-			
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public void loadMap(String s) {
-		
 		try {
 			
 			InputStream in = getClass().getResourceAsStream(s);
@@ -105,17 +99,14 @@ public class TileMap {
 					map[row][col] = Integer.parseInt(tokens[col]);
 				}
 			}
-			
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public int getTileSize() { return tileSize; }
-	public int getx() { return (int)x; }
-	public int gety() { return (int)y; }
+	public int getx() { return (int)position.x; }
+	public int gety() { return (int)position.y; }
 	public int getWidth() { return width; }
 	public int getHeight() { return height; }
 	
@@ -125,28 +116,57 @@ public class TileMap {
 		int c = rc % numTilesAcross;
 		return tiles[r][c].getType();
 	}
+
+	public TileType getType(Vector2i tileCoords) {
+		int rc = map[tileCoords.x][tileCoords.y];
+		int r = rc / numTilesAcross;
+		int c = rc % numTilesAcross;
+		return tiles[r][c].getType();
+	}
+
+	public boolean isObstacle(int x, int y) {
+		return getType(x, y) == TileType.BLOCKED;
+	}
+
+	public boolean isGround(int x, int y) {
+		return (getType(x, y) == TileType.BLOCKED || getType(x, y) == TileType.ONEWAY);
+	}
+
+	public boolean isEmpty(int x, int y) {
+		return getType(x, y) == TileType.EMPTY;
+	}
+
+	public Vector2i getMapTileAtPoint(Vector2 point) {
+		return new Vector2i((int) (point.x - position.x + tileSize / 2), (int) (point.y - position.y + tileSize /2));
+	}
+
+	public Vector2 getMapTileCoords(int row, int col) {
+		return new Vector2(row * tileSize + position.x, col * tileSize + position.y);
+	}
+
+	public Vector2 getMapTileCoords(Vector2i tileCoords) {
+		return new Vector2(tileCoords.x * tileSize + position.x, tileCoords.y * tileSize + position.y);
+	}
 	
 	public void setPosition(double x, double y) {
-		
-		this.x += (x - this.x) * tween;
-		this.y += (y - this.y) * tween;
+		this.position.x += (x - this.position.x) * tween;
+		this.position.y += (y - this.position.y) * tween;
 		
 		fixBounds();
 		
-		colOffset = (int)-this.x / tileSize;
-		rowOffset = (int)-this.y / tileSize;
+		colOffset = (int)-this.position.x / tileSize;
+		rowOffset = (int)-this.position.y / tileSize;
 		
 	}
 	
 	private void fixBounds() {
-		if(x < xmin) x = xmin;
-		if(y < ymin) y = ymin;
-		if(x > xmax) x = xmax;
-		if(y > ymax) y = ymax;
+		if(position.x < xmin) position.x = xmin;
+		if(position.y < ymin) position.y = ymin;
+		if(position.x > xmax) position.x = xmax;
+		if(position.y > ymax) position.y = ymax;
 	}
 	
 	public void draw(Graphics2D g) {
-		
 		for(
 			int row = rowOffset;
 			row < rowOffset + numRowsToDraw;
@@ -169,17 +189,13 @@ public class TileMap {
 				
 				g.drawImage(
 					tiles[r][c].getImage(),
-					(int)x + col * tileSize,
-					(int)y + row * tileSize,
+					(int)position.x + col * tileSize,
+					(int)position.y + row * tileSize,
 					null
 				);
-				
 			}
-			
 		}
-		
 	}
-	
 }
 
 

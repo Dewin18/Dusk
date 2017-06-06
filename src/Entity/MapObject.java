@@ -21,9 +21,8 @@ public class MapObject {
     protected int height;
 
     // collision box
-    protected int colWidth;
-    protected int colHeight;
-    protected double colOffset = 0.0;
+    protected CollisionBox collisionBox;
+    protected Vector2 collisionOffset;
 
 
     // animation
@@ -37,15 +36,23 @@ public class MapObject {
     }
 
     public void setPosition(double x, double y) {
+        if(position == null) {
+            position = new Vector2(x, y);
+            return;
+        }
         this.position.x = x;
         this.position.y = y;
     }
 
-    public void draw(Graphics2D g) {
-        g.drawImage(sprite, (int)position.x, (int)position.y, null);
+    public void setPosition(Vector2 position) {
+        this.position = position;
     }
 
     public Vector2 getPosition() {
         return this.position;
+    }
+
+    public void draw(Graphics2D g) {
+        g.drawImage(sprite, (int)position.x, (int)position.y, null);
     }
 }

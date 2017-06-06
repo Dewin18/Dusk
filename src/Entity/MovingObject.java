@@ -30,9 +30,15 @@ public class MovingObject extends MapObject{
     }
 
     public void setVelocity(double x, double y) {
+        if(velocity == null) {
+            velocity = new Vector2(x, y);
+            return;
+        }
         this.velocity.x = x;
         this.velocity.y = y;
     }
+
+
 
     public void updatePhysics() {
         oldPosition = position;
@@ -51,5 +57,7 @@ public class MovingObject extends MapObject{
         } else {
             isOnGround = false;
         }
+
+        collisionBox.center = position.add(collisionOffset);
     }
 }
