@@ -78,7 +78,7 @@ public class MovingObject extends MapObject{
 
             groundY = tileIndexY * tileSize + tileMap.getY();
             if (tileMap.isGround(tileIndexX, tileIndexY) &&
-                    tileIndexY * tileSize < botLeft.y && botLeft.y < tileIndexY * tileSize + 3)
+                    tileIndexY * tileSize < botLeft.y && botLeft.y < tileIndexY * tileSize + 5)
                 return true;
             if (checkedTile.x >= botRight.x) break;
         }
@@ -110,6 +110,10 @@ public class MovingObject extends MapObject{
         g.drawImage(sprite, (int)position.x, (int)position.y, null);
 
         // debugging
+        //showDebuggers(g);
+    }
+
+    private void showDebuggers(Graphics2D g) {
         g.setColor(Color.BLUE);
         int[] a = collisionBox.toXYWH();
         g.drawRect(a[0], a[1], a[2], a[3]);

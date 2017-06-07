@@ -2,12 +2,14 @@ package Entity;
 
 import Handlers.KeyHandler;
 import Handlers.Keys;
+import Main.Time;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.security.Key;
 import java.util.Arrays;
 
 import static Entity.CharacterState.*;
@@ -18,6 +20,11 @@ public class Player extends MovingObject{
     private int exp;
     private int lives;
     private int dmg;
+
+    private boolean isRising = false;
+    private boolean isFalling = false;
+    private double minFallSpeed;
+    private boolean hasJumped;
 
     private boolean hasAttack = true;
     private boolean hasDoubleJump = false;
@@ -44,11 +51,12 @@ public class Player extends MovingObject{
         setPosition(position);
 
         // set up speeds
-        jumpSpeed = -4;
+        jumpSpeed = -6.5;
         walkSpeed = 2;
         minJumpingSpeed = -1;
-        maxFallingSpeed = 2;
-        gravity = 0.2;
+        maxFallingSpeed = 4;
+        gravity = 0.3;
+        minFallSpeed = 2;
 
         // set up collision box
         collisionBox = new CollisionBox(position, new Vector2(tileSize/2, tileSize/2));
@@ -63,17 +71,20 @@ public class Player extends MovingObject{
                     currentState = JUMPING;
                     break;
                 }
+                if (hasJumped && !KeyHandler.isPressed(Keys.JUMP)) hasJumped = false;
                 if (KeyHandler.isPressed(Keys.RIGHT) != KeyHandler.isPressed(Keys.LEFT)) {
                     currentState = WALKING;
                     break;
-                } else if (KeyHandler.isPressed(Keys.JUMP)) {
+                } else if (KeyHandler.isPressed(Keys.JUMP) && !hasJumped) {
                     velocity.y = jumpSpeed;
                     currentState = JUMPING;
+                    hasJumped = true;
                     break;
                 }
                 break;
 
             case WALKING:
+                if (hasJumped && !KeyHandler.isPressed(Keys.JUMP)) hasJumped = false;
                 if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT)) {
                     currentState = STANDING;
                     setVelocity(0, 0);
@@ -85,9 +96,10 @@ public class Player extends MovingObject{
                     if (isPushingLeftWall) velocity.x = 0;
                     else velocity.x = -walkSpeed;
                 }
-                if (KeyHandler.isPressed(Keys.JUMP)) {
+                if (KeyHandler.isPressed(Keys.JUMP) && !hasJumped) {
                     velocity.y = jumpSpeed;
                     currentState = JUMPING;
+                    hasJumped = true;
                     break;
                 } else if (!isOnGround) {
                     currentState = JUMPING;
@@ -96,7 +108,8 @@ public class Player extends MovingObject{
                 break;
 
             case JUMPING:
-                velocity.y += gravity;
+                isRising = velocity.y < 0;
+                velocity.y += gravity * Time.deltaTime;
                 velocity.y = Math.min(velocity.y, maxFallingSpeed);
                 if (isOnGround) {
                     if (KeyHandler.isPressed(Keys.LEFT) == KeyHandler.isPressed(Keys.RIGHT)) {
@@ -106,10 +119,13 @@ public class Player extends MovingObject{
                         currentState = WALKING;
                         velocity.y = 0;
                     }
+                    if (hasJumped && !KeyHandler.isPressed(Keys.JUMP)) hasJumped = false;
                 }
                 if (!KeyHandler.isPressed(Keys.JUMP) && velocity.y < 0) {
                     velocity.y = Math.max(velocity.y, minJumpingSpeed);
                 }
+                isFalling = velocity.y > 0;
+                if(isRising && isFalling) velocity.y = minFallSpeed;
                 if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT)) {
                     velocity.x = 0;
                     break;
