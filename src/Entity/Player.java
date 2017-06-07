@@ -59,8 +59,8 @@ public class Player extends MovingObject{
         minFallSpeed = 2;
 
         // set up collision box
-        collisionBox = new CollisionBox(position, new Vector2(tileSize/2, tileSize/2));
-        collisionOffset = collisionBox.halfSize;
+        collisionBox = new CollisionBox(position, new Vector2(tileSize/3 - 1, tileSize/2));
+        collisionOffset = new Vector2(tileSize / 2 - 1, collisionBox.halfSize.y);
     }
 
     public void update() {

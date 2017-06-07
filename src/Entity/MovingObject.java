@@ -111,20 +111,28 @@ public class MovingObject extends MapObject{
 
         // debugging
         //showDebuggers(g);
-    }
-
-    private void showDebuggers(Graphics2D g) {
         g.setColor(Color.BLUE);
         int[] a = collisionBox.toXYWH();
         g.drawRect(a[0], a[1], a[2], a[3]);
+    }
+
+    private void showDebuggers(Graphics2D g) {
+        // Collision Box
+        g.setColor(Color.BLUE);
+        int[] a = collisionBox.toXYWH();
+        g.drawRect(a[0], a[1], a[2], a[3]);
+        // Ground line
         g.setColor(Color.MAGENTA);
         g.drawLine(0, (int)groundY,500, (int)groundY);
+        // Ground detection lines
         g.setColor(Color.YELLOW);
         g.drawLine(0, (int) triggerLineY,500, (int) triggerLineY);
         g.drawLine((int) triggerLineX, 0, (int) triggerLineX, 500);
+        // Rectangles over the tiles that are being checked
         g.setColor(new Color(5, 5, 5, 150));
         g.fillRect(drawRect.x, drawRect.y, drawRect.width, drawRect.height);
         g.fillRect(drawRect2.x, drawRect2.y, drawRect2.width, drawRect2.height);
+        // The image of the left bot tile shown in the top left corner
         g.drawImage(drawImg, 0, 0, null);
     }
 }
