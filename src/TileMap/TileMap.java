@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.image.*;
 
 import java.io.*;
+import java.util.Arrays;
 import javax.imageio.ImageIO;
 
 import Main.GamePanel;
@@ -79,7 +80,6 @@ public class TileMap {
 	
 	public void loadMap(String s) {
 		try {
-			
 			InputStream in = getClass().getResourceAsStream(s);
 			BufferedReader br = new BufferedReader(
 						new InputStreamReader(in)
@@ -105,12 +105,22 @@ public class TileMap {
 	}
 	
 	public int getTileSize() { return tileSize; }
-	public int getx() { return (int)position.x; }
-	public int gety() { return (int)position.y; }
+	public int getX() { return (int)position.x; }
+	public int getY() { return (int)position.y; }
 	public int getWidth() { return width; }
 	public int getHeight() { return height; }
+
+	public BufferedImage printTile(int col, int row) {
+		int rc = map[row][col];
+		int r = rc / numTilesAcross;
+		int c = rc % numTilesAcross;
+		BufferedImage derp = tiles[r][c].getImage();
+		return derp;
+	}
 	
 	public TileType getType(int row, int col) {
+		if (row < 0 || row >= numRows|| col < 0 || col >= numCols)
+			return TileType.BLOCKED;
 		int rc = map[row][col];
 		int r = rc / numTilesAcross;
 		int c = rc % numTilesAcross;
@@ -125,19 +135,27 @@ public class TileMap {
 	}
 
 	public boolean isObstacle(int x, int y) {
-		return getType(x, y) == TileType.BLOCKED;
+		return getType(y, x) == TileType.BLOCKED;
 	}
 
 	public boolean isGround(int x, int y) {
-		return (getType(x, y) == TileType.BLOCKED || getType(x, y) == TileType.ONEWAY);
+		return (getType(y, x) == TileType.BLOCKED || getType(y, x) == TileType.ONEWAY);
 	}
 
 	public boolean isEmpty(int x, int y) {
-		return getType(x, y) == TileType.EMPTY;
+		return getType(y, x) == TileType.EMPTY;
 	}
 
 	public Vector2i getMapTileAtPoint(Vector2 point) {
-		return new Vector2i((int) (point.x - position.x + tileSize / 2), (int) (point.y - position.y + tileSize /2));
+		return new Vector2i((int) (point.x - position.x + tileSize / 2), (int) (point.y - position.y + tileSize / 2));
+	}
+
+	public int getMapTileXAtPoint(double x) {
+		return (int)Math.round((x - position.x - tileSize / 2) / tileSize);
+	}
+
+	public int getMapTileYAtPoint(double y) {
+		return (int)Math.round((y - position.y - tileSize / 2) / tileSize);
 	}
 
 	public Vector2 getMapTileCoords(int row, int col) {

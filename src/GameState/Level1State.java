@@ -27,7 +27,7 @@ public class Level1State extends GameState {
         tileMap.setPosition(0, 0);
 
         player = new Player(tileMap);
-        player.initPlayer(new Vector2(150, 175));
+        player.initPlayer(new Vector2(150, 100));
 	}
 	
 	

@@ -16,4 +16,14 @@ public class CollisionBox {
         if (Math.abs(center.y - other.center.y) > halfSize.y + other.halfSize.y) return false;
         return true;
     }
+
+    public int[] toXYWH() {
+        int[] a = new int[4];
+        Vector2 topLeft = center.sub(halfSize);
+        a[0] = (int) topLeft.x;
+        a[1] = (int) topLeft.y;
+        a[2] = (int) halfSize.x * 2;
+        a[3] = (int) halfSize.y * 2;
+        return a;
+    }
 }

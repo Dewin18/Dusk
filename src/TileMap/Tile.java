@@ -19,5 +19,4 @@ public class Tile {
 	
 	public BufferedImage getImage() { return image; }
 	public TileType getType() { return type; }
-	
 }

@@ -1,20 +1,20 @@
 package TileMap;
 
 public class Vector2i {
-    public double x = 0;
-    public double y = 0;
+    public int x = 0;
+    public int y = 0;
 
-    public Vector2i(double x, double y) {
+    public Vector2i(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public Vector2i(double[] coords) {
+    public Vector2i(int[] coords) {
         this.x = coords[0];
         this.y = coords[1];
     }
 
-    public Vector2i addThis(Vector2i other) {
+    public Vector2i addToThis(Vector2i other) {
         this.x += other.x;
         this.y += other.y;
         return this;

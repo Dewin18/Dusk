@@ -54,5 +54,8 @@ public class MapObject {
 
     public void draw(Graphics2D g) {
         g.drawImage(sprite, (int)position.x, (int)position.y, null);
+        g.setColor(Color.BLUE);
+        int[] a = collisionBox.toXYWH();
+        g.drawRect(a[0], a[1], a[2], a[3]);
     }
 }
