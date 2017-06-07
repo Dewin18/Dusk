@@ -1,5 +1,6 @@
 package Entity;
 
+import Main.Time;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
@@ -52,7 +53,10 @@ public class MovingObject extends MapObject{
     }
 
     public boolean hasGround(Vector2 oldPosition, Vector2 position, Vector2 velocity) {
+        Vector2 oldCenter = oldPosition.add(collisionOffset);
         Vector2 center = position.add(collisionOffset);
+
+        Vector2 oldBotLeft = oldCenter.sub(collisionBox.halfSize).add(Vector2.DOWN).add(Vector2.RIGHT);
         Vector2 botLeft = center.sub(collisionBox.halfSize).add(Vector2.DOWN).add(Vector2.RIGHT);
         botLeft.y += collisionBox.halfSize.y * 2;
         Vector2 botRight = new Vector2(botLeft.x + collisionBox.halfSize.x * 2 - 2, botLeft.y);
@@ -89,8 +93,8 @@ public class MovingObject extends MapObject{
         pushedLeftWall = isPushingLeftWall;
         pushedRightWall = isPushingRightWall;
 
-        position.x += velocity.x;
-        position.y += velocity.y;
+        position.x += velocity.x * Time.deltaTime;
+        position.y += velocity.y * Time.deltaTime;
 
         groundY = 0;
         if (velocity.y >= 0 && hasGround(oldPosition, position, velocity)) {

@@ -21,8 +21,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     // game thread
     private Thread thread;
     private boolean running;
-    private int FPS = 60;
-    private long targetTime = 1000 / FPS;
 
     // image
     private BufferedImage image;
@@ -65,28 +63,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
 
     public void run()
     {
-
         init();
-
-        long start;
-        long elapsed;
         long wait;
 
         // game loop
         while (running)
         {
-
-            start = System.nanoTime();
-
+            Time.updateDeltaTime();
             update();
             draw();
             drawToScreen();
-
-            elapsed = System.nanoTime() - start;
-
-            wait = targetTime - elapsed / 1000000;
+            wait = Time.calculateWaitTime();
             if (wait < 0) wait = 5;
-
             try
             {
                 Thread.sleep(wait);
@@ -95,7 +83,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
             {
                 e.printStackTrace();
             }
-
         }
 
     }
