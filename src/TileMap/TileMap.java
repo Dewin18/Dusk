@@ -142,6 +142,10 @@ public class TileMap {
 		return (getType(y, x) == TileType.BLOCKED || getType(y, x) == TileType.ONEWAY);
 	}
 
+	public boolean isPlatform(int x, int y) {
+		return getType(y, x) == TileType.ONEWAY;
+	}
+
 	public boolean isEmpty(int x, int y) {
 		return getType(y, x) == TileType.EMPTY;
 	}

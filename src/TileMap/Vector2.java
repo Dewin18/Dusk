@@ -39,7 +39,26 @@ public class Vector2 {
         return a;
     }
 
+    public Vector2 mul(double s) {
+        Vector2 a = new Vector2(x, y);
+        a.x = a.x * s;
+        a.y = a.y * s;
+        return a;
+    }
+
     public String toString() {
         return "X: " + x + "  Y: "+ y;
+    }
+
+    public Vector2 round() {
+        return new Vector2(Math.round(this.x), Math.round(this.y));
+    }
+
+    public static Vector2 lerp(Vector2 a, Vector2 b, double t) {
+        return a.mul(1-t).add(b.mul(t));
+    }
+
+    public static Vector2 copy(Vector2 a) {
+        return new Vector2(a.x, a.y);
     }
 }

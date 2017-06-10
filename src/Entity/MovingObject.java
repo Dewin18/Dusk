@@ -28,13 +28,15 @@ public class MovingObject extends MapObject{
     boolean wasOnGround;
     boolean isAtCeiling;
     boolean wasAtCeiling;
+    boolean isOnPlatform;
 
-    double groundY;
+    int framesToIgnoreGround = 5;
+    int framesPassedUntilDrop = 6;
+    double groundY, ceilingY, leftWallX, rightWallX;
 
     // debugging
-    double triggerLineY;
-    double triggerLineX;
-    double triggerLineX2;
+    boolean debugging = false;
+    double triggerLineY, triggerLineX, triggerLineX2, triggerLineY2;
     Rectangle drawRect = new Rectangle(0, 0, 0 ,0);
     Rectangle drawRect2 = new Rectangle(0, 0, 0 ,0);
     BufferedImage drawImg = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_ARGB);
@@ -52,56 +54,42 @@ public class MovingObject extends MapObject{
         this.velocity.y = y;
     }
 
-    public boolean hasGround(Vector2 oldPosition, Vector2 position, Vector2 velocity) {
-        Vector2 oldCenter = oldPosition.add(collisionOffset);
-        Vector2 center = position.add(collisionOffset);
-
-        Vector2 oldBotLeft = oldCenter.sub(collisionBox.halfSize).add(Vector2.DOWN).add(Vector2.RIGHT);
-        Vector2 botLeft = center.sub(collisionBox.halfSize).add(Vector2.DOWN).add(Vector2.RIGHT);
-        botLeft.y += collisionBox.halfSize.y * 2;
-        Vector2 botRight = new Vector2(botLeft.x + collisionBox.halfSize.x * 2 - 2, botLeft.y);
-
-        triggerLineX = botLeft.x;
-        triggerLineY = botLeft.y;
-        drawRect = new Rectangle(tileMap.getMapTileXAtPoint(botLeft.x)*tileSize,
-                tileMap.getMapTileYAtPoint(botLeft.y)*tileSize, tileSize, tileSize);
-        drawRect2 = new Rectangle(tileMap.getMapTileXAtPoint(botRight.x)*tileSize,
-                tileMap.getMapTileYAtPoint(botRight.y)*tileSize , tileSize, tileSize);
-        drawImg = tileMap.printTile(tileMap.getMapTileXAtPoint(botLeft.x), tileMap.getMapTileYAtPoint(botLeft.y));
-
-        int tileIndexX, tileIndexY;
-        for (Vector2 checkedTile = botLeft; ;checkedTile.x += tileSize) {
-            checkedTile.x = Math.min(checkedTile.x, botRight.x);
-
-            tileIndexX = tileMap.getMapTileXAtPoint(checkedTile.x);
-            tileIndexY = tileMap.getMapTileYAtPoint(checkedTile.y);
-
-            groundY = tileIndexY * tileSize + tileMap.getY();
-            if (tileMap.isGround(tileIndexX, tileIndexY) &&
-                    tileIndexY * tileSize < botLeft.y && botLeft.y < tileIndexY * tileSize + 5)
-                return true;
-            if (checkedTile.x >= botRight.x) break;
-        }
-        return false;
-    }
-
     public void updatePhysics() {
-        oldPosition = position;
-        oldVelocity = velocity;
+        oldPosition = Vector2.copy(position);
+        oldVelocity = Vector2.copy(velocity);
         wasOnGround = isOnGround;
         wasAtCeiling = isAtCeiling;
         pushedLeftWall = isPushingLeftWall;
         pushedRightWall = isPushingRightWall;
+        isOnPlatform = false;
 
         position.x += velocity.x * Time.deltaTime;
         position.y += velocity.y * Time.deltaTime;
 
-        groundY = 0;
-        if (velocity.y >= 0 && hasGround(oldPosition, position, velocity)) {
-            position.y = groundY - collisionBox.halfSize.y - collisionOffset.y;
+        if (velocity.y >= 0 && hasGround(oldPosition, position)) {
+            position.y = groundY - collisionBox.halfSize.y - collisionOffset.y - 1;
             velocity.y = 0;
             isOnGround = true;
         } else isOnGround = false;
+        if (velocity.y <= 0 && hasCeiling(oldPosition, position)) {
+            position.y = ceilingY + collisionBox.halfSize.y + collisionOffset.y;
+            velocity.y = 0;
+            isAtCeiling = true;
+        } else isAtCeiling = false;
+        if (velocity.x <= 0 && collidesWithLeftWall(oldPosition, position)) {
+            if (oldPosition.x - collisionBox.halfSize.x + collisionOffset.x >= leftWallX) {
+                position.x = leftWallX + collisionBox.halfSize.x - collisionOffset.x;
+                isPushingLeftWall = true;
+            }
+            velocity.x = Math.min(velocity.x, 0);
+        } else isPushingLeftWall = false;
+        if (velocity.x >= 0 && collidesWithRightWall(oldPosition, position)) {
+            if (oldPosition.x + collisionBox.halfSize.x + collisionOffset.x <= rightWallX) {
+                position.x = rightWallX - collisionBox.halfSize.x - collisionOffset.x;
+                isPushingRightWall = true;
+            }
+            velocity.x = Math.max(velocity.x, 0);
+        } else isPushingRightWall = false;
 
         collisionBox.center = position.add(collisionOffset);
     }
@@ -110,10 +98,154 @@ public class MovingObject extends MapObject{
         g.drawImage(sprite, (int)position.x, (int)position.y, null);
 
         // debugging
-        //showDebuggers(g);
+        if(debugging) showDebuggers(g);
         g.setColor(Color.BLUE);
         int[] a = collisionBox.toXYWH();
         g.drawRect(a[0], a[1], a[2], a[3]);
+    }
+
+
+    public boolean hasGround(Vector2 oldPosition, Vector2 position) {
+        Vector2 oldCenter = oldPosition.add(collisionOffset);
+        Vector2 center = position.add(collisionOffset);
+
+        Vector2 oldBotLeft = oldCenter.sub(collisionBox.halfSize).add(Vector2.DOWN).add(Vector2.RIGHT);
+        oldBotLeft.y += collisionBox.halfSize.y * 2;
+        Vector2 newBotLeft = center.sub(collisionBox.halfSize).add(Vector2.DOWN).add(Vector2.RIGHT);
+        newBotLeft.y += collisionBox.halfSize.y * 2;
+        Vector2 newBotRight = new Vector2(newBotLeft.x + collisionBox.halfSize.x * 2 - 2, newBotLeft.y);
+
+        int endY = tileMap.getMapTileYAtPoint(newBotLeft.y);
+        int startY = Math.min(tileMap.getMapTileYAtPoint(oldBotLeft.y), endY);
+        int dist = Math.max(Math.abs(endY - startY), 1);
+
+        if(framesPassedUntilDrop < 6) framesPassedUntilDrop++;
+        // debugging stuff
+        if (debugging) {
+            triggerLineX = newBotLeft.x;
+            triggerLineY = newBotLeft.y;
+            drawRect = new Rectangle(tileMap.getMapTileXAtPoint(newBotLeft.x)*tileSize,
+                    tileMap.getMapTileYAtPoint(newBotLeft.y)*tileSize, tileSize, tileSize);
+            drawRect2 = new Rectangle(tileMap.getMapTileXAtPoint(newBotRight.x)*tileSize,
+                    tileMap.getMapTileYAtPoint(newBotRight.y)*tileSize , tileSize, tileSize);
+            drawImg = tileMap.printTile(tileMap.getMapTileXAtPoint(newBotLeft.x), tileMap.getMapTileYAtPoint(newBotLeft.y));
+        }
+
+        int tileIndexX;
+        for(int tileIndexY = startY; tileIndexY <= endY; tileIndexY++) {
+            Vector2 botLeft = Vector2.lerp(newBotLeft, oldBotLeft, Math.abs(endY - tileIndexY) / dist);
+            Vector2 botRight = new Vector2(botLeft.x + collisionBox.halfSize.x * 2 - 2, botLeft.y);
+
+            for (Vector2 checkedTile = botLeft; ;checkedTile.x += tileSize) {
+                checkedTile.x = Math.min(checkedTile.x, botRight.x);
+
+                tileIndexX = tileMap.getMapTileXAtPoint(checkedTile.x);
+                tileIndexY = tileMap.getMapTileYAtPoint(checkedTile.y);
+
+                groundY = tileIndexY * tileSize + tileMap.getY();
+                if(tileIndexY * tileSize <= botLeft.y && botLeft.y <= tileIndexY * tileSize + 4) {
+                    if (tileMap.isObstacle(tileIndexX, tileIndexY)) {
+                        isOnPlatform = false;
+                        return true;
+                    } else if (tileMap.isPlatform(tileIndexX, tileIndexY) && framesPassedUntilDrop > framesToIgnoreGround) {
+                        isOnPlatform = true;
+                    }
+                    if (checkedTile.x >= botRight.x) {
+                        if (isOnPlatform) return true;
+                        break;
+                    }
+                }
+                if (checkedTile.x >= botRight.x) break;
+            }
+        }
+        return false;
+    }
+
+    public boolean hasCeiling(Vector2 oldPosition, Vector2 position) {
+        Vector2 oldCenter = oldPosition.add(collisionOffset);
+        Vector2 center = position.add(collisionOffset);
+        Vector2 oldTopLeft = oldCenter.sub(collisionBox.halfSize).add(Vector2.UP).add(Vector2.RIGHT).round();
+        Vector2 newTopLeft = center.sub(collisionBox.halfSize).add(Vector2.UP).add(Vector2.RIGHT).round();
+        int endY = tileMap.getMapTileYAtPoint(newTopLeft.y);
+        int startY = Math.min(tileMap.getMapTileYAtPoint(oldTopLeft.y), endY);
+        int dist = Math.max(Math.abs(endY - startY), 1);
+        int tileIndexX;
+        ceilingY = 0;
+        for(int tileIndexY = startY; tileIndexY <= endY; tileIndexY++) {
+            Vector2 topLeft = Vector2.lerp(newTopLeft, oldTopLeft, Math.abs(endY - tileIndexY) / dist);
+            Vector2 topRight = new Vector2(topLeft.x + collisionBox.halfSize.x * 2 - 2, topLeft.y);
+            for (Vector2 checkedTile = topLeft; ;checkedTile.x += tileSize) {
+                checkedTile.x = Math.min(checkedTile.x, topRight.x);
+                tileIndexX = tileMap.getMapTileXAtPoint(checkedTile.x);
+                tileIndexY = tileMap.getMapTileYAtPoint(checkedTile.y);
+                if(tileIndexY * tileSize + tileSize >= topLeft.y && topLeft.y <= tileIndexY * tileSize + tileSize - 4) {
+                    if (tileMap.isObstacle(tileIndexX, tileIndexY)) {
+                        ceilingY = tileIndexY * tileSize + tileMap.getY();
+                        return true;
+                    }
+                }
+                if (checkedTile.x >= topRight.x) break;
+            }
+        }
+        return false;
+    }
+
+    public boolean collidesWithLeftWall(Vector2 oldPosition, Vector2 position) {
+        Vector2 oldCenter = oldPosition.add(collisionOffset);
+        Vector2 oldBotLeft = oldCenter.sub(collisionBox.halfSize).add(Vector2.LEFT).round();
+        oldBotLeft.y += collisionBox.halfSize.y * 2;
+        Vector2 center = position.add(collisionOffset);
+        Vector2 newBotLeft = center.sub(collisionBox.halfSize).add(Vector2.LEFT).round();
+        newBotLeft.y += collisionBox.halfSize.y * 2;
+        int endX = tileMap.getMapTileXAtPoint(newBotLeft.x);
+        int startX = Math.max(tileMap.getMapTileXAtPoint(oldBotLeft.x), endX);
+        int dist = Math.max(Math.abs(endX - startX), 1);
+        int tileIndexY;
+        leftWallX = 0;
+        for(int tileIndexX = startX; tileIndexX >= endX; tileIndexX--) {
+            Vector2 botLeft = Vector2.lerp(newBotLeft, oldBotLeft, Math.abs(endX - tileIndexX) / dist);
+            Vector2 topLeft = new Vector2(botLeft.x, botLeft.y - collisionBox.halfSize.y * 2);
+            for (Vector2 checkedTile = botLeft; ;checkedTile.y -= tileSize) {
+                checkedTile.y = Math.max(checkedTile.y, topLeft.y);
+                tileIndexY = tileMap.getMapTileYAtPoint(checkedTile.y);
+                if(tileIndexX * tileSize + tileSize >= botLeft.x) {
+                    if (tileMap.isObstacle(tileIndexX, tileIndexY)) {
+                        leftWallX = tileIndexX * tileSize + tileSize + tileMap.getX();
+                        return true;
+                    }
+                }
+                if (checkedTile.y <= topLeft.y) break;
+            }
+        }
+        return false;
+    }
+
+    public boolean collidesWithRightWall(Vector2 oldPosition, Vector2 position) {
+        Vector2 oldCenter = oldPosition.add(collisionOffset);
+        Vector2 oldBotRight = oldCenter.add(collisionBox.halfSize).add(Vector2.RIGHT).round();
+        Vector2 center = position.add(collisionOffset);
+        Vector2 newBotRight = center.add(collisionBox.halfSize).add(Vector2.RIGHT).round();
+        int endX = tileMap.getMapTileXAtPoint(newBotRight.x);
+        int startX = Math.max(tileMap.getMapTileXAtPoint(oldBotRight.x), endX);
+        int dist = Math.max(Math.abs(endX - startX), 1);
+        int tileIndexY;
+        rightWallX = 0;
+        for(int tileIndexX = startX; tileIndexX <= endX; tileIndexX++) {
+            Vector2 botRight = Vector2.lerp(newBotRight, oldBotRight, Math.abs(endX - tileIndexX) / dist);
+            Vector2 topRight = new Vector2(botRight.x, botRight.y - collisionBox.halfSize.y * 2);
+            for (Vector2 checkedTile = botRight; ;checkedTile.y -= tileSize) {
+                checkedTile.y = Math.max(checkedTile.y, topRight.y);
+                tileIndexY = tileMap.getMapTileYAtPoint(checkedTile.y);
+                if(tileIndexX * tileSize <= botRight.x) {
+                    if (tileMap.isObstacle(tileIndexX, tileIndexY)) {
+                        rightWallX = tileIndexX * tileSize + tileMap.getX();
+                        return true;
+                    }
+                }
+                if (checkedTile.y <= topRight.y) break;
+            }
+        }
+        return false;
     }
 
     private void showDebuggers(Graphics2D g) {

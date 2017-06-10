@@ -9,8 +9,6 @@ import TileMap.Vector2;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.security.Key;
-import java.util.Arrays;
 
 import static Entity.CharacterState.*;
 
@@ -24,6 +22,7 @@ public class Player extends MovingObject{
     private boolean isRising = false;
     private boolean isFalling = false;
     private double minFallSpeed;
+    // for canceling repeat jumps by keeping the button pressed
     private boolean hasJumped;
 
     private boolean hasAttack = true;
@@ -59,7 +58,7 @@ public class Player extends MovingObject{
         minFallSpeed = 2;
 
         // set up collision box
-        collisionBox = new CollisionBox(position, new Vector2(tileSize/3 - 1, tileSize/2));
+        collisionBox = new CollisionBox(position, new Vector2(tileSize/3 - 1, tileSize/2 - 1));
         collisionOffset = new Vector2(tileSize / 2 - 1, collisionBox.halfSize.y);
     }
 
@@ -75,11 +74,19 @@ public class Player extends MovingObject{
                 if (KeyHandler.isPressed(Keys.RIGHT) != KeyHandler.isPressed(Keys.LEFT)) {
                     currentState = WALKING;
                     break;
+                } else if (KeyHandler.isPressed(Keys.DOWN) && KeyHandler.isPressed(Keys.JUMP)) {
+                    if (isOnPlatform) {
+                        position.y += 1;
+                        framesPassedUntilDrop = 0;
+                        isOnPlatform = false;
+                        velocity.y = minFallSpeed;
+                        hasJumped = true;
+                    }
                 } else if (KeyHandler.isPressed(Keys.JUMP) && !hasJumped) {
-                    velocity.y = jumpSpeed;
-                    currentState = JUMPING;
-                    hasJumped = true;
-                    break;
+                        velocity.y = jumpSpeed;
+                        currentState = JUMPING;
+                        hasJumped = true;
+                        break;
                 }
                 break;
 
@@ -96,7 +103,15 @@ public class Player extends MovingObject{
                     if (isPushingLeftWall) velocity.x = 0;
                     else velocity.x = -walkSpeed;
                 }
-                if (KeyHandler.isPressed(Keys.JUMP) && !hasJumped) {
+                if (KeyHandler.isPressed(Keys.DOWN) && KeyHandler.isPressed(Keys.JUMP)) {
+                    if (isOnPlatform) {
+                        position.y += 1;
+                        framesPassedUntilDrop = 0;
+                        isOnPlatform = false;
+                        velocity.y = minFallSpeed;
+                        hasJumped = true;
+                    }
+                } else if (KeyHandler.isPressed(Keys.JUMP) && !hasJumped) {
                     velocity.y = jumpSpeed;
                     currentState = JUMPING;
                     hasJumped = true;
@@ -140,7 +155,5 @@ public class Player extends MovingObject{
                 break;
         }
         updatePhysics();
-
-        //System.out.println(isOnGround + "     " + position.toString() + "     " + velocity.toString() + "     " + currentState);
     }
 }
