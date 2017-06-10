@@ -9,8 +9,11 @@ import TileMap.Vector2;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
-import static Entity.CharacterState.*;
+import static Entity.CharacterState.IDLE;
+import static Entity.CharacterState.JUMPING;
+import static Entity.CharacterState.WALKING;
 
 public class Player extends MovingObject{
 
@@ -22,25 +25,56 @@ public class Player extends MovingObject{
     private boolean isRising = false;
     private boolean isFalling = false;
     private double minFallSpeed;
-    // for canceling repeat jumps by keeping the button pressed
-    private boolean hasJumped;
+    private boolean hasJumped; // for canceling repeat jumps by keeping the button pressed
+
+    private ArrayList<BufferedImage[]> sprites;
+    private final int[] NUMFRAMES = {
+            2, 8, 1, 2, 4, 2, 5
+    };
+    private final int[] FRAMEWIDTHS = {
+            30, 30, 30, 30, 30, 30, 60
+    };
+    private final int[] FRAMEHEIGHTS = {
+            30, 30, 30, 30, 30, 30, 30
+    };
+    private final int[] SPRITEDELAYS = {
+            30, 8, -1, 8, 3, 3, 3
+    };
 
     private boolean hasAttack = true;
     private boolean hasDoubleJump = false;
     private boolean hasDash = false;
 
-    public CharacterState currentState = STANDING;
+    public CharacterState currentState = IDLE;
 
     private long time = 0;
 
     public Player(TileMap tm) {
         super(tm);
+        width = 30;
+        height = 30;
 
         // load sprites
         try {
             BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream(
                     "/Sprites/Player/PlayerSprites.gif"));
             sprite = spritesheet.getSubimage(0, 0, 30, 30);
+            int count = 0;
+            sprites = new ArrayList<>();
+            for(int i = 0; i < NUMFRAMES.length; i++) {
+                BufferedImage[] bi = new BufferedImage[NUMFRAMES[i]];
+                for(int j = 0; j < NUMFRAMES[i]; j++) {
+                    bi[j] = spritesheet.getSubimage(
+                            j * FRAMEWIDTHS[i],
+                            count,
+                            FRAMEWIDTHS[i],
+                            FRAMEHEIGHTS[i]
+                    );
+                }
+                sprites.add(bi);
+                count += FRAMEHEIGHTS[i];
+            }
+
         } catch (IOException e1) {
             e1.printStackTrace();
         }
@@ -63,16 +97,22 @@ public class Player extends MovingObject{
     }
 
     public void update() {
+        handleInputs();
+        animation.update();
+        updatePhysics();
+    }
+
+    private void handleInputs() {
         switch (currentState) {
-            case STANDING:
+            case IDLE:
                 setVelocity(0, 0);
                 if (!isOnGround) {
-                    currentState = JUMPING;
+                    setAnimation(JUMPING);
                     break;
                 }
                 if (hasJumped && !KeyHandler.isPressed(Keys.JUMP)) hasJumped = false;
                 if (KeyHandler.isPressed(Keys.RIGHT) != KeyHandler.isPressed(Keys.LEFT)) {
-                    currentState = WALKING;
+                    setAnimation(JUMPING);
                     break;
                 } else if (KeyHandler.isPressed(Keys.DOWN) && KeyHandler.isPressed(Keys.JUMP)) {
                     if (isOnPlatform) {
@@ -83,25 +123,27 @@ public class Player extends MovingObject{
                         hasJumped = true;
                     }
                 } else if (KeyHandler.isPressed(Keys.JUMP) && !hasJumped) {
-                        velocity.y = jumpSpeed;
-                        currentState = JUMPING;
-                        hasJumped = true;
-                        break;
+                    velocity.y = jumpSpeed;
+                    setAnimation(JUMPING);
+                    hasJumped = true;
+                    break;
                 }
                 break;
 
             case WALKING:
                 if (hasJumped && !KeyHandler.isPressed(Keys.JUMP)) hasJumped = false;
                 if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT)) {
-                    currentState = STANDING;
+                    setAnimation(IDLE);
                     setVelocity(0, 0);
                     break;
                 } else if (KeyHandler.isPressed(Keys.RIGHT)) {
                     if (isPushingRightWall) velocity.x = 0;
                     else velocity.x = walkSpeed;
+                    isFacingRight = true;
                 } else if (KeyHandler.isPressed(Keys.LEFT)) {
                     if (isPushingLeftWall) velocity.x = 0;
                     else velocity.x = -walkSpeed;
+                    isFacingRight = false;
                 }
                 if (KeyHandler.isPressed(Keys.DOWN) && KeyHandler.isPressed(Keys.JUMP)) {
                     if (isOnPlatform) {
@@ -113,11 +155,11 @@ public class Player extends MovingObject{
                     }
                 } else if (KeyHandler.isPressed(Keys.JUMP) && !hasJumped) {
                     velocity.y = jumpSpeed;
-                    currentState = JUMPING;
+                    setAnimation(JUMPING);
                     hasJumped = true;
                     break;
                 } else if (!isOnGround) {
-                    currentState = JUMPING;
+                    setAnimation(JUMPING);
                     break;
                 }
                 break;
@@ -128,10 +170,10 @@ public class Player extends MovingObject{
                 velocity.y = Math.min(velocity.y, maxFallingSpeed);
                 if (isOnGround) {
                     if (KeyHandler.isPressed(Keys.LEFT) == KeyHandler.isPressed(Keys.RIGHT)) {
-                        currentState = STANDING;
+                        setAnimation(IDLE);
                         setVelocity(0, 0);
                     } else {
-                        currentState = WALKING;
+                        setAnimation(WALKING);
                         velocity.y = 0;
                     }
                     if (hasJumped && !KeyHandler.isPressed(Keys.JUMP)) hasJumped = false;
@@ -140,20 +182,42 @@ public class Player extends MovingObject{
                     velocity.y = Math.max(velocity.y, minJumpingSpeed);
                 }
                 isFalling = velocity.y > 0;
-                if(isRising && isFalling) velocity.y = minFallSpeed;
+                if(isRising && isFalling) {
+                    velocity.y = minFallSpeed;
+                    setAnimation(JUMPING);
+                }
                 if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT)) {
                     velocity.x = 0;
                     break;
                 } else if (KeyHandler.isPressed(Keys.RIGHT)) {
                     if (isPushingRightWall) velocity.x = 0;
                     else velocity.x = walkSpeed;
+                    isFacingRight = true;
                 } else if (KeyHandler.isPressed(Keys.LEFT)) {
                     if (isPushingLeftWall) velocity.x = 0;
                     else velocity.x = -walkSpeed;
+                    isFacingRight = false;
                 }
-
                 break;
         }
-        updatePhysics();
+    }
+
+    private void setAnimation(CharacterState state) {
+        currentState = state;
+        int statenr = 0;
+        switch (currentState) {
+            case IDLE:
+                statenr = 0;
+                break;
+            case WALKING:
+                statenr = 1;
+                break;
+            case JUMPING:
+                if(isFalling) statenr = 3;
+                else statenr = 2;
+                break;
+        }
+        animation.setFrames(sprites.get(statenr));
+        animation.setDelay(SPRITEDELAYS[statenr]);
     }
 }

@@ -26,13 +26,16 @@ public class MapObject {
 
 
     // animation
-    // TODO
+    protected Animation animation;
+    protected int currentAction;
+
     protected BufferedImage sprite;
 
     // Constructor
     public MapObject(TileMap tm) {
         tileMap = tm;
         tileSize = tileMap.getTileSize();
+        animation = new Animation();
     }
 
     public void setPosition(double x, double y) {

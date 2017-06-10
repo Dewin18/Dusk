@@ -10,14 +10,14 @@ import java.awt.image.BufferedImage;
 public class MovingObject extends MapObject{
 
     // Movement
-    protected Vector2 velocity;
-    protected Vector2 oldPosition;
-    protected Vector2 oldVelocity;
-    protected double jumpSpeed;
-    protected double walkSpeed;
-    protected double gravity = 0.5;
-    protected double maxFallingSpeed;
-    protected double minJumpingSpeed;
+    Vector2 velocity;
+    Vector2 oldPosition;
+    Vector2 oldVelocity;
+    double jumpSpeed;
+    double walkSpeed;
+    double gravity = 0.5;
+    double maxFallingSpeed;
+    double minJumpingSpeed;
 
     // collision states
     boolean isPushingRightWall;
@@ -30,16 +30,19 @@ public class MovingObject extends MapObject{
     boolean wasAtCeiling;
     boolean isOnPlatform;
 
-    int framesToIgnoreGround = 5;
     int framesPassedUntilDrop = 6;
-    double groundY, ceilingY, leftWallX, rightWallX;
+    private int framesToIgnoreGround = 5;
+    private double groundY, ceilingY, leftWallX, rightWallX;
+    private int mapCollisionSensorDepth = 4;
+
+    boolean isFacingRight = true;
 
     // debugging
-    boolean debugging = false;
-    double triggerLineY, triggerLineX, triggerLineX2, triggerLineY2;
-    Rectangle drawRect = new Rectangle(0, 0, 0 ,0);
-    Rectangle drawRect2 = new Rectangle(0, 0, 0 ,0);
-    BufferedImage drawImg = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_ARGB);
+    private boolean debugging = false;
+    private double triggerLineY, triggerLineX, triggerLineX2, triggerLineY2;
+    private Rectangle drawRect = new Rectangle(0, 0, 0 ,0);
+    private Rectangle drawRect2 = new Rectangle(0, 0, 0 ,0);
+    private BufferedImage drawImg = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_ARGB);
 
     public MovingObject(TileMap tm) {
         super(tm);
@@ -55,6 +58,7 @@ public class MovingObject extends MapObject{
     }
 
     public void updatePhysics() {
+        // Update attributes of last frame
         oldPosition = Vector2.copy(position);
         oldVelocity = Vector2.copy(velocity);
         wasOnGround = isOnGround;
@@ -62,20 +66,49 @@ public class MovingObject extends MapObject{
         pushedLeftWall = isPushingLeftWall;
         pushedRightWall = isPushingRightWall;
         isOnPlatform = false;
-
+        // Update the position
         position.x += velocity.x * Time.deltaTime;
         position.y += velocity.y * Time.deltaTime;
+        checkMapCollision();
+        // Update collision box center
+        collisionBox.center = position.add(collisionOffset);
+    }
 
+    /**
+     * Draw the sprite of the MovingObject
+     * @param g the graphic context to be drawn on
+     */
+    public void draw(Graphics2D g) {
+        //g.drawImage(sprite, (int)position.x, (int)position.y, null);
+        if(isFacingRight) {
+            g.drawImage(animation.getImage(), (int) position.x, (int) position.y, null);
+        } else {
+            g.drawImage(animation.getImage(), (int) position.x + width, (int) position.y, -width, height, null);
+        }
+        // debugging
+        if(debugging) showDebuggers(g);
+        /*g.setColor(Color.BLUE);
+        int[] a = collisionBox.toXYWH();
+        g.drawRect(a[0], a[1], a[2], a[3]);*/
+    }
+
+    /**
+     * Use the helper functions to determine the map collisions.
+     */
+    private void checkMapCollision() {
+        // Check for ground
         if (velocity.y >= 0 && hasGround(oldPosition, position)) {
             position.y = groundY - collisionBox.halfSize.y - collisionOffset.y - 1;
             velocity.y = 0;
             isOnGround = true;
         } else isOnGround = false;
+        // Check for ceiling
         if (velocity.y <= 0 && hasCeiling(oldPosition, position)) {
             position.y = ceilingY + collisionBox.halfSize.y + collisionOffset.y;
             velocity.y = 0;
             isAtCeiling = true;
         } else isAtCeiling = false;
+        // Check for left tile
         if (velocity.x <= 0 && collidesWithLeftWall(oldPosition, position)) {
             if (oldPosition.x - collisionBox.halfSize.x + collisionOffset.x >= leftWallX) {
                 position.x = leftWallX + collisionBox.halfSize.x - collisionOffset.x;
@@ -83,6 +116,7 @@ public class MovingObject extends MapObject{
             }
             velocity.x = Math.min(velocity.x, 0);
         } else isPushingLeftWall = false;
+        // Check for right tile
         if (velocity.x >= 0 && collidesWithRightWall(oldPosition, position)) {
             if (oldPosition.x + collisionBox.halfSize.x + collisionOffset.x <= rightWallX) {
                 position.x = rightWallX - collisionBox.halfSize.x - collisionOffset.x;
@@ -90,37 +124,27 @@ public class MovingObject extends MapObject{
             }
             velocity.x = Math.max(velocity.x, 0);
         } else isPushingRightWall = false;
-
-        collisionBox.center = position.add(collisionOffset);
     }
 
-    public void draw(Graphics2D g) {
-        g.drawImage(sprite, (int)position.x, (int)position.y, null);
-
-        // debugging
-        if(debugging) showDebuggers(g);
-        g.setColor(Color.BLUE);
-        int[] a = collisionBox.toXYWH();
-        g.drawRect(a[0], a[1], a[2], a[3]);
-    }
-
-
-    public boolean hasGround(Vector2 oldPosition, Vector2 position) {
+    /**
+     * Check if the MovingObject is exactly above a ground tile.
+     * @param oldPosition the old position of the MovingObject
+     * @param position the new position of the MovingObject
+     * @return true, if there is ground, false if not
+     */
+    private boolean hasGround(Vector2 oldPosition, Vector2 position) {
         Vector2 oldCenter = oldPosition.add(collisionOffset);
         Vector2 center = position.add(collisionOffset);
-
         Vector2 oldBotLeft = oldCenter.sub(collisionBox.halfSize).add(Vector2.DOWN).add(Vector2.RIGHT);
         oldBotLeft.y += collisionBox.halfSize.y * 2;
         Vector2 newBotLeft = center.sub(collisionBox.halfSize).add(Vector2.DOWN).add(Vector2.RIGHT);
         newBotLeft.y += collisionBox.halfSize.y * 2;
         Vector2 newBotRight = new Vector2(newBotLeft.x + collisionBox.halfSize.x * 2 - 2, newBotLeft.y);
-
         int endY = tileMap.getMapTileYAtPoint(newBotLeft.y);
         int startY = Math.min(tileMap.getMapTileYAtPoint(oldBotLeft.y), endY);
         int dist = Math.max(Math.abs(endY - startY), 1);
-
         if(framesPassedUntilDrop < 6) framesPassedUntilDrop++;
-        // debugging stuff
+        /*// debugging stuff
         if (debugging) {
             triggerLineX = newBotLeft.x;
             triggerLineY = newBotLeft.y;
@@ -129,21 +153,19 @@ public class MovingObject extends MapObject{
             drawRect2 = new Rectangle(tileMap.getMapTileXAtPoint(newBotRight.x)*tileSize,
                     tileMap.getMapTileYAtPoint(newBotRight.y)*tileSize , tileSize, tileSize);
             drawImg = tileMap.printTile(tileMap.getMapTileXAtPoint(newBotLeft.x), tileMap.getMapTileYAtPoint(newBotLeft.y));
-        }
-
+        }*/
         int tileIndexX;
+        // First for loop for detecting collision at high speeds (takes in account the previous frame)
         for(int tileIndexY = startY; tileIndexY <= endY; tileIndexY++) {
             Vector2 botLeft = Vector2.lerp(newBotLeft, oldBotLeft, Math.abs(endY - tileIndexY) / dist);
             Vector2 botRight = new Vector2(botLeft.x + collisionBox.halfSize.x * 2 - 2, botLeft.y);
-
+            // Second for loop for checking tiles being touched
             for (Vector2 checkedTile = botLeft; ;checkedTile.x += tileSize) {
                 checkedTile.x = Math.min(checkedTile.x, botRight.x);
-
                 tileIndexX = tileMap.getMapTileXAtPoint(checkedTile.x);
                 tileIndexY = tileMap.getMapTileYAtPoint(checkedTile.y);
-
                 groundY = tileIndexY * tileSize + tileMap.getY();
-                if(tileIndexY * tileSize <= botLeft.y && botLeft.y <= tileIndexY * tileSize + 4) {
+                if(tileIndexY * tileSize <= botLeft.y && botLeft.y <= tileIndexY * tileSize + mapCollisionSensorDepth) {
                     if (tileMap.isObstacle(tileIndexX, tileIndexY)) {
                         isOnPlatform = false;
                         return true;
@@ -161,7 +183,13 @@ public class MovingObject extends MapObject{
         return false;
     }
 
-    public boolean hasCeiling(Vector2 oldPosition, Vector2 position) {
+    /**
+     * Check if the MovingObject is exactly under a solid tile.
+     * @param oldPosition the old position of the MovingObject
+     * @param position the new position of the MovingObject
+     * @return true, if there is a solid tile directly above, false if not
+     */
+    private boolean hasCeiling(Vector2 oldPosition, Vector2 position) {
         Vector2 oldCenter = oldPosition.add(collisionOffset);
         Vector2 center = position.add(collisionOffset);
         Vector2 oldTopLeft = oldCenter.sub(collisionBox.halfSize).add(Vector2.UP).add(Vector2.RIGHT).round();
@@ -178,7 +206,7 @@ public class MovingObject extends MapObject{
                 checkedTile.x = Math.min(checkedTile.x, topRight.x);
                 tileIndexX = tileMap.getMapTileXAtPoint(checkedTile.x);
                 tileIndexY = tileMap.getMapTileYAtPoint(checkedTile.y);
-                if(tileIndexY * tileSize + tileSize >= topLeft.y && topLeft.y <= tileIndexY * tileSize + tileSize - 4) {
+                if(tileIndexY * tileSize + tileSize >= topLeft.y && topLeft.y <= tileIndexY * tileSize + tileSize - mapCollisionSensorDepth) {
                     if (tileMap.isObstacle(tileIndexX, tileIndexY)) {
                         ceilingY = tileIndexY * tileSize + tileMap.getY();
                         return true;
@@ -190,7 +218,13 @@ public class MovingObject extends MapObject{
         return false;
     }
 
-    public boolean collidesWithLeftWall(Vector2 oldPosition, Vector2 position) {
+    /**
+     * Check if the MovingObject is exactly to the right of a solid tile.
+     * @param oldPosition the old position of the MovingObject
+     * @param position the new position of the MovingObject
+     * @return true, if there is a solid tile directly to the left, false if not
+     */
+    private boolean collidesWithLeftWall(Vector2 oldPosition, Vector2 position) {
         Vector2 oldCenter = oldPosition.add(collisionOffset);
         Vector2 oldBotLeft = oldCenter.sub(collisionBox.halfSize).add(Vector2.LEFT).round();
         oldBotLeft.y += collisionBox.halfSize.y * 2;
@@ -220,7 +254,13 @@ public class MovingObject extends MapObject{
         return false;
     }
 
-    public boolean collidesWithRightWall(Vector2 oldPosition, Vector2 position) {
+    /**
+     * Check if the MovingObject is exactly to the left of a solid tile.
+     * @param oldPosition the old position of the MovingObject
+     * @param position the new position of the MovingObject
+     * @return true, if there is a solid tile directly to the right, false if not
+     */
+    private boolean collidesWithRightWall(Vector2 oldPosition, Vector2 position) {
         Vector2 oldCenter = oldPosition.add(collisionOffset);
         Vector2 oldBotRight = oldCenter.add(collisionBox.halfSize).add(Vector2.RIGHT).round();
         Vector2 center = position.add(collisionOffset);
@@ -248,6 +288,10 @@ public class MovingObject extends MapObject{
         return false;
     }
 
+    /**
+     * Draw the debugging lines and squares needed for the collision testing.
+     * @param g the graphic context to be drawn on
+     */
     private void showDebuggers(Graphics2D g) {
         // Collision Box
         g.setColor(Color.BLUE);
