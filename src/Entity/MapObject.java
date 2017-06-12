@@ -5,6 +5,8 @@ import TileMap.Vector2;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
 public class MapObject {
 
     // tile map stuff
@@ -28,6 +30,7 @@ public class MapObject {
     // animation
     protected Animation animation;
     protected int currentAction;
+    protected ArrayList<BufferedImage[]> sprites;
 
     protected BufferedImage sprite;
 

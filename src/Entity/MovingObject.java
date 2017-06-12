@@ -87,9 +87,6 @@ public class MovingObject extends MapObject{
         }
         // debugging
         if(debugging) showDebuggers(g);
-        /*g.setColor(Color.BLUE);
-        int[] a = collisionBox.toXYWH();
-        g.drawRect(a[0], a[1], a[2], a[3]);*/
     }
 
     /**
@@ -144,7 +141,7 @@ public class MovingObject extends MapObject{
         int startY = Math.min(tileMap.getMapTileYAtPoint(oldBotLeft.y), endY);
         int dist = Math.max(Math.abs(endY - startY), 1);
         if(framesPassedUntilDrop < 6) framesPassedUntilDrop++;
-        /*// debugging stuff
+        // debugging stuff
         if (debugging) {
             triggerLineX = newBotLeft.x;
             triggerLineY = newBotLeft.y;
@@ -153,7 +150,7 @@ public class MovingObject extends MapObject{
             drawRect2 = new Rectangle(tileMap.getMapTileXAtPoint(newBotRight.x)*tileSize,
                     tileMap.getMapTileYAtPoint(newBotRight.y)*tileSize , tileSize, tileSize);
             drawImg = tileMap.printTile(tileMap.getMapTileXAtPoint(newBotLeft.x), tileMap.getMapTileYAtPoint(newBotLeft.y));
-        }*/
+        }
         int tileIndexX;
         // First for loop for detecting collision at high speeds (takes in account the previous frame)
         for(int tileIndexY = startY; tileIndexY <= endY; tileIndexY++) {

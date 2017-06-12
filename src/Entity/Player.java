@@ -27,7 +27,6 @@ public class Player extends MovingObject{
     private double minFallSpeed;
     private boolean hasJumped; // for canceling repeat jumps by keeping the button pressed
 
-    private ArrayList<BufferedImage[]> sprites;
     private final int[] NUMFRAMES = {
             2, 8, 1, 2, 4, 2, 5
     };
@@ -46,8 +45,6 @@ public class Player extends MovingObject{
     private boolean hasDash = false;
 
     public CharacterState currentState = IDLE;
-
-    private long time = 0;
 
     public Player(TileMap tm) {
         super(tm);
