@@ -28,16 +28,16 @@ public class Player extends MovingObject{
     private boolean hasJumped; // for canceling repeat jumps by keeping the button pressed
 
     private final int[] NUMFRAMES = {
-            2, 8, 1, 2, 4, 2, 5
+            1, 6
     };
     private final int[] FRAMEWIDTHS = {
-            30, 30, 30, 30, 30, 30, 60
+            128, 128
     };
     private final int[] FRAMEHEIGHTS = {
-            30, 30, 30, 30, 30, 30, 30
+            128, 128
     };
     private final int[] SPRITEDELAYS = {
-            30, 8, -1, 8, 3, 3, 3
+            -1, 8
     };
 
     private boolean hasAttack = true;
@@ -48,14 +48,14 @@ public class Player extends MovingObject{
 
     public Player(TileMap tm) {
         super(tm);
-        width = 30;
-        height = 30;
+        width = 128;
+        height = 128;
 
         // load sprites
         try {
             BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream(
-                    "/Sprites/Player/PlayerSprites.gif"));
-            sprite = spritesheet.getSubimage(0, 0, 30, 30);
+                    "/Sprites/dusk_spritesheet_128.png"));
+            sprite = spritesheet.getSubimage(0, 0, 128, 128);
             int count = 0;
             sprites = new ArrayList<>();
             for(int i = 0; i < NUMFRAMES.length; i++) {
@@ -81,15 +81,15 @@ public class Player extends MovingObject{
         setPosition(position);
 
         // set up speeds
-        jumpSpeed = -6.5;
-        walkSpeed = 2;
+        jumpSpeed = -12.5;
+        walkSpeed = 6;
         minJumpingSpeed = -1;
         maxFallingSpeed = 4;
         gravity = 0.3;
-        minFallSpeed = 2;
+        minFallSpeed = 3;
 
         // set up collision box
-        collisionBox = new CollisionBox(position, new Vector2(tileSize/3 - 1, tileSize/2 - 1));
+        collisionBox = new CollisionBox(position, new Vector2(tileSize/3 - 20, tileSize/3 - 1));
         collisionOffset = new Vector2(tileSize / 2 - 1, collisionBox.halfSize.y);
     }
 
@@ -210,8 +210,8 @@ public class Player extends MovingObject{
                 statenr = 1;
                 break;
             case JUMPING:
-                if(isFalling) statenr = 3;
-                else statenr = 2;
+                if(isFalling) statenr = 0;
+                else statenr = 0;
                 break;
         }
         animation.setFrames(sprites.get(statenr));

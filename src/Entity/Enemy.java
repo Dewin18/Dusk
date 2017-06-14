@@ -18,16 +18,16 @@ public class Enemy extends MovingObject{
     double minFallSpeed = 0.4;
 
     private final int[] NUMFRAMES = {
-            3
+            1, 6
     };
     private final int[] FRAMEWIDTHS = {
-            30
+            128, 128
     };
     private final int[] FRAMEHEIGHTS = {
-            30
+            128, 128
     };
     private final int[] SPRITEDELAYS = {
-            15
+            -1, 8
     };
 
 
@@ -69,13 +69,13 @@ public class Enemy extends MovingObject{
             e1.printStackTrace();
         }
 
-        collisionBox = new CollisionBox(this.position, new Vector2(tileSize/2, tileSize/3));
-        collisionOffset = new Vector2(collisionBox.halfSize.x, collisionBox.halfSize.y *2 - 2);
+        collisionBox = new CollisionBox(position, new Vector2(tileSize/3 - 20, tileSize/3 - 1));
+        collisionOffset = new Vector2(tileSize / 2 - 1, collisionBox.halfSize.y);
 
-        width = 30;
-        height = 30;
+        width = 128;
+        height = 128;
         jumpSpeed = -6.5;
-        walkSpeed = 1;
+        walkSpeed = 2;
         minJumpingSpeed = -1;
         maxFallingSpeed = 4;
         gravity = 0.3;
@@ -95,10 +95,10 @@ public class Enemy extends MovingObject{
         switch (currentState) {
             case IDLE:
                 if (!isOnGround) {
-                    currentState = JUMPING;
+                    setAnimation(JUMPING);
                     break;
                 }
-                if(velocity.x > 0) currentState = WALKING;
+                setAnimation(WALKING);
 
                 if(isFacingRight) setVelocity(walkSpeed, 0);
                 else setVelocity(-walkSpeed, 0);
@@ -106,7 +106,7 @@ public class Enemy extends MovingObject{
 
             case WALKING:
                 if (!isOnGround) {
-                    currentState = JUMPING;
+                    setAnimation(JUMPING);
                     break;
                 }
                 if(isFacingRight) setVelocity(walkSpeed, 0);
@@ -128,10 +128,28 @@ public class Enemy extends MovingObject{
                 velocity.y += gravity * Time.deltaTime;
                 velocity.y = Math.min(velocity.y, maxFallingSpeed);
                 if (isOnGround) {
-                    currentState = WALKING;
+                    setAnimation(WALKING);
                     velocity.y = 0;
                 }
                 break;
         }
+    }
+
+    private void setAnimation(CharacterState state) {
+        currentState = state;
+        int statenr = 0;
+        switch (currentState) {
+            case IDLE:
+                statenr = 0;
+                break;
+            case WALKING:
+                statenr = 1;
+                break;
+            case JUMPING:
+                statenr = 0;
+                break;
+        }
+        animation.setFrames(sprites.get(statenr));
+        animation.setDelay(SPRITEDELAYS[statenr]);
     }
 }

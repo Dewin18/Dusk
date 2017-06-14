@@ -19,6 +19,6 @@ public class Time {
     }
 
     static long calculateWaitTime() {
-        return (Time.lastLoopTime - System.nanoTime() + TARGET_TIME) / 1000000;
+        return (lastLoopTime - System.nanoTime() + TARGET_TIME) / 1000000;
     }
 }

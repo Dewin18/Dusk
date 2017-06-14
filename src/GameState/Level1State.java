@@ -2,20 +2,16 @@ package GameState;
 
 import Entity.Player;
 import Entity.Enemy;
-import Handlers.KeyHandler;
-import Handlers.Keys;
 import Main.GamePanel;
 import TileMap.*;
 
-import javax.sound.midi.Soundbank;
 import java.awt.*;
-import java.util.Arrays;
 
 public class Level1State extends GameState {
 	
 	private TileMap tileMap;
 	private Player player;
-	private Enemy slug;
+	private Enemy enemy;
 	
 	public Level1State(GameStateManager gsm) {
 		this.gsm = gsm;
@@ -23,21 +19,21 @@ public class Level1State extends GameState {
 	}
 
 	public void init() {
-		tileMap = new TileMap(30);
-		tileMap.loadTiles("/Tilesets/grasstileset.gif");
+		tileMap = new TileMap(128);
+		tileMap.loadTiles("/Sprites/terrain_spritesheet_128.png");
 		tileMap.loadMap("/Maps/level1-1.map");
 		tileMap.setPosition(0, 0);
 
 		player = new Player(tileMap);
 		player.initPlayer(new Vector2(150, 100));
-		slug = new Enemy(tileMap);
-		slug.initEnemy(new Vector2(200, 100),"slugger.gif");
+		enemy = new Enemy(tileMap);
+		enemy.initEnemy(new Vector2(700, 100),"enemy_spritesheet_128.png");
 	}
 
 
 	public void update() {
 		player.update();
-		slug.update();
+		enemy.update();
 		//handleInput();
 	}
 
@@ -49,7 +45,7 @@ public class Level1State extends GameState {
 		// draw tilemap
 		tileMap.draw(g);
 		player.draw(g);
-		slug.draw(g);
+		enemy.draw(g);
 	}
 
 	public void handleInput() {

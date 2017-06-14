@@ -94,17 +94,7 @@ public class MovingObject extends MapObject{
      */
     private void checkMapCollision() {
         // Check for ground
-        if (velocity.y >= 0 && hasGround(oldPosition, position)) {
-            position.y = groundY - collisionBox.halfSize.y - collisionOffset.y - 1;
-            velocity.y = 0;
-            isOnGround = true;
-        } else isOnGround = false;
         // Check for ceiling
-        if (velocity.y <= 0 && hasCeiling(oldPosition, position)) {
-            position.y = ceilingY + collisionBox.halfSize.y + collisionOffset.y;
-            velocity.y = 0;
-            isAtCeiling = true;
-        } else isAtCeiling = false;
         // Check for left tile
         if (velocity.x <= 0 && collidesWithLeftWall(oldPosition, position)) {
             if (oldPosition.x - collisionBox.halfSize.x + collisionOffset.x >= leftWallX) {
@@ -121,6 +111,16 @@ public class MovingObject extends MapObject{
             }
             velocity.x = Math.max(velocity.x, 0);
         } else isPushingRightWall = false;
+        if (velocity.y >= 0 && hasGround(oldPosition, position)) {
+            position.y = groundY - collisionBox.halfSize.y - collisionOffset.y - 1;
+            velocity.y = 0;
+            isOnGround = true;
+        } else isOnGround = false;
+        if (velocity.y <= 0 && hasCeiling(oldPosition, position)) {
+            position.y = ceilingY + collisionBox.halfSize.y + collisionOffset.y;
+            velocity.y = 0;
+            isAtCeiling = true;
+        } else isAtCeiling = false;
     }
 
     /**
