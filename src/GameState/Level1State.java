@@ -2,6 +2,7 @@ package GameState;
 
 import Entity.Player;
 import Entity.Enemy;
+import Entity.InvulnerableTime;
 import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.GamePanel;
@@ -39,9 +40,31 @@ public class Level1State extends GameState {
 		player.update();
 		slug.update();
 		//handleInput();
+
+		checkPlayerEnemyCollision();
 	}
 
-	public void draw(Graphics2D g) {
+	private void checkPlayerEnemyCollision()
+    {
+	    if(player.getCollisionBox().overlaps(slug.getCollisionBox()) && !player.isInvulnerable())
+        {
+	        if(!player.isInvulnerable())
+	        {
+	            player.stepBack(); 
+	        }
+	        
+	        player.setInvulnerable(true);
+            player.setHealth(player.getHealth()-1);
+  
+            if(player.getHealth() == 0)
+            {
+                System.out.println("GAME OVER");
+            }
+	        new Thread(new InvulnerableTime(System.currentTimeMillis() / 1000, 5, player)).start();
+        }
+    }
+
+    public void draw(Graphics2D g) {
 		// clear screen
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);

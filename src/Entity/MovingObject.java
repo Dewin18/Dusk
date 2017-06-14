@@ -308,4 +308,16 @@ public class MovingObject extends MapObject{
         // The image of the left bot tile shown in the top left corner
         g.drawImage(drawImg, 0, 0, null);
     }
+    
+    /**
+     * Get the collision box for a moving object
+     * 
+     * @return the collision box for this object
+     */
+    public CollisionBox getCollisionBox()
+    {
+        return this.collisionBox;
+    }
+    
+    
 }
