@@ -2,13 +2,27 @@ package Handlers;
 
 import java.awt.event.KeyEvent;
 
+/**
+ * This Class handles all KeyEvents 
+ * 
+ * @author Ali & Dewin
+ *
+ */
 public class KeyHandler {
+    
+    /**
+     * NUM_KEYS is the number of all Keys. In this case we have 10 Keys
+     */
     public static final int NUM_KEYS = Keys.KEY_COUNT;
 
+    // Create a new keyState Array with the capacity of 10
     private static boolean keyState[] = new boolean[NUM_KEYS];
+    // Create a new prevKeyState Array with the capacity of 10
     private static boolean prevKeyState[] = new boolean[NUM_KEYS];
 
-    public static void keySet(int i, boolean b) {
+    
+    public static void keySet(int i, boolean b) 
+    {
         if(i == KeyEvent.VK_UP) keyState[Keys.UP] = b;
         else if(i == KeyEvent.VK_LEFT) keyState[Keys.LEFT] = b;
         else if(i == KeyEvent.VK_DOWN) keyState[Keys.DOWN] = b;

@@ -13,14 +13,15 @@ import Handlers.KeyHandler;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener
 {
+    private static final long serialVersionUID = 1L;
     // dimensions
-    public static final int WIDTH = 1500;
-    public static final int HEIGHT = 700;
+    public static final int WIDTH = 1200;
+    public static final int HEIGHT = 600;
     public static final int SCALE = 1;
 
     // game thread
     private Thread thread;
-    private boolean running;
+    private boolean isRunning;
 
     // image
     private BufferedImage image;
@@ -56,7 +57,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
         image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         g = (Graphics2D) image.getGraphics();
 
-        running = true;
+        isRunning = true;
 
         gsm = new GameStateManager();
     }
@@ -67,7 +68,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
         long wait;
 
         // game loop
-        while (running)
+        while (isRunning)
         {
             Time.updateDeltaTime();
             update();
@@ -115,5 +116,4 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     {
         KeyHandler.keySet(key.getKeyCode(), false);
     }
-
 }

@@ -9,6 +9,9 @@ import java.awt.image.BufferedImage;
 
 public class MovingObject extends MapObject{
 
+    // debugging
+    private final boolean debugging = false;
+    
     // Movement
     Vector2 velocity;
     Vector2 oldPosition;
@@ -37,8 +40,6 @@ public class MovingObject extends MapObject{
 
     boolean isFacingRight = true;
 
-    // debugging
-    private boolean debugging = false;
     private double triggerLineY, triggerLineX, triggerLineX2, triggerLineY2;
     private Rectangle drawRect = new Rectangle(0, 0, 0 ,0);
     private Rectangle drawRect2 = new Rectangle(0, 0, 0 ,0);
