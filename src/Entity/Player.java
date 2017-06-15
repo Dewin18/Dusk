@@ -44,7 +44,7 @@ public class Player extends MovingObject{
     private boolean hasDoubleJump = false;
     private boolean hasDash = false;
 
-    public CharacterState currentState = IDLE;
+    private CharacterState currentState = IDLE;
 
     public Player(TileMap tm) {
         super(tm);
@@ -216,5 +216,10 @@ public class Player extends MovingObject{
         }
         animation.setFrames(sprites.get(statenr));
         animation.setDelay(SPRITEDELAYS[statenr]);
+    }
+    
+    public CharacterState getCharacterState()
+    {
+        return currentState;
     }
 }

@@ -1,9 +1,11 @@
-package Handlers;
+package testing;
 
 import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import Handlers.KeyHandler;
 
 public class KeyHandlerTest
 {

@@ -1,10 +1,12 @@
-package Entity;
+package testing;
 
 import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
 
+import Entity.CharacterState;
+import Entity.Player;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
@@ -44,6 +46,15 @@ public class PlayerTest
 
         assertFalse(VectorPositionX != PlayerPositionX
                 && VectorPositionY != PlayerPositionY);
+    }
+    
+    @Test
+    public void playerStateTest()
+    {
+        CharacterState currentState = player.getCharacterState();
+        
+        //Test the default player state at start
+        assertEquals(currentState.toString(), "IDLE");
     }
 
 }

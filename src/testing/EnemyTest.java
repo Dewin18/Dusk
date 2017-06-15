@@ -1,4 +1,4 @@
-package Entity;
+package testing;
 
 public class EnemyTest
 {
