@@ -52,15 +52,3 @@ public class Level1State extends GameState {
 	}
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-

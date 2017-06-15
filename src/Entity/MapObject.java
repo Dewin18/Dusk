@@ -54,6 +54,11 @@ public class MapObject {
         this.position = position;
     }
 
+    /**
+     * Returns the current position for a MapObject
+     * 
+     * @return Vector2 
+     */
     public Vector2 getPosition() {
         return this.position;
     }

@@ -24,7 +24,7 @@ public class GamePanelTest
     @Test
     public void gamePanelSizeTest()
     {
-        assertEquals(1200, gamePanel.WIDTH);
+        assertEquals(1300, gamePanel.WIDTH);
         assertEquals(600, gamePanel.HEIGHT);
     }
 }
