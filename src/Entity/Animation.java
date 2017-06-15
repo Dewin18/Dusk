@@ -47,12 +47,11 @@ public class Animation {
     public int getFrame() { return currentFrame; }
     public int getCount() { return count; }
     
+    
+    //TODO sometimes ArrayIndexOutOfBoundsException
     public BufferedImage getImage() 
     { 
-        int index = currentFrame;
-        
-        if(index < frames.length) return frames[currentFrame]; 
-        else return frames[frames.length-1];
+       return frames[currentFrame]; 
     }
     
     public boolean hasPlayedOnce() { return timesPlayed > 0; }

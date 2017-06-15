@@ -69,8 +69,8 @@ public class Enemy extends MovingObject{
             e1.printStackTrace();
         }
 
-        collisionBox = new CollisionBox(position, new Vector2(tileSize/3 - 20, tileSize/3 - 1));
-        collisionOffset = new Vector2(tileSize / 2 - 1, collisionBox.halfSize.y);
+        collisionBox = new CollisionBox(position, new Vector2(tileSize/3 , tileSize/3 - 18));
+        collisionOffset = new Vector2(tileSize / 2 - 1, collisionBox.halfSize.y + 38);
 
         width = FRAMEWIDTHS[0];
         height = FRAMEHEIGHTS[0];
