@@ -72,8 +72,8 @@ public class Enemy extends MovingObject{
         collisionBox = new CollisionBox(position, new Vector2(tileSize/3 - 20, tileSize/3 - 1));
         collisionOffset = new Vector2(tileSize / 2 - 1, collisionBox.halfSize.y);
 
-        width = 128;
-        height = 128;
+        width = FRAMEWIDTHS[0];
+        height = FRAMEHEIGHTS[0];
         jumpSpeed = -6.5;
         walkSpeed = 2;
         minJumpingSpeed = -1;

@@ -1,5 +1,5 @@
 package Entity;
 
 public enum CharacterState {
-    IDLE, WALKING, JUMPING
+    IDLE, WALKING, JUMPING, FLINCHING
 }

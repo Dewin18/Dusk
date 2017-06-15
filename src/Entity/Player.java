@@ -5,15 +5,14 @@ import Handlers.Keys;
 import Main.Time;
 import TileMap.TileMap;
 import TileMap.Vector2;
+import org.omg.CORBA.TIMEOUT;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static Entity.CharacterState.IDLE;
-import static Entity.CharacterState.JUMPING;
-import static Entity.CharacterState.WALKING;
+import static Entity.CharacterState.*;
 
 public class Player extends MovingObject{
 
@@ -22,29 +21,36 @@ public class Player extends MovingObject{
     private int lives;
     private int dmg;
 
+    private boolean isInvulnerable = false;
     private boolean isRising = false;
     private boolean isFalling = false;
     private double minFallSpeed;
     private boolean hasJumped; // for canceling repeat jumps by keeping the button pressed
-
+    private CharacterState currentState = IDLE;
     private final int[] NUMFRAMES = {
-            1, 6
+            1, 6, 1
     };
     private final int[] FRAMEWIDTHS = {
-            128, 128
+            128, 128, 128
     };
     private final int[] FRAMEHEIGHTS = {
-            128, 128
-    };
-    private final int[] SPRITEDELAYS = {
-            -1, 8
+            128, 128, 128
     };
 
+    private final int[] SPRITEDELAYS = {
+            -1, 8, -1
+    };
     private boolean hasAttack = true;
     private boolean hasDoubleJump = false;
     private boolean hasDash = false;
 
-    public CharacterState currentState = IDLE;
+    private final double knockBack = 10;
+    private final int flinchTime = 5;
+    private int currentFlinchTime = flinchTime;
+    private final int invulnerabilityTime = 80;
+    private boolean isBlinking = false;
+    private int invulnerabilityTimer = invulnerabilityTime;
+    private ArrayList<MapObject> mapObjects = new ArrayList<>();
 
     public Player(TileMap tm) {
         super(tm);
@@ -97,6 +103,9 @@ public class Player extends MovingObject{
         handleInputs();
         animation.update();
         updatePhysics();
+        updateInvulnerability();
+        checkCollision();
+        updateAlpha();
     }
 
     private void handleInputs() {
@@ -196,6 +205,13 @@ public class Player extends MovingObject{
                     isFacingRight = false;
                 }
                 break;
+            case FLINCHING:
+                if (currentFlinchTime < flinchTime) currentFlinchTime += Math.round(Time.deltaTime);
+                else {
+                    setAnimation(IDLE);
+                    isBlinking = true;
+                }
+                break;
         }
     }
 
@@ -213,8 +229,78 @@ public class Player extends MovingObject{
                 if(isFalling) statenr = 0;
                 else statenr = 0;
                 break;
+            case FLINCHING:
+                statenr = 2;
+                break;
         }
         animation.setFrames(sprites.get(statenr));
         animation.setDelay(SPRITEDELAYS[statenr]);
+    }
+
+    private void updateInvulnerability() {
+        if (invulnerabilityTimer < invulnerabilityTime) {
+            invulnerabilityTimer += Math.round(Time.deltaTime);
+        } else if (isInvulnerable){
+            setInvulnerable(false);
+            System.out.println("vulnerable");
+            setAnimation(IDLE);
+            alpha = 1;
+            isBlinking = false;
+        }
+    }
+
+    public void addCollisionCheck(MapObject mapObject) {
+        mapObjects.add(mapObject);
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public boolean isInvulnerable() {
+        return isInvulnerable;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setInvulnerable(boolean b) {
+        isInvulnerable = b;
+    }
+
+    private void checkCollision() {
+        for (MapObject m : mapObjects) {
+            if(collisionBox.overlaps(m.collisionBox)) {
+                reactToCollision(m);
+            }
+        }
+    }
+
+    private void reactToCollision(MapObject m) {
+        if (m instanceof Enemy) reactToCollision((Enemy) m);
+    }
+
+    private void updateAlpha() {
+        if(isInvulnerable && isBlinking)
+            alpha = (float)(Math.sin(Time.getCurrentTime() * 0.0013) * 0.2 + 0.66);
+    }
+
+    private void reactToCollision(Enemy e) {
+        if (!isInvulnerable()) {
+            Time.freeze(10);
+            if (e.isFacingRight) {
+                velocity.x = knockBack;
+                velocity.y = 0;
+            } else {
+                velocity.x = -knockBack;
+                velocity.y = 0;
+            }
+            setInvulnerable(true);
+            --health;
+            currentFlinchTime = 0;
+            invulnerabilityTimer = 0;
+            setAnimation(FLINCHING);
+        }
     }
 }

@@ -45,6 +45,8 @@ public class MovingObject extends MapObject{
     private Rectangle drawRect2 = new Rectangle(0, 0, 0 ,0);
     private BufferedImage drawImg = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_ARGB);
 
+    float alpha = 1.0f;
+
     public MovingObject(TileMap tm) {
         super(tm);
     }
@@ -80,7 +82,8 @@ public class MovingObject extends MapObject{
      * @param g the graphic context to be drawn on
      */
     public void draw(Graphics2D g) {
-        //g.drawImage(sprite, (int)position.x, (int)position.y, null);
+        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+        g.setComposite(ac);
         if(isFacingRight) {
             g.drawImage(animation.getImage(), (int) position.x, (int) position.y, null);
         } else {
@@ -95,7 +98,11 @@ public class MovingObject extends MapObject{
      */
     private void checkMapCollision() {
         // Check for ground
-        // Check for ceiling
+        if (velocity.y >= 0 && hasGround(oldPosition, position)) {
+            position.y = groundY - collisionBox.halfSize.y - collisionOffset.y - 1;
+            velocity.y = 0;
+            isOnGround = true;
+        } else isOnGround = false;
         // Check for left tile
         if (velocity.x <= 0 && collidesWithLeftWall(oldPosition, position)) {
             if (oldPosition.x - collisionBox.halfSize.x + collisionOffset.x >= leftWallX) {
@@ -112,11 +119,7 @@ public class MovingObject extends MapObject{
             }
             velocity.x = Math.max(velocity.x, 0);
         } else isPushingRightWall = false;
-        if (velocity.y >= 0 && hasGround(oldPosition, position)) {
-            position.y = groundY - collisionBox.halfSize.y - collisionOffset.y - 1;
-            velocity.y = 0;
-            isOnGround = true;
-        } else isOnGround = false;
+        // Check for ceiling
         if (velocity.y <= 0 && hasCeiling(oldPosition, position)) {
             position.y = ceilingY + collisionBox.halfSize.y + collisionOffset.y;
             velocity.y = 0;
@@ -308,5 +311,13 @@ public class MovingObject extends MapObject{
         g.fillRect(drawRect2.x, drawRect2.y, drawRect2.width, drawRect2.height);
         // The image of the left bot tile shown in the top left corner
         g.drawImage(drawImg, 0, 0, null);
+    }
+
+    /**
+     * Get the collider of the object.
+     * @return the collider (collision box)
+     */
+    public CollisionBox getCollisionBox() {
+        return collisionBox;
     }
 }

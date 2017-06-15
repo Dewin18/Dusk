@@ -28,6 +28,8 @@ public class Level1State extends GameState {
 		player.initPlayer(new Vector2(150, 100));
 		enemy = new Enemy(tileMap);
 		enemy.initEnemy(new Vector2(700, 100),"enemy_spritesheet_128.png");
+
+		player.addCollisionCheck(enemy);
 	}
 
 
@@ -42,10 +44,12 @@ public class Level1State extends GameState {
 		g.setColor(Color.WHITE);
 		g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
-		// draw tilemap
-		tileMap.draw(g);
 		player.draw(g);
 		enemy.draw(g);
+		// draw tilemap
+		AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
+		g.setComposite(ac);
+		tileMap.draw(g);
 	}
 
 	public void handleInput() {

@@ -1,5 +1,7 @@
 package Entity;
 
+import Main.Time;
+
 import java.awt.image.BufferedImage;
 
 public class Animation {
@@ -33,7 +35,7 @@ public class Animation {
         if(delay == -1) return;
         count++;
         if(count == delay) {
-            currentFrame++;
+            currentFrame += Math.round(Time.deltaTime);
             count = 0;
         }
         if(currentFrame == numFrames) {
