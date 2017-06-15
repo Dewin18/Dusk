@@ -5,7 +5,6 @@ import Handlers.Keys;
 import Main.Time;
 import TileMap.TileMap;
 import TileMap.Vector2;
-import org.omg.CORBA.TIMEOUT;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -36,10 +35,10 @@ public class Player extends MovingObject{
     private final int[] FRAMEHEIGHTS = {
             128, 128, 128
     };
-
     private final int[] SPRITEDELAYS = {
             -1, 8, -1
     };
+
     private boolean hasAttack = true;
     private boolean hasDoubleJump = false;
     private boolean hasDash = false;
@@ -302,5 +301,15 @@ public class Player extends MovingObject{
             invulnerabilityTimer = 0;
             setAnimation(FLINCHING);
         }
+    }
+
+    public CharacterState getCharacterState()
+    {
+        return currentState;
+    }
+
+    public double getMinFallSpeed()
+    {
+        return minFallSpeed;
     }
 }

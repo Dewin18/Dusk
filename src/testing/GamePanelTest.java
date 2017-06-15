@@ -1,10 +1,11 @@
-/*
-package Main;
+package testing;
 
 import static org.junit.Assert.*;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import Main.GamePanel;
 
 public class GamePanelTest
 {
@@ -29,4 +30,3 @@ public class GamePanelTest
         assertEquals(600, gamePanel.HEIGHT);
     }
 }
-*/

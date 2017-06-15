@@ -313,6 +313,18 @@ public class MovingObject extends MapObject{
         g.drawImage(drawImg, 0, 0, null);
     }
 
+    public Vector2 getVelocity() { return velocity; }
+
+    public double getJumpSpeed() { return jumpSpeed; }
+
+    public double getWalkSpeed() { return walkSpeed; }
+
+    public double getGravity() { return gravity; }
+
+    public double getMaxFallingSpeed() { return maxFallingSpeed; }
+
+    public double getMinJumpingSpeed() { return minJumpingSpeed; }
+
     /**
      * Get the collider of the object.
      * @return the collider (collision box)
