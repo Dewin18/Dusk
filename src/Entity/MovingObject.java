@@ -309,4 +309,16 @@ public class MovingObject extends MapObject{
         // The image of the left bot tile shown in the top left corner
         g.drawImage(drawImg, 0, 0, null);
     }
+    
+    public Vector2 getVelocity() { return velocity; }
+
+    public double getJumpSpeed() { return jumpSpeed; }
+    
+    public double getWalkSpeed() { return walkSpeed; }
+    
+    public double getGravity() { return gravity; }
+    
+    public double getMaxFallingSpeed() { return maxFallingSpeed; }
+    
+    public double getMinJumpingSpeed() { return minJumpingSpeed; }
 }

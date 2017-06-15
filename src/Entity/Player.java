@@ -222,4 +222,9 @@ public class Player extends MovingObject{
     {
         return currentState;
     }
+    
+    public double getMinFallSpeed()
+    {
+        return minFallSpeed;
+    }
 }
