@@ -2,6 +2,7 @@ package GameState;
 
 import Entity.Player;
 import Entity.Enemy;
+import Entity.EvilTwin;
 import Main.GamePanel;
 import TileMap.*;
 
@@ -11,7 +12,7 @@ public class Level1State extends GameState {
 	
 	private TileMap tileMap;
 	private Player player;
-	private Enemy enemy;
+	private EvilTwin evilTwin;
 	
 	public Level1State(GameStateManager gsm) {
 		this.gsm = gsm;
@@ -26,16 +27,17 @@ public class Level1State extends GameState {
 
 		player = new Player(tileMap);
 		player.initPlayer(new Vector2(150, 100));
-		enemy = new Enemy(tileMap);
-		enemy.initEnemy(new Vector2(700, 100),"enemy_spritesheet_128.png");
+		
+		evilTwin = new EvilTwin(tileMap);
+		evilTwin.initEnemy(new Vector2(700, 100),"enemy_spritesheet_128.png");
 
-		player.addCollisionCheck(enemy);
+		player.addCollisionCheck(evilTwin);
 	}
 
 
 	public void update() {
 		player.update();
-		enemy.update();
+		evilTwin.update();
 		//handleInput();
 	}
 
@@ -45,7 +47,7 @@ public class Level1State extends GameState {
 		g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
 		player.draw(g);
-		enemy.draw(g);
+		evilTwin.draw(g);
 		// draw tilemap
 		AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
 		g.setComposite(ac);
