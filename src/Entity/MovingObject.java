@@ -36,7 +36,7 @@ public class MovingObject extends MapObject{
     int framesPassedUntilDrop = 6;
     private int framesToIgnoreGround = 5;
     private double groundY, ceilingY, leftWallX, rightWallX;
-    private int mapCollisionSensorDepth = 4;
+    private int mapCollisionSensorDepth = 10;
 
     boolean isFacingRight = true;
 
