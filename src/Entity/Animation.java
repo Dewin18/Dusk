@@ -36,6 +36,7 @@ public class Animation {
         count++;
         if(count == delay) {
             currentFrame += Math.round(Time.deltaTime);
+            currentFrame = Math.min(currentFrame, frames.length);
             count = 0;
         }
         if(currentFrame == numFrames) {
@@ -47,8 +48,6 @@ public class Animation {
     public int getFrame() { return currentFrame; }
     public int getCount() { return count; }
     
-    
-    //TODO sometimes ArrayIndexOutOfBoundsException
     public BufferedImage getImage() 
     { 
        return frames[currentFrame]; 
