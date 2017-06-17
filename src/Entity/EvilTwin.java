@@ -119,12 +119,10 @@ public class EvilTwin extends Enemy
                 if (isPushingLeftWall) {
                     isFacingRight = true;
                     position.x += 5;
-                    System.out.println("asdashdasjdh");
                     isPushingLeftWall = false;
                 } else if (isPushingRightWall) {
                     isFacingRight = false;
                     position.x -= 5;
-                    System.out.println("SDS");
                     isPushingRightWall = false;
                 }
                 break;

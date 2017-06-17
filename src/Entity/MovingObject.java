@@ -5,6 +5,8 @@ import TileMap.TileMap;
 import TileMap.Vector2;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 public class MovingObject extends MapObject{
@@ -84,11 +86,19 @@ public class MovingObject extends MapObject{
     public void draw(Graphics2D g) {
         AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
         g.setComposite(ac);
-        if(isFacingRight) {
-            g.drawImage(animation.getImage(), (int) position.x, (int) position.y, null);
-        } else {
-            g.drawImage(animation.getImage(), (int) position.x + width, (int) position.y, -width, height, null);
+        BufferedImage sprite = animation.getImage();
+        AffineTransform tx = AffineTransform.getRotateInstance(Math.toRadians(rotation), width /2, height /2);
+        AffineTransform bla = AffineTransform.getScaleInstance(-1, 1);
+        bla.translate(-width, 0);
+        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+        AffineTransformOp op2 = new AffineTransformOp(bla, AffineTransformOp.TYPE_BILINEAR);
+        if (sprite != null)
+            if (isFacingRight) {
+                g.drawImage(op.filter(sprite, null), (int) position.x, (int) position.y, null);
+            } else {
+                g.drawImage(op.filter(op2.filter(sprite, null), null), (int) position.x, (int) position.y, null);
         }
+
         // debugging
         if(debugging) showDebuggers(g);
     }

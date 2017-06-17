@@ -209,6 +209,7 @@ public class Player extends MovingObject{
                 else {
                     setAnimation(IDLE);
                     isBlinking = true;
+                    rotation = 0;
                 }
                 break;
         }
@@ -241,7 +242,6 @@ public class Player extends MovingObject{
             invulnerabilityTimer += Math.round(Time.deltaTime);
         } else if (isInvulnerable){
             setInvulnerable(false);
-            System.out.println("vulnerable");
             setAnimation(IDLE);
             alpha = 1;
             isBlinking = false;
@@ -288,12 +288,14 @@ public class Player extends MovingObject{
     private void reactToCollision(Enemy e) {
         if (!isInvulnerable()) {
             Time.freeze(10);
-            if (e.isFacingRight) {
+            if (e.position.x < this.position.x) {
                 velocity.x = knockBack;
                 velocity.y = 0;
+                rotation = 45;
             } else {
                 velocity.x = -knockBack;
                 velocity.y = 0;
+                rotation = -45;
             }
             setInvulnerable(true);
             --health;

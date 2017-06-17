@@ -21,6 +21,7 @@ public class MapObject {
     // dimenstions
     protected int width;
     protected int height;
+    protected double rotation = 0;
 
     // collision box
     protected CollisionBox collisionBox;
