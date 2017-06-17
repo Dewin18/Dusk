@@ -3,6 +3,12 @@ package Entity;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
+/**
+ * All enemy subclasses inherit from this abstract class Enemy. 
+ * 
+ * @author Dewin & Ali
+ *
+ */
 public abstract class Enemy extends MovingObject
 {
     /**
@@ -26,7 +32,7 @@ public abstract class Enemy extends MovingObject
      * @param position The position as Vector(x, y) on the map
      * @param spriteName is the selected spriteSheet for this enemy
      */
-    protected abstract void initEnemy(Vector2 position, String spriteName);
+    public abstract void initEnemy(Vector2 position, String spriteName);
 
     /**
      * Update all enemy actions
@@ -35,5 +41,5 @@ public abstract class Enemy extends MovingObject
      * Should implement animation.update();
      * Should implement updatePhysics();
      */
-    protected abstract void update();
+    public abstract void update();
 }

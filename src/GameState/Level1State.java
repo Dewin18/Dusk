@@ -1,20 +1,27 @@
 package GameState;
 
-import Entity.Player;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+
 import Entity.Enemy;
 import Entity.EvilTwin;
+import Entity.Player;
 import Main.GamePanel;
-import TileMap.*;
-
-import java.awt.*;
+import TileMap.TileMap;
+import TileMap.Vector2;
 
 public class Level1State extends GameState {
 	
 	private TileMap tileMap;
 	private Player player;
-	private EvilTwin evilTwin;
+	
+	//All Level1State enemies are stored in this list
+	private ArrayList<Enemy> enemyList;
 	
 	public Level1State(GameStateManager gsm) {
+	    enemyList = new ArrayList<>();
 		this.gsm = gsm;
 		init();
 	}
@@ -28,16 +35,28 @@ public class Level1State extends GameState {
 		player = new Player(tileMap);
 		player.initPlayer(new Vector2(150, 100));
 		
-		evilTwin = new EvilTwin(tileMap);
-		evilTwin.initEnemy(new Vector2(700, 100),"enemy_spritesheet_128.png");
+		//With dynamic binding we can assign the Enemy reference to a concrete Enemy e.g. EvilTwin
+		Enemy evilTwin1 = new EvilTwin(tileMap);
+		evilTwin1.initEnemy(new Vector2(700, 100),"enemy_spritesheet_128.png");
+		
+		Enemy evilTwin2 = new EvilTwin(tileMap);
+        evilTwin2.initEnemy(new Vector2(800, 100),"enemy_spritesheet_128.png");
+		
+		enemyList.add(evilTwin1);
+		enemyList.add(evilTwin2);
 
-		player.addCollisionCheck(evilTwin);
+		player.addCollisionCheck(evilTwin1);
+	    player.addCollisionCheck(evilTwin2);
 	}
 
 
 	public void update() {
 		player.update();
-		evilTwin.update();
+
+		for (Enemy enemy : enemyList) {
+            enemy.update();
+        }
+		
 		//handleInput();
 	}
 
@@ -47,7 +66,11 @@ public class Level1State extends GameState {
 		g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
 		player.draw(g);
-		evilTwin.draw(g);
+		
+		for (Enemy enemy : enemyList) {
+            enemy.draw(g);
+        }
+		
 		// draw tilemap
 		AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
 		g.setComposite(ac);

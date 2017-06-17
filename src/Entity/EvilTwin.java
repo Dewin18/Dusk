@@ -46,7 +46,6 @@ public class EvilTwin extends Enemy
         isFacingRight = false;
     }
     
-    @Override
     public void initEnemy(Vector2 position, String spriteName) {
         this.position = position;
         // load sprites
@@ -91,7 +90,6 @@ public class EvilTwin extends Enemy
         animation.setDelay(SPRITEDELAYS[0]);
     }
 
-    @Override
     public void update() {
         moveAround();
         animation.update();
