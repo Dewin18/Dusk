@@ -40,7 +40,7 @@ public class Level1State extends GameState {
 		evilTwin1.initEnemy(new Vector2(700, 100),"enemy_spritesheet_128.png");
 		
 		Enemy evilTwin2 = new EvilTwin(tileMap);
-        evilTwin2.initEnemy(new Vector2(800, 100),"enemy_spritesheet_128.png");
+        evilTwin2.initEnemy(new Vector2(600, 100),"enemy_spritesheet_128.png");
 		
 		enemyList.add(evilTwin1);
 		enemyList.add(evilTwin2);
