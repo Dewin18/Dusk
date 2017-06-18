@@ -86,12 +86,12 @@ public class Player extends MovingObject{
         setPosition(position);
 
         // set up speeds
-        jumpSpeed = -12.5;
+        jumpSpeed = -14;
         walkSpeed = 6;
         minJumpingSpeed = -1;
-        maxFallingSpeed = 4;
-        gravity = 0.3;
-        minFallSpeed = 3;
+        maxFallingSpeed = 10;
+        gravity = 0.5;
+        minFallSpeed = 5;
 
         // set up collision box
         collisionBox = new CollisionBox(position, new Vector2(tileSize/3 , tileSize/3 - 18));
@@ -184,11 +184,10 @@ public class Player extends MovingObject{
                     if (hasJumped && !KeyHandler.isPressed(Keys.JUMP)) hasJumped = false;
                 }
                 if (!KeyHandler.isPressed(Keys.JUMP) && velocity.y < 0) {
-                    velocity.y = Math.max(velocity.y, minJumpingSpeed);
+                    velocity.y = Math.max(-velocity.y, -minJumpingSpeed);
                 }
                 isFalling = velocity.y > 0;
                 if(isRising && isFalling) {
-                    velocity.y = minFallSpeed;
                     setAnimation(JUMPING);
                 }
                 if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT)) {

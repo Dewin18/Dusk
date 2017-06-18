@@ -47,7 +47,7 @@ public class Animation {
 
     public int getFrame() { return currentFrame; }
     public int getCount() { return count; }
-    
+
     public BufferedImage getImage() 
     { 
        return frames[currentFrame]; 
