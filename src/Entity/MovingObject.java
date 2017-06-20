@@ -9,11 +9,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
-public abstract class MovingObject extends MapObject{
+public abstract class MovingObject extends MapObject
+{
 
     // debugging
     private final boolean debugging = false;
-    
+
     // Movement
     Vector2 velocity;
     Vector2 oldPosition;
@@ -44,18 +45,21 @@ public abstract class MovingObject extends MapObject{
     boolean isFacingRight = true;
 
     private double triggerLineY, triggerLineX, triggerLineX2, triggerLineY2;
-    private Rectangle drawRect = new Rectangle(0, 0, 0 ,0);
-    private Rectangle drawRect2 = new Rectangle(0, 0, 0 ,0);
+    private Rectangle drawRect = new Rectangle(0, 0, 0, 0);
+    private Rectangle drawRect2 = new Rectangle(0, 0, 0, 0);
     private BufferedImage drawImg = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_ARGB);
 
     float alpha = 1.0f;
 
-    public MovingObject(TileMap tm) {
+    public MovingObject(TileMap tm)
+    {
         super(tm);
     }
 
-    public void setVelocity(double x, double y) {
-        if(velocity == null) {
+    public void setVelocity(double x, double y)
+    {
+        if (velocity == null)
+        {
             velocity = new Vector2(x, y);
             return;
         }
@@ -63,7 +67,8 @@ public abstract class MovingObject extends MapObject{
         this.velocity.y = y;
     }
 
-    public void updatePhysics() {
+    public void updatePhysics()
+    {
         // Update attributes of last frame
         oldPosition = Vector2.copy(position);
         oldVelocity = Vector2.copy(velocity);
@@ -82,56 +87,66 @@ public abstract class MovingObject extends MapObject{
 
     /**
      * Draw the sprite of the MovingObject
+     *
      * @param g the graphic context to be drawn on
      */
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D g)
+    {
         AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
         g.setComposite(ac);
         BufferedImage sprite = animation.getImage();
-        AffineTransform rotateInstance = AffineTransform.getRotateInstance(Math.toRadians(rotation), width /2, height /2);
+        AffineTransform rotateInstance = AffineTransform.getRotateInstance(Math.toRadians(rotation), width / 2, height / 2);
         AffineTransform scaleInstance = AffineTransform.getScaleInstance(-1, 1);
         scaleInstance.translate(-width, 0);
         AffineTransformOp op = new AffineTransformOp(rotateInstance, AffineTransformOp.TYPE_BILINEAR);
         AffineTransformOp op2 = new AffineTransformOp(scaleInstance, AffineTransformOp.TYPE_BILINEAR);
-        if (sprite != null)
-            if (isFacingRight) {
-                g.drawImage(op.filter(sprite, null), (int)(position.x + tileMap.cameraPos.x), (int)(position.y + tileMap.cameraPos.y) , null);
-            } else {
-                g.drawImage(op.filter(op2.filter(sprite, null), null), (int)(position.x + tileMap.cameraPos.x), (int)(position.y + tileMap.cameraPos.y), null);
+        if (sprite != null) if (isFacingRight)
+        {
+            g.drawImage(op.filter(sprite, null), (int) (position.x + tileMap.cameraPos.x), (int) (position.y + tileMap.cameraPos.y), null);
+        } else
+        {
+            g.drawImage(op.filter(op2.filter(sprite, null), null), (int) (position.x + tileMap.cameraPos.x), (int) (position.y + tileMap.cameraPos.y), null);
         }
 
         // debugging
-        if(debugging) showDebuggers(g);
+        if (debugging) showDebuggers(g);
     }
 
     /**
      * Use the helper functions to determine the map collisions.
      */
-    private void checkMapCollision() {
+    private void checkMapCollision()
+    {
         // Check for ground
-        if (velocity.y >= 0 && hasGround(oldPosition, position)) {
+        if (velocity.y >= 0 && hasGround(oldPosition, position))
+        {
             position.y = groundY - collisionBox.halfSize.y - collisionOffset.y - 1;
             velocity.y = 0;
             isOnGround = true;
         } else isOnGround = false;
         // Check for left tile
-        if (velocity.x <= 0 && collidesWithLeftWall(oldPosition, position)) {
-            if (oldPosition.x - collisionBox.halfSize.x + collisionOffset.x >= leftWallX) {
+        if (velocity.x <= 0 && collidesWithLeftWall(oldPosition, position))
+        {
+            if (oldPosition.x - collisionBox.halfSize.x + collisionOffset.x >= leftWallX)
+            {
                 position.x = leftWallX + collisionBox.halfSize.x - collisionOffset.x;
                 isPushingLeftWall = true;
             }
             velocity.x = Math.min(velocity.x, 0);
         } else isPushingLeftWall = false;
         // Check for right tile
-        if (velocity.x >= 0 && collidesWithRightWall(oldPosition, position)) {
-            if (oldPosition.x + collisionBox.halfSize.x + collisionOffset.x <= rightWallX) {
+        if (velocity.x >= 0 && collidesWithRightWall(oldPosition, position))
+        {
+            if (oldPosition.x + collisionBox.halfSize.x + collisionOffset.x <= rightWallX)
+            {
                 position.x = rightWallX - collisionBox.halfSize.x - collisionOffset.x;
                 isPushingRightWall = true;
             }
             velocity.x = Math.max(velocity.x, 0);
         } else isPushingRightWall = false;
         // Check for ceiling
-        if (velocity.y <= 0 && hasCeiling(oldPosition, position)) {
+        if (velocity.y <= 0 && hasCeiling(oldPosition, position))
+        {
             position.y = ceilingY + collisionBox.halfSize.y + collisionOffset.y;
             velocity.y = 0;
             isAtCeiling = true;
@@ -140,11 +155,13 @@ public abstract class MovingObject extends MapObject{
 
     /**
      * Check if the MovingObject is exactly above a ground tile.
+     *
      * @param oldPosition the old position of the MovingObject
-     * @param position the new position of the MovingObject
+     * @param position    the new position of the MovingObject
      * @return true, if there is ground, false if not
      */
-    private boolean hasGround(Vector2 oldPosition, Vector2 position) {
+    private boolean hasGround(Vector2 oldPosition, Vector2 position)
+    {
         Vector2 oldCenter = oldPosition.add(collisionOffset);
         Vector2 center = position.add(collisionOffset);
         Vector2 oldBotLeft = oldCenter.sub(collisionBox.halfSize).add(Vector2.DOWN).add(Vector2.RIGHT);
@@ -155,36 +172,41 @@ public abstract class MovingObject extends MapObject{
         int endY = tileMap.getMapTileYAtPoint(newBotLeft.y);
         int startY = Math.min(tileMap.getMapTileYAtPoint(oldBotLeft.y), endY);
         int dist = Math.max(Math.abs(endY - startY), 1);
-        if(framesPassedUntilDrop < 6) framesPassedUntilDrop++;
+        if (framesPassedUntilDrop < 6) framesPassedUntilDrop++;
         // debugging stuff
-        if (debugging) {
+        if (debugging)
+        {
             triggerLineX = newBotLeft.x;
             triggerLineY = newBotLeft.y;
-            drawRect = new Rectangle(tileMap.getMapTileXAtPoint(newBotLeft.x)*tileSize,
-                    tileMap.getMapTileYAtPoint(newBotLeft.y)*tileSize, tileSize, tileSize);
-            drawRect2 = new Rectangle(tileMap.getMapTileXAtPoint(newBotRight.x)*tileSize,
-                    tileMap.getMapTileYAtPoint(newBotRight.y)*tileSize , tileSize, tileSize);
+            drawRect = new Rectangle(tileMap.getMapTileXAtPoint(newBotLeft.x) * tileSize, tileMap.getMapTileYAtPoint(newBotLeft.y) * tileSize, tileSize, tileSize);
+            drawRect2 = new Rectangle(tileMap.getMapTileXAtPoint(newBotRight.x) * tileSize, tileMap.getMapTileYAtPoint(newBotRight.y) * tileSize, tileSize, tileSize);
             drawImg = tileMap.printTile(tileMap.getMapTileXAtPoint(newBotLeft.x), tileMap.getMapTileYAtPoint(newBotLeft.y));
         }
         int tileIndexX;
         // First for loop for detecting collision at high speeds (takes in account the previous frame)
-        for(int tileIndexY = startY; tileIndexY <= endY; tileIndexY++) {
+        for (int tileIndexY = startY; tileIndexY <= endY; tileIndexY++)
+        {
             Vector2 botLeft = Vector2.lerp(newBotLeft, oldBotLeft, Math.abs(endY - tileIndexY) / dist);
             Vector2 botRight = new Vector2(botLeft.x + collisionBox.halfSize.x * 2 - 2, botLeft.y);
             // Second for loop for checking tiles being touched
-            for (Vector2 checkedTile = botLeft; ;checkedTile.x += tileSize) {
+            for (Vector2 checkedTile = botLeft; ; checkedTile.x += tileSize)
+            {
                 checkedTile.x = Math.min(checkedTile.x, botRight.x);
                 tileIndexX = tileMap.getMapTileXAtPoint(checkedTile.x);
                 tileIndexY = tileMap.getMapTileYAtPoint(checkedTile.y);
                 groundY = tileIndexY * tileSize + tileMap.getY();
-                if(tileIndexY * tileSize <= botLeft.y && botLeft.y <= tileIndexY * tileSize + mapCollisionSensorDepth) {
-                    if (tileMap.isObstacle(tileIndexX, tileIndexY)) {
+                if (tileIndexY * tileSize <= botLeft.y && botLeft.y <= tileIndexY * tileSize + mapCollisionSensorDepth)
+                {
+                    if (tileMap.isObstacle(tileIndexX, tileIndexY))
+                    {
                         isOnPlatform = false;
                         return true;
-                    } else if (tileMap.isPlatform(tileIndexX, tileIndexY) && framesPassedUntilDrop > framesToIgnoreGround) {
+                    } else if (tileMap.isPlatform(tileIndexX, tileIndexY) && framesPassedUntilDrop > framesToIgnoreGround)
+                    {
                         isOnPlatform = true;
                     }
-                    if (checkedTile.x >= botRight.x) {
+                    if (checkedTile.x >= botRight.x)
+                    {
                         if (isOnPlatform) return true;
                         break;
                     }
@@ -197,11 +219,13 @@ public abstract class MovingObject extends MapObject{
 
     /**
      * Check if the MovingObject is exactly under a solid tile.
+     *
      * @param oldPosition the old position of the MovingObject
-     * @param position the new position of the MovingObject
+     * @param position    the new position of the MovingObject
      * @return true, if there is a solid tile directly above, false if not
      */
-    private boolean hasCeiling(Vector2 oldPosition, Vector2 position) {
+    private boolean hasCeiling(Vector2 oldPosition, Vector2 position)
+    {
         Vector2 oldCenter = oldPosition.add(collisionOffset);
         Vector2 center = position.add(collisionOffset);
         Vector2 oldTopLeft = oldCenter.sub(collisionBox.halfSize).add(Vector2.UP).add(Vector2.RIGHT).round();
@@ -211,15 +235,19 @@ public abstract class MovingObject extends MapObject{
         int dist = Math.max(Math.abs(endY - startY), 1);
         int tileIndexX;
         ceilingY = 0;
-        for(int tileIndexY = startY; tileIndexY <= endY; tileIndexY++) {
+        for (int tileIndexY = startY; tileIndexY <= endY; tileIndexY++)
+        {
             Vector2 topLeft = Vector2.lerp(newTopLeft, oldTopLeft, Math.abs(endY - tileIndexY) / dist);
             Vector2 topRight = new Vector2(topLeft.x + collisionBox.halfSize.x * 2 - 2, topLeft.y);
-            for (Vector2 checkedTile = topLeft; ;checkedTile.x += tileSize) {
+            for (Vector2 checkedTile = topLeft; ; checkedTile.x += tileSize)
+            {
                 checkedTile.x = Math.min(checkedTile.x, topRight.x);
                 tileIndexX = tileMap.getMapTileXAtPoint(checkedTile.x);
                 tileIndexY = tileMap.getMapTileYAtPoint(checkedTile.y);
-                if(tileIndexY * tileSize + tileSize >= topLeft.y && topLeft.y <= tileIndexY * tileSize + tileSize - mapCollisionSensorDepth) {
-                    if (tileMap.isObstacle(tileIndexX, tileIndexY)) {
+                if (tileIndexY * tileSize + tileSize >= topLeft.y && topLeft.y <= tileIndexY * tileSize + tileSize - mapCollisionSensorDepth)
+                {
+                    if (tileMap.isObstacle(tileIndexX, tileIndexY))
+                    {
                         ceilingY = tileIndexY * tileSize + tileMap.getY();
                         return true;
                     }
@@ -232,11 +260,13 @@ public abstract class MovingObject extends MapObject{
 
     /**
      * Check if the MovingObject is exactly to the right of a solid tile.
+     *
      * @param oldPosition the old position of the MovingObject
-     * @param position the new position of the MovingObject
+     * @param position    the new position of the MovingObject
      * @return true, if there is a solid tile directly to the left, false if not
      */
-    private boolean collidesWithLeftWall(Vector2 oldPosition, Vector2 position) {
+    private boolean collidesWithLeftWall(Vector2 oldPosition, Vector2 position)
+    {
         Vector2 oldCenter = oldPosition.add(collisionOffset);
         Vector2 oldBotLeft = oldCenter.sub(collisionBox.halfSize).add(Vector2.LEFT).round();
         oldBotLeft.y += collisionBox.halfSize.y * 2;
@@ -248,14 +278,18 @@ public abstract class MovingObject extends MapObject{
         int dist = Math.max(Math.abs(endX - startX), 1);
         int tileIndexY;
         leftWallX = 0;
-        for(int tileIndexX = startX; tileIndexX >= endX; tileIndexX--) {
+        for (int tileIndexX = startX; tileIndexX >= endX; tileIndexX--)
+        {
             Vector2 botLeft = Vector2.lerp(newBotLeft, oldBotLeft, Math.abs(endX - tileIndexX) / dist);
             Vector2 topLeft = new Vector2(botLeft.x, botLeft.y - collisionBox.halfSize.y * 2);
-            for (Vector2 checkedTile = botLeft; ;checkedTile.y -= tileSize) {
+            for (Vector2 checkedTile = botLeft; ; checkedTile.y -= tileSize)
+            {
                 checkedTile.y = Math.max(checkedTile.y, topLeft.y);
                 tileIndexY = tileMap.getMapTileYAtPoint(checkedTile.y);
-                if(tileIndexX * tileSize + tileSize >= botLeft.x) {
-                    if (tileMap.isObstacle(tileIndexX, tileIndexY)) {
+                if (tileIndexX * tileSize + tileSize >= botLeft.x)
+                {
+                    if (tileMap.isObstacle(tileIndexX, tileIndexY))
+                    {
                         leftWallX = tileIndexX * tileSize + tileSize + tileMap.getX();
                         return true;
                     }
@@ -268,11 +302,13 @@ public abstract class MovingObject extends MapObject{
 
     /**
      * Check if the MovingObject is exactly to the left of a solid tile.
+     *
      * @param oldPosition the old position of the MovingObject
-     * @param position the new position of the MovingObject
+     * @param position    the new position of the MovingObject
      * @return true, if there is a solid tile directly to the right, false if not
      */
-    private boolean collidesWithRightWall(Vector2 oldPosition, Vector2 position) {
+    private boolean collidesWithRightWall(Vector2 oldPosition, Vector2 position)
+    {
         Vector2 oldCenter = oldPosition.add(collisionOffset);
         Vector2 oldBotRight = oldCenter.add(collisionBox.halfSize).add(Vector2.RIGHT).round();
         Vector2 center = position.add(collisionOffset);
@@ -282,14 +318,18 @@ public abstract class MovingObject extends MapObject{
         int dist = Math.max(Math.abs(endX - startX), 1);
         int tileIndexY;
         rightWallX = 0;
-        for(int tileIndexX = startX; tileIndexX <= endX; tileIndexX++) {
+        for (int tileIndexX = startX; tileIndexX <= endX; tileIndexX++)
+        {
             Vector2 botRight = Vector2.lerp(newBotRight, oldBotRight, Math.abs(endX - tileIndexX) / dist);
             Vector2 topRight = new Vector2(botRight.x, botRight.y - collisionBox.halfSize.y * 2);
-            for (Vector2 checkedTile = botRight; ;checkedTile.y -= tileSize) {
+            for (Vector2 checkedTile = botRight; ; checkedTile.y -= tileSize)
+            {
                 checkedTile.y = Math.max(checkedTile.y, topRight.y);
                 tileIndexY = tileMap.getMapTileYAtPoint(checkedTile.y);
-                if(tileIndexX * tileSize <= botRight.x) {
-                    if (tileMap.isObstacle(tileIndexX, tileIndexY)) {
+                if (tileIndexX * tileSize <= botRight.x)
+                {
+                    if (tileMap.isObstacle(tileIndexX, tileIndexY))
+                    {
                         rightWallX = tileIndexX * tileSize + tileMap.getX();
                         return true;
                     }
@@ -302,19 +342,21 @@ public abstract class MovingObject extends MapObject{
 
     /**
      * Draw the debugging lines and squares needed for the collision testing.
+     *
      * @param g the graphic context to be drawn on
      */
-    private void showDebuggers(Graphics2D g) {
+    private void showDebuggers(Graphics2D g)
+    {
         // Collision Box
         g.setColor(Color.BLUE);
         int[] a = collisionBox.toXYWH();
         g.drawRect(a[0], a[1], a[2], a[3]);
         // Ground line
         g.setColor(Color.MAGENTA);
-        g.drawLine(0, (int)groundY,500, (int)groundY);
+        g.drawLine(0, (int) groundY, 500, (int) groundY);
         // Ground detection lines
         g.setColor(Color.YELLOW);
-        g.drawLine(0, (int) triggerLineY,500, (int) triggerLineY);
+        g.drawLine(0, (int) triggerLineY, 500, (int) triggerLineY);
         g.drawLine((int) triggerLineX, 0, (int) triggerLineX, 500);
         // Rectangles over the tiles that are being checked
         g.setColor(new Color(5, 5, 5, 150));
@@ -326,21 +368,41 @@ public abstract class MovingObject extends MapObject{
 
 
     abstract void setAnimation(CharacterState state);
+
     abstract public void update();
 
-    public Vector2 getVelocity() { return velocity; }
+    public Vector2 getVelocity()
+    {
+        return velocity;
+    }
 
-    public double getJumpSpeed() { return jumpSpeed; }
+    public double getJumpSpeed()
+    {
+        return jumpSpeed;
+    }
 
-    public double getWalkSpeed() { return walkSpeed; }
+    public double getWalkSpeed()
+    {
+        return walkSpeed;
+    }
 
-    public double getGravity() { return gravity; }
+    public double getGravity()
+    {
+        return gravity;
+    }
 
-    public double getMaxFallingSpeed() { return maxFallingSpeed; }
+    public double getMaxFallingSpeed()
+    {
+        return maxFallingSpeed;
+    }
 
-    public double getMinJumpingSpeed() { return minJumpingSpeed; }
+    public double getMinJumpingSpeed()
+    {
+        return minJumpingSpeed;
+    }
 
-    public CollisionBox getCollisionBox() {
+    public CollisionBox getCollisionBox()
+    {
         return collisionBox;
     }
 }

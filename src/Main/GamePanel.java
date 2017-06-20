@@ -79,8 +79,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
             try
             {
                 Thread.sleep(wait);
-            }
-            catch (Exception e)
+            } catch (Exception e)
             {
                 e.printStackTrace();
             }
@@ -95,9 +94,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
 
     private void draw()
     {
-        RenderingHints rh = new RenderingHints(
-                RenderingHints.KEY_TEXT_ANTIALIASING,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        RenderingHints rh = new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g.setRenderingHints(rh);
         gsm.draw(g);
     }
@@ -109,7 +106,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
         g2.dispose();
     }
 
-    public void keyTyped(KeyEvent key) {}
+    public void keyTyped(KeyEvent key)
+    {
+    }
 
     public void keyPressed(KeyEvent key)
     {

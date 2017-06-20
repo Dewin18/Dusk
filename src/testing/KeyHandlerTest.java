@@ -10,7 +10,7 @@ import Handlers.KeyHandler;
 public class KeyHandlerTest
 {
     KeyHandler keyHandler;
-    
+
     @Test
     public void ConstructorTest()
     {

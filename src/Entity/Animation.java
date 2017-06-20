@@ -4,7 +4,8 @@ import Main.Time;
 
 import java.awt.image.BufferedImage;
 
-public class Animation {
+public class Animation
+{
     private BufferedImage[] frames = {null};
     private int currentFrame;
     private int numFrames;
@@ -14,11 +15,13 @@ public class Animation {
 
     private int timesPlayed;
 
-    public Animation() {
+    public Animation()
+    {
         timesPlayed = 0;
     }
 
-    public void setFrames(BufferedImage[] frames) {
+    public void setFrames(BufferedImage[] frames)
+    {
         this.frames = frames;
         currentFrame = 0;
         count = 0;
@@ -27,32 +30,60 @@ public class Animation {
         numFrames = frames.length;
     }
 
-    public void setDelay(int i) { delay = i; }
-    public void setFrame(int i) { currentFrame = i; }
-    public void setNumFrames(int i) { numFrames = i; }
+    public void setDelay(int i)
+    {
+        delay = i;
+    }
 
-    public void update() {
-        if(delay == -1) return;
+    public void setFrame(int i)
+    {
+        currentFrame = i;
+    }
+
+    public void setNumFrames(int i)
+    {
+        numFrames = i;
+    }
+
+    public void update()
+    {
+        if (delay == -1) return;
         count++;
-        if(count == delay) {
+        if (count == delay)
+        {
             currentFrame += Math.round(Time.deltaTime);
             currentFrame = Math.min(currentFrame, frames.length);
             count = 0;
         }
-        if(currentFrame == numFrames) {
+        if (currentFrame == numFrames)
+        {
             currentFrame = 0;
             timesPlayed++;
         }
     }
 
-    public int getFrame() { return currentFrame; }
-    public int getCount() { return count; }
-
-    public BufferedImage getImage() 
-    { 
-       return frames[currentFrame]; 
+    public int getFrame()
+    {
+        return currentFrame;
     }
-    
-    public boolean hasPlayedOnce() { return timesPlayed > 0; }
-    public boolean hasPlayed(int i) { return timesPlayed == i; }
+
+    public int getCount()
+    {
+        return count;
+    }
+
+    public BufferedImage getImage()
+    {
+        return frames[currentFrame];
+    }
+
+    public boolean hasPlayedOnce()
+    {
+        return timesPlayed > 0;
+    }
+
+    public boolean hasPlayed(int i)
+    {
+        return timesPlayed == i;
+    }
 }

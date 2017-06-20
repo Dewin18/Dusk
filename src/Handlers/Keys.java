@@ -1,6 +1,7 @@
 package Handlers;
 
-public class Keys {
+public class Keys
+{
 
     public static int UP = 0;
     public static int LEFT = 1;

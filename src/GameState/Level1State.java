@@ -1,6 +1,5 @@
 package GameState;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -13,20 +12,22 @@ import Main.GamePanel;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
-public class Level1State extends GameState {
-	
-	private TileMap tileMap;
-	private Player player;
-	private Camera camera;
+public class Level1State extends GameState
+{
 
-	//All Level1State enemies are stored in this list
-	private ArrayList<Enemy> enemyList;
+    private TileMap tileMap;
+    private Player player;
+    private Camera camera;
 
-	public Level1State(GameStateManager gsm) {
-	    enemyList = new ArrayList<>();
-	    this.gsm = gsm;
-		init();
-	}
+    //All Level1State enemies are stored in this list
+    private ArrayList<Enemy> enemyList;
+
+    public Level1State(GameStateManager gsm)
+    {
+        enemyList = new ArrayList<>();
+        this.gsm = gsm;
+        init();
+    }
 
     public void init()
     {
@@ -62,48 +63,55 @@ public class Level1State extends GameState {
     }
 
 
-	public void update() {
-		player.update();
+    public void update()
+    {
+        player.update();
 
-		for (Enemy enemy : enemyList) {
+        for (Enemy enemy : enemyList)
+        {
             enemy.update();
         }
-		
-		camera.update();
-	}
 
-	public void draw(Graphics2D g) {
-		// clear screen
-		g.setColor(Color.WHITE);
-		g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
+        camera.update();
+    }
 
-		player.draw(g);
-		for (Enemy enemy : enemyList) {
+    public void draw(Graphics2D g)
+    {
+        // clear screen
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
+
+        player.draw(g);
+        for (Enemy enemy : enemyList)
+        {
             enemy.draw(g);
         }
-		
-		// draw tilemap
-		//tileMap.draw(g);
-		camera.draw(g);
-	}
 
-    public void handleInput() {
+        // draw tilemap
+        //tileMap.draw(g);
+        camera.draw(g);
+    }
+
+    public void handleInput()
+    {
     }
 
     /**
      * Create new enemies by calling this method.
      *
-     * @param enemyName The enemy name as String
-     * @param position The map position as Vector2
+     * @param enemyName   The enemy name as String
+     * @param position    The map position as Vector2
      * @param spriteSheet THe spriteSheet as String
      */
     public void createEnemy(String enemyName, Vector2 position, String spriteSheet)
     {
         Enemy enemy = null;
 
-        switch (enemyName) {
-        case "EvilTwin": enemy = new EvilTwin(tileMap);
-            break;
+        switch (enemyName)
+        {
+            case "EvilTwin":
+                enemy = new EvilTwin(tileMap);
+                break;
         }
 
         enemy.initEnemy(position, spriteSheet);

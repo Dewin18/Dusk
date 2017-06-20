@@ -9,7 +9,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public abstract class MapObject {
+public abstract class MapObject
+{
 
     // tile map stuff
     protected TileMap tileMap;
@@ -36,15 +37,18 @@ public abstract class MapObject {
 
     BufferedImage sprite;
 
-    public MapObject(TileMap tm) {
+    public MapObject(TileMap tm)
+    {
         tileMap = tm;
         tileSize = tileMap.getTileSize();
         animation = new Animation();
         collisionBox = new CollisionBox();
     }
 
-    public void setPosition(double x, double y) {
-        if(position == null) {
+    public void setPosition(double x, double y)
+    {
+        if (position == null)
+        {
             position = new Vector2(x, y);
             return;
         }
@@ -52,46 +56,48 @@ public abstract class MapObject {
         this.position.y = y;
     }
 
-    public void setPosition(Vector2 position) {
+    public void setPosition(Vector2 position)
+    {
         this.position = position;
     }
 
     /**
      * Returns the current position for a MapObject
-     * 
-     * @return Vector2 
+     *
+     * @return Vector2
      */
-    public Vector2 getPosition() {
+    public Vector2 getPosition()
+    {
         return this.position;
     }
 
     /**
      * Loads the sprites from a file
-     * @param fileName the spritesheet name
+     *
+     * @param fileName  the spritesheet name
      * @param numframes number of frames per row
-     * @param widths width of the sprites per row
-     * @param heights height of the sprites per row
+     * @param widths    width of the sprites per row
+     * @param heights   height of the sprites per row
      */
-    void loadSprites(String fileName, int[] numframes, int[] widths, int[] heights) {
-        try {
-            BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream(
-                    "/Sprites/" + fileName));
+    void loadSprites(String fileName, int[] numframes, int[] widths, int[] heights)
+    {
+        try
+        {
+            BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream("/Sprites/" + fileName));
             int count = 0;
             sprites = new ArrayList<>();
-            for(int i = 0; i < numframes.length; i++) {
+            for (int i = 0; i < numframes.length; i++)
+            {
                 BufferedImage[] bi = new BufferedImage[numframes[i]];
-                for(int j = 0; j < numframes[i]; j++) {
-                    bi[j] = spritesheet.getSubimage(
-                            j * widths[i],
-                            count,
-                            widths[i],
-                            heights[i]
-                    );
+                for (int j = 0; j < numframes[i]; j++)
+                {
+                    bi[j] = spritesheet.getSubimage(j * widths[i], count, widths[i], heights[i]);
                 }
                 sprites.add(bi);
                 count += heights[i];
             }
-        } catch (IOException e1) {
+        } catch (IOException e1)
+        {
             e1.printStackTrace();
         }
     }

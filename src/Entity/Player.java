@@ -15,7 +15,8 @@ import java.util.ArrayList;
 
 import static Entity.CharacterState.*;
 
-public class Player extends MovingObject{
+public class Player extends MovingObject
+{
 
     private int health;
     private int exp;
@@ -45,7 +46,8 @@ public class Player extends MovingObject{
     private final int[] FRAMEHEIGHTS = {128, 128, 128};
     private final int[] SPRITEDELAYS = {-1, 7, -1};
 
-    public Player(TileMap tm) {
+    public Player(TileMap tm)
+    {
         super(tm);
 
         width = FRAMEWIDTHS[0];
@@ -53,7 +55,8 @@ public class Player extends MovingObject{
         loadSprites("dusk_spritesheet_128.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
     }
 
-    public void initPlayer(Vector2 position) {
+    public void initPlayer(Vector2 position)
+    {
         setPosition(position);
         // set up speeds
         jumpSpeed = -14;
@@ -64,12 +67,13 @@ public class Player extends MovingObject{
         minFallSpeed = 3;
         // set up collision box
         collisionBox.setCenter(position);
-        collisionBox.setHalfSize(new Vector2(tileSize/3 , tileSize/3 - 18));
+        collisionBox.setHalfSize(new Vector2(tileSize / 3, tileSize / 3 - 18));
         collisionOffset = new Vector2(tileSize / 2 - 1, collisionBox.halfSize.y + 38);
     }
 
     @Override
-    public void update() {
+    public void update()
+    {
         handleInputs();
         animation.update();
         updatePhysics();
@@ -79,38 +83,41 @@ public class Player extends MovingObject{
     }
 
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D g)
+    {
         super.draw(g);
     }
 
     //---- State handling ---------------------------------------------------------------------------------
-    private void handleInputs() {
-        switch (currentState) {
+    private void handleInputs()
+    {
+        switch (currentState)
+        {
             case IDLE:
                 setVelocity(0, 0);
                 // Check if in air
                 if (checkAndHandleInAir()) break;
                 // Check if Keys.JUMP has been released
-                if (checkAndHandleJumpReleased());
+                if (checkAndHandleJumpReleased()) ;
                 // Check if walking
                 if (checkAndHandleWalking()) break;
-                // Check for platform drop
-                else if (checkAndHandlePlatformDrop());
-                // Check for jump
+                    // Check for platform drop
+                else if (checkAndHandlePlatformDrop()) ;
+                    // Check for jump
                 else if (checkAndHandleJump()) break;
                 break;
             case WALKING:
                 // Check if in air
                 if (checkAndHandleInAir()) break;
                 // Check if Keys.JUMP has been released
-                if (checkAndHandleJumpReleased());
+                if (checkAndHandleJumpReleased()) ;
                 // Check if idling
                 if (checkAndHandleIdling()) break;
                 // Check for walls
-                if (checkAndHandleWalls());
+                if (checkAndHandleWalls()) ;
                 // Check for platform drop
-                if (checkAndHandlePlatformDrop());
-                // Check for jump
+                if (checkAndHandlePlatformDrop()) ;
+                    // Check for jump
                 else if (checkAndHandleJump()) break;
                 break;
             case JUMPING:
@@ -119,42 +126,46 @@ public class Player extends MovingObject{
                 // Update y velocity
                 updateYVelocity();
                 // Check if on ground
-                if (isOnGround) {
+                if (isOnGround)
+                {
                     // Check if idling
-                    if (checkAndHandleIdling());
-                    // Check if walking
-                    else {
+                    if (checkAndHandleIdling()) ;
+                        // Check if walking
+                    else
+                    {
                         setAnimation(WALKING);
                         velocity.y = 0;
                     }
                     // Check if Keys.JUMP has been released
-                    if (checkAndHandleJumpReleased());
+                    if (checkAndHandleJumpReleased()) ;
                 }
                 // Check for preemptive release of JUMP while jumping
                 checkForEarlyReleaseOfJump();
                 // Update isFalling boolean
                 updateIsFalling();
                 // Update rising/falling animation
-                if (checkAndHandleJumpDirectionChange());
+                if (checkAndHandleJumpDirectionChange()) ;
                 // Check if both LEFT and RIGHT are being pressed
                 if (checkAndHandleLeftAndRightPressed()) break;
-                // Check for walls
-                else if (checkAndHandleWalls());
+                    // Check for walls
+                else if (checkAndHandleWalls()) ;
                 break;
             case FLINCHING:
                 // Check if still flinching
-                if (checkAndHandleStillFlinching());
-                // Start blinking and stop flinching
+                if (checkAndHandleStillFlinching()) ;
+                    // Start blinking and stop flinching
                 else stopFlinching();
                 break;
         }
     }
 
     @Override
-    void setAnimation(CharacterState state) {
+    void setAnimation(CharacterState state)
+    {
         currentState = state;
         int statenr = 0;
-        switch (currentState) {
+        switch (currentState)
+        {
             case IDLE:
                 statenr = 0;
                 break;
@@ -162,7 +173,7 @@ public class Player extends MovingObject{
                 statenr = 1;
                 break;
             case JUMPING:
-                if(isFalling) statenr = 0;
+                if (isFalling) statenr = 0;
                 else statenr = 0;
                 break;
             case FLINCHING:
@@ -173,23 +184,28 @@ public class Player extends MovingObject{
         animation.setDelay(SPRITEDELAYS[statenr]);
     }
 
-    public void setInvulnerable(boolean b) {
+    public void setInvulnerable(boolean b)
+    {
         isInvulnerable = b;
     }
 
-    public boolean isInvulnerable() {
+    public boolean isInvulnerable()
+    {
         return isInvulnerable;
     }
 
-    private void updateAlpha() {
-        if(isInvulnerable && isBlinking)
-            alpha = (float)(Math.sin(Time.getCurrentTime() * 0.0013) * 0.2 + 0.66);
+    private void updateAlpha()
+    {
+        if (isInvulnerable && isBlinking) alpha = (float) (Math.sin(Time.getCurrentTime() * 0.0013) * 0.2 + 0.66);
     }
 
-    private void updateInvulnerability() {
-        if (invulnerabilityTimer < invulnerabilityTime) {
+    private void updateInvulnerability()
+    {
+        if (invulnerabilityTimer < invulnerabilityTime)
+        {
             invulnerabilityTimer += Math.round(Time.deltaTime);
-        } else if (isInvulnerable){
+        } else if (isInvulnerable)
+        {
             setInvulnerable(false);
             setAnimation(JUMPING);
             alpha = 1;
@@ -198,30 +214,39 @@ public class Player extends MovingObject{
     }
 
     //---- Collision handling ---------------------------------------------------------------------------------
-    public void addCollisionCheck(MapObject mapObject) {
+    public void addCollisionCheck(MapObject mapObject)
+    {
         mapObjects.add(mapObject);
     }
 
-    private void checkCollision() {
-        for (MapObject m : mapObjects) {
-            if(collisionBox.overlaps(m.collisionBox)) {
+    private void checkCollision()
+    {
+        for (MapObject m : mapObjects)
+        {
+            if (collisionBox.overlaps(m.collisionBox))
+            {
                 reactToCollision(m);
             }
         }
     }
 
-    private void reactToCollision(MapObject m) {
+    private void reactToCollision(MapObject m)
+    {
         if (m instanceof Enemy) reactToCollision((Enemy) m);
     }
 
-    private void reactToCollision(Enemy e) {
-        if (!isInvulnerable()) {
+    private void reactToCollision(Enemy e)
+    {
+        if (!isInvulnerable())
+        {
             Time.freeze(10);
-            if (e.position.x < this.position.x) {
+            if (e.position.x < this.position.x)
+            {
                 velocity.x = knockBack;
                 velocity.y = 0;
                 rotation = 45;
-            } else {
+            } else
+            {
                 velocity.x = -knockBack;
                 velocity.y = 0;
                 rotation = -45;
@@ -235,24 +260,30 @@ public class Player extends MovingObject{
     }
 
     //---- Helpers for state handling ---------------------------------------------------------------------------------
-    private boolean checkAndHandleInAir() {
-        if (!isOnGround) {
+    private boolean checkAndHandleInAir()
+    {
+        if (!isOnGround)
+        {
             setAnimation(JUMPING);
             return true;
         }
         return false;
     }
 
-    private boolean checkAndHandleWalking() {
-        if (KeyHandler.isPressed(Keys.RIGHT) != KeyHandler.isPressed(Keys.LEFT)) {
+    private boolean checkAndHandleWalking()
+    {
+        if (KeyHandler.isPressed(Keys.RIGHT) != KeyHandler.isPressed(Keys.LEFT))
+        {
             setAnimation(WALKING);
             return true;
         }
         return false;
     }
 
-    private boolean checkAndHandleIdling() {
-        if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT)) {
+    private boolean checkAndHandleIdling()
+    {
+        if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT))
+        {
             setAnimation(IDLE);
             setVelocity(0, 0);
             return true;
@@ -260,9 +291,12 @@ public class Player extends MovingObject{
         return false;
     }
 
-    private boolean checkAndHandlePlatformDrop() {
-        if (KeyHandler.isPressed(Keys.DOWN) && KeyHandler.isPressed(Keys.JUMP)) {
-            if (isOnPlatform) {
+    private boolean checkAndHandlePlatformDrop()
+    {
+        if (KeyHandler.isPressed(Keys.DOWN) && KeyHandler.isPressed(Keys.JUMP))
+        {
+            if (isOnPlatform)
+            {
                 position.y += 1;
                 framesPassedUntilDrop = 0;
                 isOnPlatform = false;
@@ -274,8 +308,10 @@ public class Player extends MovingObject{
         return false;
     }
 
-    private boolean checkAndHandleJump() {
-        if (KeyHandler.isPressed(Keys.JUMP) && !hasJumped) {
+    private boolean checkAndHandleJump()
+    {
+        if (KeyHandler.isPressed(Keys.JUMP) && !hasJumped)
+        {
             velocity.y = jumpSpeed;
             setAnimation(JUMPING);
             hasJumped = true;
@@ -284,13 +320,16 @@ public class Player extends MovingObject{
         return false;
     }
 
-    private boolean checkAndHandleWalls() {
-        if (KeyHandler.isPressed(Keys.RIGHT)) {
+    private boolean checkAndHandleWalls()
+    {
+        if (KeyHandler.isPressed(Keys.RIGHT))
+        {
             if (isPushingRightWall) velocity.x = 0;
             else velocity.x = walkSpeed;
             isFacingRight = true;
             return true;
-        } else if (KeyHandler.isPressed(Keys.LEFT)) {
+        } else if (KeyHandler.isPressed(Keys.LEFT))
+        {
             if (isPushingLeftWall) velocity.x = 0;
             else velocity.x = -walkSpeed;
             isFacingRight = false;
@@ -299,69 +338,85 @@ public class Player extends MovingObject{
         return false;
     }
 
-    private boolean checkAndHandleLeftAndRightPressed() {
-        if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT)) {
+    private boolean checkAndHandleLeftAndRightPressed()
+    {
+        if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT))
+        {
             velocity.x = 0;
             return true;
         }
         return false;
     }
 
-    private boolean checkAndHandleJumpDirectionChange() {
-        if(isRising && isFalling) {
+    private boolean checkAndHandleJumpDirectionChange()
+    {
+        if (isRising && isFalling)
+        {
             setAnimation(JUMPING);
             return true;
         }
         return false;
     }
 
-    private boolean checkAndHandleJumpReleased() {
-        if (hasJumped && !KeyHandler.isPressed(Keys.JUMP)) {
+    private boolean checkAndHandleJumpReleased()
+    {
+        if (hasJumped && !KeyHandler.isPressed(Keys.JUMP))
+        {
             hasJumped = false;
             return true;
         }
         return false;
     }
 
-    private void updateYVelocity() {
+    private void updateYVelocity()
+    {
         velocity.y += gravity * Time.deltaTime;
         velocity.y = Math.min(velocity.y, maxFallingSpeed);
     }
 
-    private void checkForEarlyReleaseOfJump() {
-        if (!KeyHandler.isPressed(Keys.JUMP) && velocity.y < 0) {
+    private void checkForEarlyReleaseOfJump()
+    {
+        if (!KeyHandler.isPressed(Keys.JUMP) && velocity.y < 0)
+        {
             velocity.y = Math.min(-velocity.y, -minJumpingSpeed);
         }
     }
 
-    private void updateIsRising() {
+    private void updateIsRising()
+    {
         isRising = velocity.y < 0;
     }
 
-    private void updateIsFalling() {
+    private void updateIsFalling()
+    {
         isFalling = velocity.y > 0;
     }
 
-    private boolean checkAndHandleStillFlinching() {
-        if (currentFlinchTime < flinchTime) {
+    private boolean checkAndHandleStillFlinching()
+    {
+        if (currentFlinchTime < flinchTime)
+        {
             currentFlinchTime += Math.round(Time.deltaTime);
             return true;
         }
         return false;
     }
 
-    private void stopFlinching() {
+    private void stopFlinching()
+    {
         setAnimation(JUMPING);
         isBlinking = true;
         rotation = 0;
     }
 
     //---- Getters and setters ---------------------------------------------------------------------------------
-    public void setHealth(int health) {
+    public void setHealth(int health)
+    {
         this.health = health;
     }
 
-    public int getHealth() {
+    public int getHealth()
+    {
         return health;
     }
 

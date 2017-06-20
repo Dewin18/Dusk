@@ -15,9 +15,8 @@ public class Background
     {
         try
         {
-            image = ImageIO.read(getClass().getResourceAsStream(s));           
-        }
-        catch (Exception e)
+            image = ImageIO.read(getClass().getResourceAsStream(s));
+        } catch (Exception e)
         {
             e.printStackTrace();
         }

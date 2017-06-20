@@ -10,7 +10,7 @@ import Main.GamePanel;
 public class GamePanelTest
 {
     GamePanel gamePanel;
-    
+
     public GamePanelTest()
     {
         super();
@@ -22,7 +22,7 @@ public class GamePanelTest
     {
         gamePanel = new GamePanel();
     }
-    
+
     @Test
     public void gamePanelSizeTest()
     {

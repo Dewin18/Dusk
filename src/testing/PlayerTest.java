@@ -31,7 +31,7 @@ public class PlayerTest
     }
 
     @Test
-    public void playerInitalisationTest()
+    public void playerInitialisationTest()
     {
         assertTrue(player.getJumpSpeed() == (-12.5));
         assertTrue(player.getWalkSpeed() == 6);
@@ -40,7 +40,7 @@ public class PlayerTest
         assertTrue(player.getGravity() == 0.3);
         assertTrue(player.getMinFallSpeed() == 3);
     }
-    
+
     @Test
     public void playerPositionTest()
     {
@@ -57,17 +57,16 @@ public class PlayerTest
 
         player.setPosition(new Vector2(200, 100));
 
-        assertFalse(VectorPositionX != PlayerPositionX
-                && VectorPositionY != PlayerPositionY);
+        assertFalse(VectorPositionX != PlayerPositionX && VectorPositionY != PlayerPositionY);
     }
-    
+
     @Test
     public void playerStateTest()
     {
         CharacterState currentState = player.getCharacterState();
         //Test the default player state at start
         assertEquals(currentState.toString(), "IDLE");
-        
+
     }
 
 }

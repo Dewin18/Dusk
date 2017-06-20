@@ -6,7 +6,8 @@ import TileMap.Vector2;
 
 import java.awt.*;
 
-public class Camera {
+public class Camera
+{
     // references
     private TileMap tileMap;
     private Player player;
@@ -32,18 +33,15 @@ public class Camera {
     private int numRowsToDraw;
     private int numColsToDraw;
 
-    public Camera(TileMap tileMap, Player player) {
+    public Camera(TileMap tileMap, Player player)
+    {
         this.tileMap = tileMap;
         this.player = player;
 
         size = new Vector2(GamePanel.WIDTH, GamePanel.HEIGHT);
         tileSize = tileMap.getTileSize();
 
-        setBounds(
-                tileMap.getWidth() - tileSize,
-                tileMap.getHeight() - 2 * tileSize,
-                0, 0
-        );
+        setBounds(tileMap.getWidth() - tileSize, tileMap.getHeight() - 2 * tileSize, 0, 0);
 
         numRowsToDraw = GamePanel.HEIGHT / tileSize + 2;
         numColsToDraw = GamePanel.WIDTH / tileSize + 2;
@@ -54,25 +52,29 @@ public class Camera {
     /**
      * Set position of the camera and update the new column and row offset.
      * Takes in account the tween, for smooth panning.
+     *
      * @param x new x position
      * @param y new y position
      */
-    public void setPosition(double x, double y) {
+    public void setPosition(double x, double y)
+    {
         position.x += (x - position.x) * tween * Time.deltaTime;
         position.y += (y - position.y) * tween * Time.deltaTime;
         fixBounds();
-        colOffset = (int)-position.x / tileSize;
-        rowOffset = (int)-position.y / tileSize;
+        colOffset = (int) -position.x / tileSize;
+        rowOffset = (int) -position.y / tileSize;
     }
 
     /**
      * Set Bounds of the camera.
+     *
      * @param i1 xmin bound
      * @param i2 ymin bound
      * @param i3 xmax bound
      * @param i4 ymax bound
      */
-    public void setBounds(int i1, int i2, int i3, int i4) {
+    public void setBounds(int i1, int i2, int i3, int i4)
+    {
         xmin = GamePanel.WIDTH - i1;
         ymin = GamePanel.WIDTH - i2;
         xmax = i3;
@@ -82,7 +84,8 @@ public class Camera {
     /**
      * Check if camera is out of bounds and puts it in place.
      */
-    private void fixBounds() {
+    private void fixBounds()
+    {
         if (position.x < xmin) position.x = xmin;
         if (position.y < ymin) position.y = ymin;
         if (position.x > xmax) position.x = xmax;
@@ -91,18 +94,19 @@ public class Camera {
 
     /**
      * Iterate through every tile on screen (plus other 2 for padding) and renders them.
+     *
      * @param g graphic context to draw on
      */
-    public void draw(Graphics2D g) {
-        for (int row = rowOffset; row < rowOffset + numRowsToDraw; row++) {
+    public void draw(Graphics2D g)
+    {
+        for (int row = rowOffset; row < rowOffset + numRowsToDraw; row++)
+        {
             if (row >= numRows) break;
-            for (int col = colOffset; col < colOffset + numColsToDraw; col++) {
+            for (int col = colOffset; col < colOffset + numColsToDraw; col++)
+            {
                 if (col >= numCols) break;
                 if (tileMap.isTransparent(row, col)) continue;
-                g.drawImage(tileMap.printTile(col, row),
-                        (int)position.x + col * tileSize,
-                        (int)position.y + row * tileSize,
-                        null);
+                g.drawImage(tileMap.printTile(col, row), (int) position.x + col * tileSize, (int) position.y + row * tileSize, null);
             }
         }
     }
@@ -110,10 +114,10 @@ public class Camera {
     /**
      * Update the current position so that it follows the Player.
      */
-    public void update() {
-            setPosition(GamePanel.WIDTH / 2 - player.getPosition().x,
-                    GamePanel.HEIGHT / 2 - player.getPosition().y);
-            tileMap.cameraPos = this.position;
+    public void update()
+    {
+        setPosition(GamePanel.WIDTH / 2 - player.getPosition().x, GamePanel.HEIGHT / 2 - player.getPosition().y);
+        tileMap.cameraPos = this.position;
 
     }
 }
