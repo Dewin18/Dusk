@@ -32,6 +32,7 @@ public class Level1State extends GameState {
     {
         initMap();
         initPlayer();
+        initCamera();
         initEnemies();
     }
 
@@ -47,6 +48,11 @@ public class Level1State extends GameState {
     {
         player = new Player(tileMap);
         player.initPlayer(new Vector2(150, 100));
+    }
+
+    private void initCamera()
+    {
+        camera = new Camera(tileMap, player);
     }
 
     private void initEnemies()
