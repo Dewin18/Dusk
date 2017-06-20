@@ -4,12 +4,15 @@ import Main.Time;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
 
-public class MovingObject extends MapObject{
+public abstract class MovingObject extends MapObject{
 
     // debugging
     private final boolean debugging = false;
@@ -25,6 +28,7 @@ public class MovingObject extends MapObject{
     double minJumpingSpeed;
 
     // collision states
+    CharacterState currentState = CharacterState.IDLE;
     boolean isPushingRightWall;
     boolean pushedRightWall;
     boolean isPushingLeftWall;
@@ -87,11 +91,11 @@ public class MovingObject extends MapObject{
         AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
         g.setComposite(ac);
         BufferedImage sprite = animation.getImage();
-        AffineTransform tx = AffineTransform.getRotateInstance(Math.toRadians(rotation), width /2, height /2);
-        AffineTransform bla = AffineTransform.getScaleInstance(-1, 1);
-        bla.translate(-width, 0);
-        AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-        AffineTransformOp op2 = new AffineTransformOp(bla, AffineTransformOp.TYPE_BILINEAR);
+        AffineTransform rotateInstance = AffineTransform.getRotateInstance(Math.toRadians(rotation), width /2, height /2);
+        AffineTransform scaleInstance = AffineTransform.getScaleInstance(-1, 1);
+        scaleInstance.translate(-width, 0);
+        AffineTransformOp op = new AffineTransformOp(rotateInstance, AffineTransformOp.TYPE_BILINEAR);
+        AffineTransformOp op2 = new AffineTransformOp(scaleInstance, AffineTransformOp.TYPE_BILINEAR);
         if (sprite != null)
             if (isFacingRight) {
                 g.drawImage(op.filter(sprite, null), (int) position.x, (int) position.y, null);
@@ -323,6 +327,10 @@ public class MovingObject extends MapObject{
         g.drawImage(drawImg, 0, 0, null);
     }
 
+
+    abstract void setAnimation(CharacterState state);
+    abstract public void update();
+
     public Vector2 getVelocity() { return velocity; }
 
     public double getJumpSpeed() { return jumpSpeed; }
@@ -335,10 +343,6 @@ public class MovingObject extends MapObject{
 
     public double getMinJumpingSpeed() { return minJumpingSpeed; }
 
-    /**
-     * Get the collider of the object.
-     * @return the collider (collision box)
-     */
     public CollisionBox getCollisionBox() {
         return collisionBox;
     }

@@ -11,6 +11,10 @@ public class CollisionBox {
         this.halfSize = halfSize;
     }
 
+    public CollisionBox() {
+
+    }
+
     public boolean overlaps(CollisionBox other) {
         if (Math.abs(center.x - other.center.x) > halfSize.x + other.halfSize.x) return false;
         if (Math.abs(center.y - other.center.y) > halfSize.y + other.halfSize.y) return false;
@@ -25,5 +29,13 @@ public class CollisionBox {
         a[2] = (int) halfSize.x * 2;
         a[3] = (int) halfSize.y * 2;
         return a;
+    }
+
+    public void setCenter(Vector2 center) {
+        this.center = center;
+    }
+
+    public void setHalfSize(Vector2 halfSize) {
+        this.halfSize = halfSize;
     }
 }

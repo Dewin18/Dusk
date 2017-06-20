@@ -12,12 +12,12 @@ import TileMap.Vector2;
 public abstract class Enemy extends MovingObject
 {
     /**
-     * All enemies define it's own Maximum health
+     * All enemies define their own Maximum health
      */
     protected int health;
     
     /**
-     * All enemies define it's own Maximum damage
+     * All enemies define their own Maximum damage
      */
     protected int damage;
 
@@ -27,7 +27,7 @@ public abstract class Enemy extends MovingObject
     }
     
     /**
-     * Enemy initalization method
+     * Enemy initialization method
      * 
      * @param position The position as Vector(x, y) on the map
      * @param spriteName is the selected spriteSheet for this enemy

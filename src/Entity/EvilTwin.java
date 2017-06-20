@@ -16,64 +16,29 @@ import TileMap.Vector2;
 
 public class EvilTwin extends Enemy
 {
-    private CharacterState currentState = IDLE; 
-    
     private double minFallSpeed;
 
-    private final int[] NUMFRAMES = { 
-            1, 6                        
-    };
-    private final int[] FRAMEWIDTHS = {
-            128, 128                     
-    };
-    private final int[] FRAMEHEIGHTS = {
-            128, 128                       
-    };
-    private final int[] SPRITEDELAYS = {
-            -1, 8                           
-    };
+    private final int[] NUMFRAMES = {1, 6};
+    private final int[] FRAMEWIDTHS = {128, 128};
+    private final int[] FRAMEHEIGHTS = {128, 128};
+    private final int[] SPRITEDELAYS = {-1, 8};
     
     public EvilTwin(TileMap tm)
     {
         super(tm);
-
         health = 1;
         damage = 1;
         minFallSpeed = 0.4;
-
         velocity = new Vector2(0, 0);
-
         isFacingRight = false;
     }
     
     public void initEnemy(Vector2 position, String spriteName) {
         this.position = position;
-        // load sprites
-        try {
-            BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream(
-                    "/Sprites/Enemies/" + spriteName));
-            sprite = spritesheet.getSubimage(0, 0, 30, 30);
-            int count = 0;
-            sprites = new ArrayList<>();
-            for(int i = 0; i < NUMFRAMES.length; i++) {
-                BufferedImage[] bi = new BufferedImage[NUMFRAMES[i]];
-                for(int j = 0; j < NUMFRAMES[i]; j++) {
-                    bi[j] = spritesheet.getSubimage(
-                            j * FRAMEWIDTHS[i],
-                            count,
-                            FRAMEWIDTHS[i],
-                            FRAMEHEIGHTS[i]
-                    );
-                }
-                sprites.add(bi);
-                count += FRAMEHEIGHTS[i];
-            }
+        loadSprites("Enemies/" + spriteName, NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
 
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-
-        collisionBox = new CollisionBox(position, new Vector2(tileSize/3 , tileSize/3 - 18));
+        collisionBox.setCenter(position);
+        collisionBox.setHalfSize(new Vector2(tileSize/3 , tileSize/3 - 18));
         collisionOffset = new Vector2(tileSize / 2 - 1, collisionBox.halfSize.y + 38);
 
         width = FRAMEWIDTHS[0];
@@ -90,6 +55,7 @@ public class EvilTwin extends Enemy
         animation.setDelay(SPRITEDELAYS[0]);
     }
 
+    @Override
     public void update() {
         moveAround();
         animation.update();
@@ -138,7 +104,8 @@ public class EvilTwin extends Enemy
         }
     }
 
-    private void setAnimation(CharacterState state) { 
+    @Override
+    void setAnimation(CharacterState state) {
         currentState = state;
         int statenr = 0;
         switch (currentState) {

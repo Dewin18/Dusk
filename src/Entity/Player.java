@@ -25,19 +25,6 @@ public class Player extends MovingObject{
     private boolean isFalling = false;
     private double minFallSpeed;
     private boolean hasJumped; // for canceling repeat jumps by keeping the button pressed
-    private CharacterState currentState = IDLE;
-    private final int[] NUMFRAMES = {
-            1, 6, 1
-    };
-    private final int[] FRAMEWIDTHS = {
-            128, 128, 128
-    };
-    private final int[] FRAMEHEIGHTS = {
-            128, 128, 128
-    };
-    private final int[] SPRITEDELAYS = {
-            -1, 8, -1
-    };
 
     private boolean hasAttack = true;
     private boolean hasDoubleJump = false;
@@ -51,53 +38,35 @@ public class Player extends MovingObject{
     private int invulnerabilityTimer = invulnerabilityTime;
     private ArrayList<MapObject> mapObjects = new ArrayList<>();
 
+    private final int[] NUMFRAMES = {1, 6, 1};
+    private final int[] FRAMEWIDTHS = {128, 128, 128};
+    private final int[] FRAMEHEIGHTS = {128, 128, 128};
+    private final int[] SPRITEDELAYS = {-1, 8, -1};
+
     public Player(TileMap tm) {
         super(tm);
-        width = 128;
-        height = 128;
 
-        // load sprites
-        try {
-            BufferedImage spritesheet = ImageIO.read(getClass().getResourceAsStream(
-                    "/Sprites/dusk_spritesheet_128.png"));
-            sprite = spritesheet.getSubimage(0, 0, 128, 128);
-            int count = 0;
-            sprites = new ArrayList<>();
-            for(int i = 0; i < NUMFRAMES.length; i++) {
-                BufferedImage[] bi = new BufferedImage[NUMFRAMES[i]];
-                for(int j = 0; j < NUMFRAMES[i]; j++) {
-                    bi[j] = spritesheet.getSubimage(
-                            j * FRAMEWIDTHS[i],
-                            count,
-                            FRAMEWIDTHS[i],
-                            FRAMEHEIGHTS[i]
-                    );
-                }
-                sprites.add(bi);
-                count += FRAMEHEIGHTS[i];
-            }
-
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
+        width = FRAMEWIDTHS[0];
+        height = FRAMEHEIGHTS[0];
+        loadSprites("dusk_spritesheet_128.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
     }
 
     public void initPlayer(Vector2 position) {
         setPosition(position);
-
         // set up speeds
         jumpSpeed = -14;
         walkSpeed = 6;
-        minJumpingSpeed = -1;
+        minJumpingSpeed = -2;
         maxFallingSpeed = 10;
         gravity = 0.5;
-        minFallSpeed = 5;
-
+        minFallSpeed = 3;
         // set up collision box
-        collisionBox = new CollisionBox(position, new Vector2(tileSize/3 , tileSize/3 - 18));
+        collisionBox.setCenter(position);
+        collisionBox.setHalfSize(new Vector2(tileSize/3 , tileSize/3 - 18));
         collisionOffset = new Vector2(tileSize / 2 - 1, collisionBox.halfSize.y + 38);
     }
 
+    @Override
     public void update() {
         handleInputs();
         animation.update();
@@ -107,114 +76,75 @@ public class Player extends MovingObject{
         updateAlpha();
     }
 
+    //---- State handling ---------------------------------------------------------------------------------
     private void handleInputs() {
         switch (currentState) {
             case IDLE:
                 setVelocity(0, 0);
-                if (!isOnGround) {
-                    setAnimation(JUMPING);
-                    break;
-                }
-                if (hasJumped && !KeyHandler.isPressed(Keys.JUMP)) hasJumped = false;
-                if (KeyHandler.isPressed(Keys.RIGHT) != KeyHandler.isPressed(Keys.LEFT)) {
-                    setAnimation(JUMPING);
-                    break;
-                } else if (KeyHandler.isPressed(Keys.DOWN) && KeyHandler.isPressed(Keys.JUMP)) {
-                    if (isOnPlatform) {
-                        position.y += 1;
-                        framesPassedUntilDrop = 0;
-                        isOnPlatform = false;
-                        velocity.y = minFallSpeed;
-                        hasJumped = true;
-                    }
-                } else if (KeyHandler.isPressed(Keys.JUMP) && !hasJumped) {
-                    velocity.y = jumpSpeed;
-                    setAnimation(JUMPING);
-                    hasJumped = true;
-                    break;
-                }
+                // Check if in air
+                if (checkAndHandleInAir()) break;
+                // Check if Keys.JUMP has been released
+                if (checkAndHandleJumpReleased());
+                // Check if walking
+                if (checkAndHandleWalking()) break;
+                // Check for platform drop
+                else if (checkAndHandlePlatformDrop());
+                // Check for jump
+                else if (checkAndHandleJump()) break;
                 break;
-
             case WALKING:
-                if (hasJumped && !KeyHandler.isPressed(Keys.JUMP)) hasJumped = false;
-                if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT)) {
-                    setAnimation(IDLE);
-                    setVelocity(0, 0);
-                    break;
-                } else if (KeyHandler.isPressed(Keys.RIGHT)) {
-                    if (isPushingRightWall) velocity.x = 0;
-                    else velocity.x = walkSpeed;
-                    isFacingRight = true;
-                } else if (KeyHandler.isPressed(Keys.LEFT)) {
-                    if (isPushingLeftWall) velocity.x = 0;
-                    else velocity.x = -walkSpeed;
-                    isFacingRight = false;
-                }
-                if (KeyHandler.isPressed(Keys.DOWN) && KeyHandler.isPressed(Keys.JUMP)) {
-                    if (isOnPlatform) {
-                        position.y += 1;
-                        framesPassedUntilDrop = 0;
-                        isOnPlatform = false;
-                        velocity.y = minFallSpeed;
-                        hasJumped = true;
-                    }
-                } else if (KeyHandler.isPressed(Keys.JUMP) && !hasJumped) {
-                    velocity.y = jumpSpeed;
-                    setAnimation(JUMPING);
-                    hasJumped = true;
-                    break;
-                } else if (!isOnGround) {
-                    setAnimation(JUMPING);
-                    break;
-                }
+                // Check if in air
+                if (checkAndHandleInAir()) break;
+                // Check if Keys.JUMP has been released
+                if (checkAndHandleJumpReleased());
+                // Check if idling
+                if (checkAndHandleIdling()) break;
+                // Check for walls
+                if (checkAndHandleWalls());
+                // Check for platform drop
+                if (checkAndHandlePlatformDrop());
+                // Check for jump
+                else if (checkAndHandleJump()) break;
                 break;
-
             case JUMPING:
-                isRising = velocity.y < 0;
-                velocity.y += gravity * Time.deltaTime;
-                velocity.y = Math.min(velocity.y, maxFallingSpeed);
+                // Update isRising boolean
+                updateIsRising();
+                // Update y velocity
+                updateYVelocity();
+                // Check if on ground
                 if (isOnGround) {
-                    if (KeyHandler.isPressed(Keys.LEFT) == KeyHandler.isPressed(Keys.RIGHT)) {
-                        setAnimation(IDLE);
-                        setVelocity(0, 0);
-                    } else {
+                    // Check if idling
+                    if (checkAndHandleIdling());
+                    // Check if walking
+                    else {
                         setAnimation(WALKING);
                         velocity.y = 0;
                     }
-                    if (hasJumped && !KeyHandler.isPressed(Keys.JUMP)) hasJumped = false;
+                    // Check if Keys.JUMP has been released
+                    if (checkAndHandleJumpReleased());
                 }
-                if (!KeyHandler.isPressed(Keys.JUMP) && velocity.y < 0) {
-                    velocity.y = Math.max(-velocity.y, -minJumpingSpeed);
-                }
-                isFalling = velocity.y > 0;
-                if(isRising && isFalling) {
-                    setAnimation(JUMPING);
-                }
-                if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT)) {
-                    velocity.x = 0;
-                    break;
-                } else if (KeyHandler.isPressed(Keys.RIGHT)) {
-                    if (isPushingRightWall) velocity.x = 0;
-                    else velocity.x = walkSpeed;
-                    isFacingRight = true;
-                } else if (KeyHandler.isPressed(Keys.LEFT)) {
-                    if (isPushingLeftWall) velocity.x = 0;
-                    else velocity.x = -walkSpeed;
-                    isFacingRight = false;
-                }
+                // Check for preemptive release of JUMP while jumping
+                checkForEarlyReleaseOfJump();
+                // Update isFalling boolean
+                updateIsFalling();
+                // Update rising/falling animation
+                if (checkAndHandleJumpDirectionChange());
+                // Check if both LEFT and RIGHT are being pressed
+                if (checkAndHandleLeftAndRightPressed()) break;
+                // Check for walls
+                else if (checkAndHandleWalls());
                 break;
             case FLINCHING:
-                if (currentFlinchTime < flinchTime) currentFlinchTime += Math.round(Time.deltaTime);
-                else {
-                    setAnimation(IDLE);
-                    isBlinking = true;
-                    rotation = 0;
-                }
+                // Check if still flinching
+                if (checkAndHandleStillFlinching());
+                // Start blinking and stop flinching
+                else stopFlinching();
                 break;
         }
     }
 
-    private void setAnimation(CharacterState state) {
+    @Override
+    void setAnimation(CharacterState state) {
         currentState = state;
         int statenr = 0;
         switch (currentState) {
@@ -236,35 +166,33 @@ public class Player extends MovingObject{
         animation.setDelay(SPRITEDELAYS[statenr]);
     }
 
-    private void updateInvulnerability() {
-        if (invulnerabilityTimer < invulnerabilityTime) {
-            invulnerabilityTimer += Math.round(Time.deltaTime);
-        } else if (isInvulnerable){
-            setInvulnerable(false);
-            setAnimation(IDLE);
-            alpha = 1;
-            isBlinking = false;
-        }
-    }
-
-    public void addCollisionCheck(MapObject mapObject) {
-        mapObjects.add(mapObject);
-    }
-
-    public void setHealth(int health) {
-        this.health = health;
+    public void setInvulnerable(boolean b) {
+        isInvulnerable = b;
     }
 
     public boolean isInvulnerable() {
         return isInvulnerable;
     }
 
-    public int getHealth() {
-        return health;
+    private void updateAlpha() {
+        if(isInvulnerable && isBlinking)
+            alpha = (float)(Math.sin(Time.getCurrentTime() * 0.0013) * 0.2 + 0.66);
     }
 
-    public void setInvulnerable(boolean b) {
-        isInvulnerable = b;
+    private void updateInvulnerability() {
+        if (invulnerabilityTimer < invulnerabilityTime) {
+            invulnerabilityTimer += Math.round(Time.deltaTime);
+        } else if (isInvulnerable){
+            setInvulnerable(false);
+            setAnimation(JUMPING);
+            alpha = 1;
+            isBlinking = false;
+        }
+    }
+
+    //---- Collision handling ---------------------------------------------------------------------------------
+    public void addCollisionCheck(MapObject mapObject) {
+        mapObjects.add(mapObject);
     }
 
     private void checkCollision() {
@@ -277,11 +205,6 @@ public class Player extends MovingObject{
 
     private void reactToCollision(MapObject m) {
         if (m instanceof Enemy) reactToCollision((Enemy) m);
-    }
-
-    private void updateAlpha() {
-        if(isInvulnerable && isBlinking)
-            alpha = (float)(Math.sin(Time.getCurrentTime() * 0.0013) * 0.2 + 0.66);
     }
 
     private void reactToCollision(Enemy e) {
@@ -302,6 +225,137 @@ public class Player extends MovingObject{
             invulnerabilityTimer = 0;
             setAnimation(FLINCHING);
         }
+    }
+
+    //---- Helpers for state handling ---------------------------------------------------------------------------------
+    private boolean checkAndHandleInAir() {
+        if (!isOnGround) {
+            setAnimation(JUMPING);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkAndHandleWalking() {
+        if (KeyHandler.isPressed(Keys.RIGHT) != KeyHandler.isPressed(Keys.LEFT)) {
+            setAnimation(WALKING);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkAndHandleIdling() {
+        if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT)) {
+            setAnimation(IDLE);
+            setVelocity(0, 0);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkAndHandlePlatformDrop() {
+        if (KeyHandler.isPressed(Keys.DOWN) && KeyHandler.isPressed(Keys.JUMP)) {
+            if (isOnPlatform) {
+                position.y += 1;
+                framesPassedUntilDrop = 0;
+                isOnPlatform = false;
+                velocity.y = minFallSpeed;
+                hasJumped = true;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkAndHandleJump() {
+        if (KeyHandler.isPressed(Keys.JUMP) && !hasJumped) {
+            velocity.y = jumpSpeed;
+            setAnimation(JUMPING);
+            hasJumped = true;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkAndHandleWalls() {
+        if (KeyHandler.isPressed(Keys.RIGHT)) {
+            if (isPushingRightWall) velocity.x = 0;
+            else velocity.x = walkSpeed;
+            isFacingRight = true;
+            return true;
+        } else if (KeyHandler.isPressed(Keys.LEFT)) {
+            if (isPushingLeftWall) velocity.x = 0;
+            else velocity.x = -walkSpeed;
+            isFacingRight = false;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkAndHandleLeftAndRightPressed() {
+        if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT)) {
+            velocity.x = 0;
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkAndHandleJumpDirectionChange() {
+        if(isRising && isFalling) {
+            setAnimation(JUMPING);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean checkAndHandleJumpReleased() {
+        if (hasJumped && !KeyHandler.isPressed(Keys.JUMP)) {
+            hasJumped = false;
+            return true;
+        }
+        return false;
+    }
+
+    private void updateYVelocity() {
+        velocity.y += gravity * Time.deltaTime;
+        velocity.y = Math.min(velocity.y, maxFallingSpeed);
+    }
+
+    private void checkForEarlyReleaseOfJump() {
+        if (!KeyHandler.isPressed(Keys.JUMP) && velocity.y < 0) {
+            velocity.y = Math.min(-velocity.y, -minJumpingSpeed);
+        }
+    }
+
+    private void updateIsRising() {
+        isRising = velocity.y < 0;
+    }
+
+    private void updateIsFalling() {
+        isFalling = velocity.y > 0;
+    }
+
+    private boolean checkAndHandleStillFlinching() {
+        if (currentFlinchTime < flinchTime) {
+            currentFlinchTime += Math.round(Time.deltaTime);
+            return true;
+        }
+        return false;
+    }
+
+    private void stopFlinching() {
+        setAnimation(JUMPING);
+        isBlinking = true;
+        rotation = 0;
+    }
+
+    //---- Getters and setters ---------------------------------------------------------------------------------
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public int getHealth() {
+        return health;
     }
 
     public CharacterState getCharacterState()
