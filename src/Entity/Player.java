@@ -2,11 +2,13 @@ package Entity;
 
 import Handlers.KeyHandler;
 import Handlers.Keys;
+import Main.GamePanel;
 import Main.Time;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,7 +43,7 @@ public class Player extends MovingObject{
     private final int[] NUMFRAMES = {1, 6, 1};
     private final int[] FRAMEWIDTHS = {128, 128, 128};
     private final int[] FRAMEHEIGHTS = {128, 128, 128};
-    private final int[] SPRITEDELAYS = {-1, 8, -1};
+    private final int[] SPRITEDELAYS = {-1, 7, -1};
 
     public Player(TileMap tm) {
         super(tm);
@@ -74,6 +76,11 @@ public class Player extends MovingObject{
         updateInvulnerability();
         checkCollision();
         updateAlpha();
+    }
+
+    @Override
+    public void draw(Graphics2D g) {
+        super.draw(g);
     }
 
     //---- State handling ---------------------------------------------------------------------------------

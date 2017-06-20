@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import Entity.Enemy;
 import Entity.EvilTwin;
 import Entity.Player;
+import Main.Camera;
 import Main.GamePanel;
 import TileMap.TileMap;
 import TileMap.Vector2;
@@ -16,13 +17,14 @@ public class Level1State extends GameState {
 	
 	private TileMap tileMap;
 	private Player player;
+	private Camera camera;
 	
 	//All Level1State enemies are stored in this list
 	private ArrayList<Enemy> enemyList;
 	
 	public Level1State(GameStateManager gsm) {
 	    enemyList = new ArrayList<>();
-		this.gsm = gsm;
+	    this.gsm = gsm;
 		init();
 	}
 
@@ -32,7 +34,9 @@ public class Level1State extends GameState {
 		tileMap.loadMap("/Maps/level1-1.map");
 		tileMap.setPosition(0, 0);
 
+
 		player = new Player(tileMap);
+		camera = new Camera(tileMap, player);
 		player.initPlayer(new Vector2(150, 100));
 		
 		//With dynamic binding we can assign the Enemy reference to a concrete Enemy e.g. EvilTwin
@@ -57,7 +61,7 @@ public class Level1State extends GameState {
             enemy.update();
         }
 		
-		//handleInput();
+		camera.update();
 	}
 
 	public void draw(Graphics2D g) {
@@ -66,18 +70,16 @@ public class Level1State extends GameState {
 		g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
 		player.draw(g);
-		
 		for (Enemy enemy : enemyList) {
             enemy.draw(g);
         }
 		
 		// draw tilemap
-		AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
-		g.setComposite(ac);
-		tileMap.draw(g);
+		//tileMap.draw(g);
+		camera.draw(g);
 	}
 
 	public void handleInput() {
 	}
-	
+
 }

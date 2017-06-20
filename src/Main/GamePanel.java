@@ -95,6 +95,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
 
     private void draw()
     {
+        RenderingHints rh = new RenderingHints(
+                RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        g.setRenderingHints(rh);
         gsm.draw(g);
     }
 

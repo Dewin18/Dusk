@@ -18,7 +18,7 @@ public abstract class MapObject {
     protected double ymap;
 
     // Position
-    protected Vector2 position;
+    protected Vector2 position = new Vector2(0, 0);
 
     // dimenstions
     protected int width;

@@ -4,13 +4,10 @@ import Main.Time;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.ArrayList;
 
 public abstract class MovingObject extends MapObject{
 
@@ -98,9 +95,9 @@ public abstract class MovingObject extends MapObject{
         AffineTransformOp op2 = new AffineTransformOp(scaleInstance, AffineTransformOp.TYPE_BILINEAR);
         if (sprite != null)
             if (isFacingRight) {
-                g.drawImage(op.filter(sprite, null), (int) position.x, (int) position.y, null);
+                g.drawImage(op.filter(sprite, null), (int)(position.x + tileMap.cameraPos.x), (int)(position.y + tileMap.cameraPos.y) , null);
             } else {
-                g.drawImage(op.filter(op2.filter(sprite, null), null), (int) position.x, (int) position.y, null);
+                g.drawImage(op.filter(op2.filter(sprite, null), null), (int)(position.x + tileMap.cameraPos.x), (int)(position.y + tileMap.cameraPos.y), null);
         }
 
         // debugging

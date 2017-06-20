@@ -3,6 +3,8 @@ package Entity;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
+import java.awt.*;
+
 /**
  * All enemy subclasses inherit from this abstract class Enemy. 
  * 
@@ -41,5 +43,6 @@ public abstract class Enemy extends MovingObject
      * Should implement animation.update();
      * Should implement updatePhysics();
      */
+    @Override
     public abstract void update();
 }

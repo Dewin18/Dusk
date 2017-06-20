@@ -13,6 +13,7 @@ public class TileMap {
 	
 	// position
 	private Vector2 position = new Vector2(0,0);
+	public Vector2 cameraPos = new Vector2(0, 0);
 	
 	// bounds
 	private int xmin;
@@ -50,9 +51,7 @@ public class TileMap {
 	
 	public void loadTiles(String s) {
 		try {
-			tileset = ImageIO.read(
-				getClass().getResourceAsStream(s)
-			);
+			tileset = ImageIO.read (getClass().getResourceAsStream(s));
 			numTilesAcross = tileset.getWidth() / tileSize;
 			tiles = new Tile[2][numTilesAcross];
 			
@@ -77,7 +76,7 @@ public class TileMap {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void loadMap(String s) {
 		try {
 			InputStream in = getClass().getResourceAsStream(s);
@@ -90,6 +89,11 @@ public class TileMap {
 			map = new int[numRows][numCols];
 			width = numCols * tileSize;
 			height = numRows * tileSize;
+
+			xmin = GamePanel.WIDTH - width;
+			xmax = 0;
+			ymin = GamePanel.HEIGHT - height;
+			ymax = 0;
 			
 			String delims = "\\s+";
 			for(int row = 0; row < numRows; row++) {
@@ -146,6 +150,10 @@ public class TileMap {
 		return getType(y, x) == TileType.ONEWAY;
 	}
 
+	public boolean isTransparent(int x, int y) {
+		return map[x][y] == 0;
+	}
+
 	public boolean isEmpty(int x, int y) {
 		return getType(y, x) == TileType.EMPTY;
 	}
@@ -169,7 +177,11 @@ public class TileMap {
 	public Vector2 getMapTileCoords(Vector2i tileCoords) {
 		return new Vector2(tileCoords.x * tileSize + position.x, tileCoords.y * tileSize + position.y);
 	}
-	
+
+	public int getNumRows() { return numRows; }
+	public int getNumCols() { return numCols; }
+	public int getMapTile(int x, int y) { return map[x][y]; }
+
 	public void setPosition(double x, double y) {
 		this.position.x += (x - this.position.x) * tween;
 		this.position.y += (y - this.position.y) * tween;
