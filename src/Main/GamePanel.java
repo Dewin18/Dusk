@@ -1,6 +1,7 @@
 package Main;
 
 import java.awt.*;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.event.*;
 import java.security.Key;
@@ -26,7 +27,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     // image
     private BufferedImage image;
     private Graphics2D g;
-
+    public Canvas canvas;
+    public BufferStrategy strategy;
 
     // manager
     private GameStateManager gsm;
@@ -37,6 +39,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
         super();
         setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         setFocusable(true);
+        setIgnoreRepaint(true);
         requestFocus();
     }
 
@@ -53,10 +56,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
 
     private void init()
     {
-
-        image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-        g = (Graphics2D) image.getGraphics();
-
+        //image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        //g = (Graphics2D) image.getGraphics();
+        //g = (Graphics2D)strategy.getDrawGraphics();
         isRunning = true;
 
         gsm = new GameStateManager();
@@ -71,11 +73,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
         while (isRunning)
         {
             Time.updateDeltaTime();
+            g = (Graphics2D)strategy.getDrawGraphics();
             update();
             draw();
-            drawToScreen();
+            //drawToScreen();
+            g.dispose();
+            strategy.show();
             wait = Time.calculateWaitTime();
-            if (wait < 0) wait = 5;
+            if (wait < 0) wait = 10;
             try
             {
                 Thread.sleep(wait);

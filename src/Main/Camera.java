@@ -3,6 +3,7 @@ package Main;
 import Entity.Player;
 import TileMap.TileMap;
 import TileMap.Vector2;
+import TileMap.Vector2i;
 
 import java.awt.*;
 
@@ -14,7 +15,7 @@ public class Camera
 
     // position and size
     private Vector2 position = new Vector2(0, 0);
-    private Vector2 size;
+    private Vector2i size;
     private double scale;
     private double tween = 0.08;
     private int tileSize;
@@ -37,14 +38,15 @@ public class Camera
     {
         this.tileMap = tileMap;
         this.player = player;
-
-        size = new Vector2(GamePanel.WIDTH, GamePanel.HEIGHT);
+        size = new Vector2i(GamePanel.WIDTH, GamePanel.HEIGHT);
         tileSize = tileMap.getTileSize();
 
-        setBounds(tileMap.getWidth() - tileSize, tileMap.getHeight() - 2 * tileSize, 0, 0);
+        setBounds(tileMap.getWidth() - tileSize, tileMap.getHeight() - tileSize, 0, 0);
+        System.out.println(tileMap.getHeight());
+        System.out.println(tileMap.getWidth());
 
-        numRowsToDraw = GamePanel.HEIGHT / tileSize + 2;
-        numColsToDraw = GamePanel.WIDTH / tileSize + 2;
+        numRowsToDraw = size.y / tileSize + 2;
+        numColsToDraw = size.x / tileSize + 2;
         numRows = tileMap.getNumRows();
         numCols = tileMap.getNumCols();
     }
@@ -75,20 +77,20 @@ public class Camera
      */
     public void setBounds(int i1, int i2, int i3, int i4)
     {
-        xmin = GamePanel.WIDTH - i1;
-        ymin = GamePanel.WIDTH - i2;
+        xmin = size.x - i1;
+        ymin = size.y - i2;
         xmax = i3;
         ymax = i4;
     }
 
     /**
-     * Check if camera is out of bounds and puts it in place.
+     * Check if camera is out of bounds and put it in place.
      */
     private void fixBounds()
     {
         if (position.x < xmin) position.x = xmin;
-        if (position.y < ymin) position.y = ymin;
         if (position.x > xmax) position.x = xmax;
+        if (position.y < ymin) position.y = ymin;
         if (position.y > ymax) position.y = ymax;
     }
 
