@@ -1,32 +1,24 @@
 package Entity;
 
-import static Entity.CharacterState.IDLE;
-import static Entity.CharacterState.JUMPING;
-import static Entity.CharacterState.WALKING;
-
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-
 import Main.Time;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
+import static Entity.CharacterState.JUMPING;
+import static Entity.CharacterState.WALKING;
+
 public class EvilTwin extends Enemy
 {
-    private double minFallSpeed;
-
     private final int[] NUMFRAMES = {1, 6};
     private final int[] FRAMEWIDTHS = {128, 128};
     private final int[] FRAMEHEIGHTS = {128, 128};
     private final int[] SPRITEDELAYS = {-1, 8};
+    private double minFallSpeed;
 
     public EvilTwin(TileMap tm)
     {
         super(tm);
-        health = 1;
+        health = 5;
         damage = 1;
         minFallSpeed = 0.4;
         velocity = new Vector2(0, 0);
@@ -132,5 +124,11 @@ public class EvilTwin extends Enemy
         }
         animation.setFrames(sprites.get(statenr));
         animation.setDelay(SPRITEDELAYS[statenr]);
+    }
+
+    @Override
+    protected void die()
+    {
+        //TODO trigger death animation
     }
 }

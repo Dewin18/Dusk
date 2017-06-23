@@ -3,8 +3,6 @@ package Entity;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
-import java.awt.*;
-
 /**
  * All enemy subclasses inherit from this abstract class Enemy.
  *
@@ -34,6 +32,27 @@ public abstract class Enemy extends MovingObject
      * @param spriteName is the selected spriteSheet for this enemy
      */
     public abstract void initEnemy(Vector2 position, String spriteName);
+
+    /**
+     * Damage this enemy by a given amount
+     *
+     * @param damage the damage being done
+     */
+    public void getHit(int damage)
+    {
+        //TODO Toggle flinching and short invulnerability
+        health -= damage;
+        if (health <= 0)
+        {
+            die();
+            notifyObservers();
+        }
+    }
+
+    /**
+     * Trigger the dying animation and actions triggered with it
+     */
+    protected abstract void die();
 
     /**
      * Update all enemy actions

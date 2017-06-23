@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public abstract class MapObject
+public abstract class MapObject extends ObservableEntity
 {
 
     // tile map stuff
@@ -21,7 +21,7 @@ public abstract class MapObject
     // Position
     protected Vector2 position = new Vector2(0, 0);
 
-    // dimenstions
+    // dimensions
     protected int width;
     protected int height;
     protected double rotation = 0;
@@ -56,11 +56,6 @@ public abstract class MapObject
         this.position.y = y;
     }
 
-    public void setPosition(Vector2 position)
-    {
-        this.position = position;
-    }
-
     /**
      * Returns the current position for a MapObject
      *
@@ -69,6 +64,11 @@ public abstract class MapObject
     public Vector2 getPosition()
     {
         return this.position;
+    }
+
+    public void setPosition(Vector2 position)
+    {
+        this.position = position;
     }
 
     /**

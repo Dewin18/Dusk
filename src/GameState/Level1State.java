@@ -1,18 +1,15 @@
 package GameState;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.util.ArrayList;
-
-import Entity.Enemy;
-import Entity.EvilTwin;
-import Entity.Player;
+import Entity.*;
 import Main.Camera;
 import Main.GamePanel;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
-public class Level1State extends GameState
+import java.awt.*;
+import java.util.ArrayList;
+
+public class Level1State extends GameState implements EntityObserver
 {
 
     private TileMap tileMap;
@@ -115,7 +112,18 @@ public class Level1State extends GameState
         }
 
         enemy.initEnemy(position, spriteSheet);
+        enemy.addObserver(this);
         enemyList.add(enemy);
         player.addCollisionCheck(enemy);
+    }
+
+    @Override
+    public void reactToChange(ObservableEntity o)
+    {
+        if (o instanceof Enemy)
+        {
+            enemyList.remove(o);
+            player.addObjectToBeRemoved((MapObject) o);
+        }
     }
 }

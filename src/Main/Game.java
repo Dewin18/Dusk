@@ -1,6 +1,6 @@
 package Main;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 import java.awt.*;
 
 public class Game
@@ -13,6 +13,7 @@ public class Game
         GamePanel panel = new GamePanel();
         panel.setLayout(null);
         Canvas canvas = new Canvas();
+        canvas.addKeyListener(panel);
         canvas.setIgnoreRepaint(true);
         canvas.setBounds(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
         panel.add(canvas);
