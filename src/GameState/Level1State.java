@@ -5,12 +5,14 @@ import Main.Camera;
 import Main.GamePanel;
 import TileMap.TileMap;
 import TileMap.Vector2;
+import TileMap.Background;
 
 import java.awt.*;
 import java.util.ArrayList;
 
 public class Level1State extends GameState implements EntityObserver
 {
+    private Background bg;
 
     private TileMap tileMap;
     private Player player;
@@ -28,16 +30,22 @@ public class Level1State extends GameState implements EntityObserver
 
     public void init()
     {
+        initBackground();
         initMap();
         initPlayer();
         initCamera();
         initEnemies();
     }
 
+    private void initBackground()
+    {
+        bg = new Background("forestbackground.png");
+    }
+
     private void initMap()
     {
         tileMap = new TileMap(128);
-        tileMap.loadTiles("/Sprites/terrain_spritesheet_128.png");
+        tileMap.loadTiles("/Sprites/terrain_spritesheet_128_2.png");
         tileMap.loadMap("/Maps/level1-1.map");
         tileMap.setPosition(0, 0);
     }
@@ -70,6 +78,7 @@ public class Level1State extends GameState implements EntityObserver
         }
 
         camera.update();
+        bg.setPosition(tileMap.cameraPos);
     }
 
     public void draw(Graphics2D g)
@@ -77,6 +86,8 @@ public class Level1State extends GameState implements EntityObserver
         // clear screen
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
+
+        bg.draw(g);
 
         player.draw(g);
         for (Enemy enemy : enemyList)
@@ -89,9 +100,7 @@ public class Level1State extends GameState implements EntityObserver
         camera.draw(g);
     }
 
-    public void handleInput()
-    {
-    }
+    public void handleInput(){}
 
     /**
      * Create new enemies by calling this method.

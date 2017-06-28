@@ -125,8 +125,14 @@ public abstract class MapObject extends ObservableEntity
     void updateForce() {
         if (forceToAdd.x != 0) {
             velocity.addToThis(forceToAdd);
-            forceToAdd.x -= 1 / (forceToAdd.x) * 6;
-            if (forceToAdd.x < 3) forceToAdd.x = 0;
+            if (forceToAdd.x < 0)
+            {
+                forceToAdd.x -= 1 / (forceToAdd.x) * 6;
+            } else
+            {
+                forceToAdd.x -= 1 / (forceToAdd.x) * 6;
+            }
+            if (Math.abs(forceToAdd.x) < 3) forceToAdd.x = 0;
             forceCurrentTime++;
         }
     }

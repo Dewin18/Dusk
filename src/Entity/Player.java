@@ -269,7 +269,7 @@ public class Player extends MovingObject
 
     private void reactToAttackCollision(Enemy e)
     {
-        e.getHit(dmg);
+        e.getHit(dmg, position.x);
     }
 
     private void reactToCollision(MapObject m)
