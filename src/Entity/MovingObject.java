@@ -13,10 +13,9 @@ public abstract class MovingObject extends MapObject
 {
 
     // debugging
-    private final boolean debugging = true;
+    private final boolean debugging = false;
 
     // Movement
-    Vector2 velocity;
     Vector2 oldPosition;
     Vector2 oldVelocity;
     double jumpSpeed;
@@ -24,6 +23,7 @@ public abstract class MovingObject extends MapObject
     double gravity = 0.5;
     double maxFallingSpeed;
     double minJumpingSpeed;
+    double knockback;
 
     // Attack collision
     CollisionBox attackCollider;
@@ -376,7 +376,9 @@ public abstract class MovingObject extends MapObject
 
     abstract void setAnimation(CharacterState state);
 
-    abstract public void update();
+    public void update() {
+        super.update();
+    }
 
     public Vector2 getVelocity()
     {

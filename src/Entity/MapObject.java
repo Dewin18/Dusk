@@ -20,6 +20,7 @@ public abstract class MapObject extends ObservableEntity
 
     // Position
     protected Vector2 position = new Vector2(0, 0);
+    protected Vector2 velocity = new Vector2(0, 0);
 
     // dimensions
     protected int width;
@@ -29,6 +30,10 @@ public abstract class MapObject extends ObservableEntity
     // collision box
     protected CollisionBox collisionBox;
     protected Vector2 collisionOffset;
+
+    // force stuff
+    protected int forceCurrentTime, forceTotalTime = 0;
+    protected Vector2 forceToAdd = Vector2.ZERO;
 
     // animation
     Animation animation;
@@ -100,6 +105,37 @@ public abstract class MapObject extends ObservableEntity
         {
             e1.printStackTrace();
         }
+    }
+
+    /**
+     * Add force to a current object that decays over the specified amount of time.
+     *
+     * @param force force to add
+     * @param time  time for the force to decay over
+     */
+    void addForce(Vector2 force, int time) {
+        forceCurrentTime = 0;
+        forceTotalTime = time;
+        forceToAdd = force;
+    }
+
+    /**
+     * Update the current force.
+     */
+    void updateForce() {
+        if (forceToAdd.x != 0) {
+            velocity.addToThis(forceToAdd);
+            forceToAdd.x -= 1 / (forceToAdd.x) * 6;
+            if (forceToAdd.x < 3) forceToAdd.x = 0;
+            forceCurrentTime++;
+        }
+    }
+
+    /**
+     * Main update method.
+     */
+    public void update() {
+        updateForce();
     }
 
     public abstract void draw(Graphics2D g);

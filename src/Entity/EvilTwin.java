@@ -13,12 +13,14 @@ public class EvilTwin extends Enemy
     private final int[] FRAMEWIDTHS = {128, 128};
     private final int[] FRAMEHEIGHTS = {128, 128};
     private final int[] SPRITEDELAYS = {-1, 8};
+    protected int currentInvulnerableTime = invulnerableTime = 9;
     private double minFallSpeed;
+    private int currentFlinchTime, flinchTime = 30;
 
     public EvilTwin(TileMap tm)
     {
         super(tm);
-        health = 5;
+        health = 10;
         damage = 1;
         minFallSpeed = 0.4;
         velocity = new Vector2(0, 0);
@@ -52,8 +54,7 @@ public class EvilTwin extends Enemy
     public void update()
     {
         moveAround();
-        animation.update();
-        updatePhysics();
+        super.update();
     }
 
     private void moveAround()
@@ -83,12 +84,12 @@ public class EvilTwin extends Enemy
                 if (isPushingLeftWall)
                 {
                     isFacingRight = true;
-                    position.x += 5;
+                    //position.x += 5;
                     isPushingLeftWall = false;
                 } else if (isPushingRightWall)
                 {
                     isFacingRight = false;
-                    position.x -= 5;
+                    //position.x -= 5;
                     isPushingRightWall = false;
                 }
                 break;
@@ -101,6 +102,10 @@ public class EvilTwin extends Enemy
                     setAnimation(WALKING);
                     velocity.y = 0;
                 }
+                break;
+            case FLINCHING:
+                if (checkAndHandleStillFlinching()) ;
+                else stopFlinching();
                 break;
         }
     }
@@ -121,14 +126,29 @@ public class EvilTwin extends Enemy
             case JUMPING:
                 statenr = 0;
                 break;
+            case FLINCHING:
+                statenr = 1;
+                break;
         }
         animation.setFrames(sprites.get(statenr));
         animation.setDelay(SPRITEDELAYS[statenr]);
     }
 
     @Override
-    protected void die()
-    {
+    protected void die() {
         //TODO trigger death animation
     }
+
+    private boolean checkAndHandleStillFlinching() {
+        if (currentFlinchTime < flinchTime) {
+            currentFlinchTime += Math.round(Time.deltaTime);
+            return true;
+        }
+        return false;
+    }
+
+    private void stopFlinching() {
+        setAnimation(JUMPING);
+    }
+
 }

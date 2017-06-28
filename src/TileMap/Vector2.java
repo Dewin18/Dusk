@@ -6,6 +6,7 @@ public class Vector2
     public static final Vector2 DOWN = new Vector2(0, 1);
     public static final Vector2 LEFT = new Vector2(-1, 0);
     public static final Vector2 RIGHT = new Vector2(1, 0);
+    public static final Vector2 ZERO = new Vector2(0, 0);
     public double x = 0;
     public double y = 0;
 

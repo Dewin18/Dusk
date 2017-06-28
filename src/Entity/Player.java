@@ -14,7 +14,6 @@ import static Entity.CharacterState.*;
 public class Player extends MovingObject
 {
 
-    private final double knockBack = 10;
     private final int flinchTime = 5;
     private final int attackTime = 8;
     private final int invulnerabilityTime = 80;
@@ -22,6 +21,7 @@ public class Player extends MovingObject
     private final int[] FRAMEWIDTHS = {128, 128, 128, 256};
     private final int[] FRAMEHEIGHTS = {128, 128, 128, 128};
     private final int[] SPRITEDELAYS = {-1, 7, -1, -1};
+    double knockback = 15;
     private int health;
     private int exp;
     private int lives;
@@ -284,13 +284,11 @@ public class Player extends MovingObject
             Time.freeze(15);
             if (e.position.x < this.position.x)
             {
-                velocity.x = knockBack;
-                velocity.y = 0;
+                velocity.x = knockback;
                 rotation = 45;
             } else
             {
-                velocity.x = -knockBack;
-                velocity.y = 0;
+                velocity.x = -knockback;
                 rotation = -45;
             }
             setInvulnerable(true);
