@@ -16,7 +16,6 @@ public abstract class MovingObject extends MapObject
     private final boolean debugging = false;
 
     // Movement
-    Vector2 velocity;
     Vector2 oldPosition;
     Vector2 oldVelocity;
     double jumpSpeed;
@@ -24,6 +23,11 @@ public abstract class MovingObject extends MapObject
     double gravity = 0.5;
     double maxFallingSpeed;
     double minJumpingSpeed;
+    double knockback;
+
+    // Attack collision
+    CollisionBox attackCollider;
+    Vector2 attackColliderOffset;
 
     // collision states
     CharacterState currentState = CharacterState.IDLE;
@@ -38,18 +42,15 @@ public abstract class MovingObject extends MapObject
     boolean isOnPlatform;
 
     int framesPassedUntilDrop = 6;
+    boolean isFacingRight = true;
+    float alpha = 1.0f;
     private int framesToIgnoreGround = 5;
     private double groundY, ceilingY, leftWallX, rightWallX;
     private int mapCollisionSensorDepth = 25;
-
-    boolean isFacingRight = true;
-
     private double triggerLineY, triggerLineX, triggerLineX2, triggerLineY2;
     private Rectangle drawRect = new Rectangle(0, 0, 0, 0);
     private Rectangle drawRect2 = new Rectangle(0, 0, 0, 0);
     private BufferedImage drawImg = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_ARGB);
-
-    float alpha = 1.0f;
 
     public MovingObject(TileMap tm)
     {
@@ -92,8 +93,6 @@ public abstract class MovingObject extends MapObject
      */
     public void draw(Graphics2D g)
     {
-        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
-        g.setComposite(ac);
         BufferedImage sprite = animation.getImage();
         AffineTransform rotateInstance = AffineTransform.getRotateInstance(Math.toRadians(rotation), width / 2, height / 2);
         AffineTransform scaleInstance = AffineTransform.getScaleInstance(-1, 1);
@@ -105,7 +104,7 @@ public abstract class MovingObject extends MapObject
             g.drawImage(op.filter(sprite, null), (int) (position.x + tileMap.cameraPos.x), (int) (position.y + tileMap.cameraPos.y), null);
         } else
         {
-            g.drawImage(op.filter(op2.filter(sprite, null), null), (int) (position.x + tileMap.cameraPos.x), (int) (position.y + tileMap.cameraPos.y), null);
+            g.drawImage(op.filter(op2.filter(sprite, null), null), (int) (position.x - (width - tileSize) + tileMap.cameraPos.x), (int) (position.y + tileMap.cameraPos.y), null);
         }
 
         // debugging
@@ -350,26 +349,36 @@ public abstract class MovingObject extends MapObject
         // Collision Box
         g.setColor(Color.BLUE);
         int[] a = collisionBox.toXYWH();
-        g.drawRect(a[0], a[1], a[2], a[3]);
-        // Ground line
-        g.setColor(Color.MAGENTA);
-        g.drawLine(0, (int) groundY, 500, (int) groundY);
-        // Ground detection lines
-        g.setColor(Color.YELLOW);
-        g.drawLine(0, (int) triggerLineY, 500, (int) triggerLineY);
-        g.drawLine((int) triggerLineX, 0, (int) triggerLineX, 500);
-        // Rectangles over the tiles that are being checked
-        g.setColor(new Color(5, 5, 5, 150));
-        g.fillRect(drawRect.x, drawRect.y, drawRect.width, drawRect.height);
-        g.fillRect(drawRect2.x, drawRect2.y, drawRect2.width, drawRect2.height);
-        // The image of the left bot tile shown in the top left corner
-        g.drawImage(drawImg, 0, 0, null);
+        g.drawRect(a[0] + (int)tileMap.cameraPos.x, a[1] + (int)tileMap.cameraPos.y, a[2], a[3]);
+        if (attackCollider != null)
+        {
+            int[] b = attackCollider.toXYWH();
+            g.drawRect(b[0] + (int)tileMap.cameraPos.x, b[1] + (int)tileMap.cameraPos.y, b[2], b[3]);
+        }
+        if (false)
+        {
+            // Ground line
+            g.setColor(Color.MAGENTA);
+            g.drawLine(0, (int) groundY, 500, (int) groundY);
+            // Ground detection lines
+            g.setColor(Color.YELLOW);
+            g.drawLine(0, (int) triggerLineY, 500, (int) triggerLineY);
+            g.drawLine((int) triggerLineX, 0, (int) triggerLineX, 500);
+            // Rectangles over the tiles that are being checked
+            g.setColor(new Color(5, 5, 5, 150));
+            g.fillRect(drawRect.x, drawRect.y, drawRect.width, drawRect.height);
+            g.fillRect(drawRect2.x, drawRect2.y, drawRect2.width, drawRect2.height);
+            // The image of the left bot tile shown in the top left corner
+            g.drawImage(drawImg, 0, 0, null);
+        }
     }
 
 
     abstract void setAnimation(CharacterState state);
 
-    abstract public void update();
+    public void update() {
+        super.update();
+    }
 
     public Vector2 getVelocity()
     {

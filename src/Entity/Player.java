@@ -2,15 +2,11 @@ package Entity;
 
 import Handlers.KeyHandler;
 import Handlers.Keys;
-import Main.GamePanel;
 import Main.Time;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import static Entity.CharacterState.*;
@@ -18,33 +14,33 @@ import static Entity.CharacterState.*;
 public class Player extends MovingObject
 {
 
+    private final int flinchTime = 5;
+    private final int attackTime = 8;
+    private final int invulnerabilityTime = 80;
+    private final int[] NUMFRAMES = {1, 6, 1, 1};
+    private final int[] FRAMEWIDTHS = {128, 128, 128, 256};
+    private final int[] FRAMEHEIGHTS = {128, 128, 128, 128};
+    private final int[] SPRITEDELAYS = {-1, 7, -1, -1};
+    double knockback = 15;
     private int health;
     private int exp;
     private int lives;
-    private int dmg;
-
+    private int dmg = 3;
+    private ArrayList<MapObject> objectsToRemove;
+    private boolean isAttacking = false;
     private boolean isInvulnerable = false;
     private boolean isRising = false;
     private boolean isFalling = false;
     private double minFallSpeed;
     private boolean hasJumped; // for canceling repeat jumps by keeping the button pressed
-
     private boolean hasAttack = true;
     private boolean hasDoubleJump = false;
     private boolean hasDash = false;
-
-    private final double knockBack = 10;
-    private final int flinchTime = 5;
     private int currentFlinchTime = flinchTime;
-    private final int invulnerabilityTime = 80;
+    private int currentAttackTime = attackTime;
     private boolean isBlinking = false;
     private int invulnerabilityTimer = invulnerabilityTime;
     private ArrayList<MapObject> mapObjects = new ArrayList<>();
-
-    private final int[] NUMFRAMES = {1, 6, 1};
-    private final int[] FRAMEWIDTHS = {128, 128, 128};
-    private final int[] FRAMEHEIGHTS = {128, 128, 128};
-    private final int[] SPRITEDELAYS = {-1, 7, -1};
 
     public Player(TileMap tm)
     {
@@ -69,6 +65,8 @@ public class Player extends MovingObject
         collisionBox.setCenter(position);
         collisionBox.setHalfSize(new Vector2(tileSize / 3, tileSize / 3 - 18));
         collisionOffset = new Vector2(tileSize / 2 - 1, collisionBox.halfSize.y + 38);
+        // set up attack collider
+        attackColliderOffset = new Vector2(tileSize + tileSize/3, tileSize / 2);
     }
 
     @Override
@@ -80,12 +78,17 @@ public class Player extends MovingObject
         updateInvulnerability();
         checkCollision();
         updateAlpha();
+        checkAndHandleAttack();
     }
 
     @Override
     public void draw(Graphics2D g)
     {
+        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha);
+        g.setComposite(ac);
         super.draw(g);
+        AlphaComposite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1);
+        g.setComposite(a);
     }
 
     //---- State handling ---------------------------------------------------------------------------------
@@ -95,65 +98,41 @@ public class Player extends MovingObject
         {
             case IDLE:
                 setVelocity(0, 0);
-                // Check if in air
                 if (checkAndHandleInAir()) break;
-                // Check if Keys.JUMP has been released
                 if (checkAndHandleJumpReleased()) ;
-                // Check if walking
                 if (checkAndHandleWalking()) break;
-                    // Check for platform drop
                 else if (checkAndHandlePlatformDrop()) ;
-                    // Check for jump
                 else if (checkAndHandleJump()) break;
                 break;
             case WALKING:
-                // Check if in air
                 if (checkAndHandleInAir()) break;
-                // Check if Keys.JUMP has been released
                 if (checkAndHandleJumpReleased()) ;
-                // Check if idling
                 if (checkAndHandleIdling()) break;
-                // Check for walls
                 if (checkAndHandleWalls()) ;
-                // Check for platform drop
                 if (checkAndHandlePlatformDrop()) ;
-                    // Check for jump
                 else if (checkAndHandleJump()) break;
                 break;
             case JUMPING:
-                // Update isRising boolean
                 updateIsRising();
-                // Update y velocity
                 updateYVelocity();
-                // Check if on ground
                 if (isOnGround)
                 {
-                    // Check if idling
                     if (checkAndHandleIdling()) ;
-                        // Check if walking
                     else
                     {
                         setAnimation(WALKING);
                         velocity.y = 0;
                     }
-                    // Check if Keys.JUMP has been released
                     if (checkAndHandleJumpReleased()) ;
                 }
-                // Check for preemptive release of JUMP while jumping
                 checkForEarlyReleaseOfJump();
-                // Update isFalling boolean
                 updateIsFalling();
-                // Update rising/falling animation
                 if (checkAndHandleJumpDirectionChange()) ;
-                // Check if both LEFT and RIGHT are being pressed
                 if (checkAndHandleLeftAndRightPressed()) break;
-                    // Check for walls
                 else if (checkAndHandleWalls()) ;
                 break;
             case FLINCHING:
-                // Check if still flinching
                 if (checkAndHandleStillFlinching()) ;
-                    // Start blinking and stop flinching
                 else stopFlinching();
                 break;
         }
@@ -163,35 +142,51 @@ public class Player extends MovingObject
     void setAnimation(CharacterState state)
     {
         currentState = state;
-        int statenr = 0;
-        switch (currentState)
+        if (!isAttacking)
         {
-            case IDLE:
-                statenr = 0;
-                break;
-            case WALKING:
-                statenr = 1;
-                break;
-            case JUMPING:
-                if (isFalling) statenr = 0;
-                else statenr = 0;
-                break;
-            case FLINCHING:
-                statenr = 2;
-                break;
+            int statenr = 0;
+            switch (currentState)
+            {
+                case IDLE:
+                    statenr = 0;
+                    break;
+                case WALKING:
+                    statenr = 1;
+                    break;
+                case JUMPING:
+                    if (isFalling) statenr = 0;
+                    else statenr = 0;
+                    break;
+                case FLINCHING:
+                    statenr = 2;
+                    break;
+                case ATTACKING:
+                    statenr = 3;
+                    break;
+            }
+            animation.setFrames(sprites.get(statenr));
+            animation.setDelay(SPRITEDELAYS[statenr]);
+            width = FRAMEWIDTHS[statenr];
+            height = FRAMEHEIGHTS[statenr];
         }
-        animation.setFrames(sprites.get(statenr));
-        animation.setDelay(SPRITEDELAYS[statenr]);
     }
 
-    public void setInvulnerable(boolean b)
+    private void setAnimation(int statenr)
     {
-        isInvulnerable = b;
+        animation.setFrames(sprites.get(statenr));
+        animation.setDelay(SPRITEDELAYS[statenr]);
+        width = FRAMEWIDTHS[statenr];
+        height = FRAMEHEIGHTS[statenr];
     }
 
     public boolean isInvulnerable()
     {
         return isInvulnerable;
+    }
+
+    public void setInvulnerable(boolean b)
+    {
+        isInvulnerable = b;
     }
 
     private void updateAlpha()
@@ -219,6 +214,24 @@ public class Player extends MovingObject
         mapObjects.add(mapObject);
     }
 
+    public void removeCollisionCheck(MapObject mapObject)
+    {
+        mapObjects.remove(mapObject);
+    }
+
+    public void addObjectToBeRemoved(MapObject o)
+    {
+        if (objectsToRemove == null)
+        {
+            ArrayList<MapObject> list = new ArrayList<>();
+            list.add(o);
+            objectsToRemove = list;
+        } else
+        {
+            objectsToRemove.add(o);
+        }
+    }
+
     private void checkCollision()
     {
         for (MapObject m : mapObjects)
@@ -230,6 +243,35 @@ public class Player extends MovingObject
         }
     }
 
+    private void checkAttackCollision()
+    {
+        for (MapObject m : mapObjects)
+        {
+            if (attackCollider.overlaps(m.collisionBox))
+            {
+                reactToAttackCollision(m);
+            }
+        }
+        if (objectsToRemove != null)
+        {
+            for (MapObject o : objectsToRemove)
+            {
+                removeCollisionCheck(o);
+            }
+            objectsToRemove = null;
+        }
+    }
+
+    private void reactToAttackCollision(MapObject m)
+    {
+        if (m instanceof Enemy) reactToAttackCollision((Enemy) m);
+    }
+
+    private void reactToAttackCollision(Enemy e)
+    {
+        e.getHit(dmg, position.x);
+    }
+
     private void reactToCollision(MapObject m)
     {
         if (m instanceof Enemy) reactToCollision((Enemy) m);
@@ -239,16 +281,14 @@ public class Player extends MovingObject
     {
         if (!isInvulnerable())
         {
-            Time.freeze(10);
+            Time.freeze(15);
             if (e.position.x < this.position.x)
             {
-                velocity.x = knockBack;
-                velocity.y = 0;
+                velocity.x = knockback;
                 rotation = 45;
             } else
             {
-                velocity.x = -knockBack;
-                velocity.y = 0;
+                velocity.x = -knockback;
                 rotation = -45;
             }
             setInvulnerable(true);
@@ -260,6 +300,35 @@ public class Player extends MovingObject
     }
 
     //---- Helpers for state handling ---------------------------------------------------------------------------------
+    private void checkAndHandleAttack()
+    {
+        if (KeyHandler.hasJustBeenPressed(Keys.ATTACK) && !isAttacking && currentState != FLINCHING)
+        {
+            if (isFacingRight)
+            {
+                attackCollider = new CollisionBox(position.add(attackColliderOffset), new Vector2(tileSize / 3, tileSize / 3));
+            } else
+            {
+                attackCollider = new CollisionBox(position.add(attackColliderOffset).addX(attackColliderOffset.x * -2 + tileSize), new Vector2(tileSize / 3, tileSize / 3));
+            }
+            setAnimation(3);
+            isAttacking = true;
+            currentAttackTime = 0;
+            checkAttackCollision();
+        }
+        else if (currentAttackTime < attackTime)
+        {
+            checkAttackCollision();
+            currentAttackTime++;
+            if (currentAttackTime == attackTime)
+            {
+                isAttacking = false;
+                setAnimation(currentState);
+                attackCollider = null;
+            }
+        }
+    }
+
     private boolean checkAndHandleInAir()
     {
         if (!isOnGround)
@@ -326,13 +395,13 @@ public class Player extends MovingObject
         {
             if (isPushingRightWall) velocity.x = 0;
             else velocity.x = walkSpeed;
-            isFacingRight = true;
+            if (!isAttacking) isFacingRight = true;
             return true;
         } else if (KeyHandler.isPressed(Keys.LEFT))
         {
             if (isPushingLeftWall) velocity.x = 0;
             else velocity.x = -walkSpeed;
-            isFacingRight = false;
+            if (!isAttacking) isFacingRight = false;
             return true;
         }
         return false;
@@ -409,15 +478,15 @@ public class Player extends MovingObject
         rotation = 0;
     }
 
+    public int getHealth()
+    {
+        return health;
+    }
+
     //---- Getters and setters ---------------------------------------------------------------------------------
     public void setHealth(int health)
     {
         this.health = health;
-    }
-
-    public int getHealth()
-    {
-        return health;
     }
 
     public CharacterState getCharacterState()

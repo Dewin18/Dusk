@@ -1,5 +1,6 @@
 package Entity;
 
+import Main.Time;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
@@ -22,6 +23,11 @@ public abstract class Enemy extends MovingObject
      */
     protected int damage;
 
+    protected boolean isInvulnerable;
+    protected int invulnerableTime;
+    protected int currentInvulnerableTime;
+    protected double knockback = 6.75;
+
     public Enemy(TileMap tm)
     {
         super(tm);
@@ -36,12 +42,80 @@ public abstract class Enemy extends MovingObject
     public abstract void initEnemy(Vector2 position, String spriteName);
 
     /**
+     * Damage this enemy by a given amount.
+     *
+     * @param damage the damage being done
+     */
+    public void getHit(int damage, double playerXPosition)
+    {
+        if (!isInvulnerable) {
+            setAnimation(CharacterState.FLINCHING);
+            setInvulnerable(true);
+            //velocity.x += knockback;
+            if (playerXPosition < position.x)
+            {
+                addForce(new Vector2(knockback, 0), 30);
+            } else
+            {
+                addForce(new Vector2(-knockback, 0), 30);
+            }
+            health -= damage;
+            if (health <= 0) {
+                die();
+                notifyObservers();
+            }
+        }
+    }
+
+    /**
+     * Update the invulnerable state.
+     */
+    private void updateInvulnerability() {
+        if (currentInvulnerableTime < invulnerableTime) {
+            currentInvulnerableTime += Math.round(Time.deltaTime);
+        } else if (isInvulnerable) {
+            setInvulnerable(false);
+            setAnimation(CharacterState.JUMPING);
+        }
+    }
+
+    /**
+     * Set the invulnerable state of this enemy.
+     *
+     * @param b the invulnerability state
+     */
+    public void setInvulnerable(boolean b) {
+        isInvulnerable = b;
+        if (b) {
+            currentInvulnerableTime = 0;
+        }
+    }
+
+    /**
+     * Trigger the dying animation and actions triggered with it
+     */
+    protected abstract void die();
+
+    /**
      * Update all enemy actions
      *
      * Should implement the enemy movements e.g. a private method moveAround();
-     * Should implement animation.update();
-     * Should implement updatePhysics();
      */
     @Override
-    public abstract void update();
+    public void update() {
+        updateInvulnerability();
+        animation.update();
+        super.update();
+        updatePhysics();
+    }
+
+    /**
+     * Draw the sprite on the screen.
+     *
+     * @param g the graphic context to be drawn on
+     */
+    @Override
+    public void draw(Graphics2D g) {
+        super.draw(g);
+    }
 }

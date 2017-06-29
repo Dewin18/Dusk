@@ -1,32 +1,26 @@
 package Entity;
 
-import static Entity.CharacterState.IDLE;
-import static Entity.CharacterState.JUMPING;
-import static Entity.CharacterState.WALKING;
-
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
-
 import Main.Time;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
+import static Entity.CharacterState.JUMPING;
+import static Entity.CharacterState.WALKING;
+
 public class EvilTwin extends Enemy
 {
-    private double minFallSpeed;
-
     private final int[] NUMFRAMES = {1, 6};
     private final int[] FRAMEWIDTHS = {128, 128};
     private final int[] FRAMEHEIGHTS = {128, 128};
     private final int[] SPRITEDELAYS = {-1, 8};
+    protected int currentInvulnerableTime = invulnerableTime = 9;
+    private double minFallSpeed;
+    private int currentFlinchTime, flinchTime = 30;
 
     public EvilTwin(TileMap tm)
     {
         super(tm);
-        health = 1;
+        health = 10;
         damage = 1;
         minFallSpeed = 0.4;
         velocity = new Vector2(0, 0);
@@ -60,8 +54,7 @@ public class EvilTwin extends Enemy
     public void update()
     {
         moveAround();
-        animation.update();
-        updatePhysics();
+        super.update();
     }
 
     private void moveAround()
@@ -91,12 +84,12 @@ public class EvilTwin extends Enemy
                 if (isPushingLeftWall)
                 {
                     isFacingRight = true;
-                    position.x += 5;
+                    //position.x += 5;
                     isPushingLeftWall = false;
                 } else if (isPushingRightWall)
                 {
                     isFacingRight = false;
-                    position.x -= 5;
+                    //position.x -= 5;
                     isPushingRightWall = false;
                 }
                 break;
@@ -109,6 +102,10 @@ public class EvilTwin extends Enemy
                     setAnimation(WALKING);
                     velocity.y = 0;
                 }
+                break;
+            case FLINCHING:
+                if (checkAndHandleStillFlinching()) ;
+                else stopFlinching();
                 break;
         }
     }
@@ -129,8 +126,29 @@ public class EvilTwin extends Enemy
             case JUMPING:
                 statenr = 0;
                 break;
+            case FLINCHING:
+                statenr = 1;
+                break;
         }
         animation.setFrames(sprites.get(statenr));
         animation.setDelay(SPRITEDELAYS[statenr]);
     }
+
+    @Override
+    protected void die() {
+        //TODO trigger death animation
+    }
+
+    private boolean checkAndHandleStillFlinching() {
+        if (currentFlinchTime < flinchTime) {
+            currentFlinchTime += Math.round(Time.deltaTime);
+            return true;
+        }
+        return false;
+    }
+
+    private void stopFlinching() {
+        setAnimation(JUMPING);
+    }
+
 }

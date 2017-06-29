@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public abstract class MapObject
+public abstract class MapObject extends ObservableEntity
 {
 
     // tile map stuff
@@ -20,8 +20,9 @@ public abstract class MapObject
 
     // Position
     protected Vector2 position = new Vector2(0, 0);
+    protected Vector2 velocity = new Vector2(0, 0);
 
-    // dimenstions
+    // dimensions
     protected int width;
     protected int height;
     protected double rotation = 0;
@@ -29,6 +30,10 @@ public abstract class MapObject
     // collision box
     protected CollisionBox collisionBox;
     protected Vector2 collisionOffset;
+
+    // force stuff
+    protected int forceCurrentTime, forceTotalTime = 0;
+    protected Vector2 forceToAdd = Vector2.ZERO;
 
     // animation
     Animation animation;
@@ -56,11 +61,6 @@ public abstract class MapObject
         this.position.y = y;
     }
 
-    public void setPosition(Vector2 position)
-    {
-        this.position = position;
-    }
-
     /**
      * Returns the current position for a MapObject
      *
@@ -69,6 +69,11 @@ public abstract class MapObject
     public Vector2 getPosition()
     {
         return this.position;
+    }
+
+    public void setPosition(Vector2 position)
+    {
+        this.position = position;
     }
 
     /**
@@ -100,6 +105,43 @@ public abstract class MapObject
         {
             e1.printStackTrace();
         }
+    }
+
+    /**
+     * Add force to a current object that decays over the specified amount of time.
+     *
+     * @param force force to add
+     * @param time  time for the force to decay over
+     */
+    void addForce(Vector2 force, int time) {
+        forceCurrentTime = 0;
+        forceTotalTime = time;
+        forceToAdd = force;
+    }
+
+    /**
+     * Update the current force.
+     */
+    void updateForce() {
+        if (forceToAdd.x != 0) {
+            velocity.addToThis(forceToAdd);
+            if (forceToAdd.x < 0)
+            {
+                forceToAdd.x -= 1 / (forceToAdd.x) * 6;
+            } else
+            {
+                forceToAdd.x -= 1 / (forceToAdd.x) * 6;
+            }
+            if (Math.abs(forceToAdd.x) < 3) forceToAdd.x = 0;
+            forceCurrentTime++;
+        }
+    }
+
+    /**
+     * Main update method.
+     */
+    public void update() {
+        updateForce();
     }
 
     public abstract void draw(Graphics2D g);
