@@ -7,6 +7,7 @@ import TileMap.Background;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
+import Main.Game;
 import Main.GamePanel;
 
 public class MenuState extends GameState
@@ -15,7 +16,7 @@ public class MenuState extends GameState
     private Background bg;
 
     private int currentChoice = 0;
-    private String[] options = {"Start", "Help", "Quit"};
+    private String[] options = {"Start", "Settings", "Quit"};
 
     private Color titleColor;
     private Font titleFont;
@@ -48,12 +49,14 @@ public class MenuState extends GameState
 
         // draw menu options
         g.setFont(font);
+        
         for (int i = 0; i < options.length; i++)
         {
             if (i == currentChoice)
             {
                 g.setColor(Color.GREEN);
-            } else
+            } 
+            else
             {
                 g.setColor(Color.LIGHT_GRAY);
             }
@@ -70,7 +73,7 @@ public class MenuState extends GameState
         }
         if (currentChoice == 1)
         {
-            // help
+           gsm.setState(GameStateManager.OPTIONSTATE);
         }
         if (currentChoice == 2)
         {
