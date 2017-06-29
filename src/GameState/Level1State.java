@@ -2,17 +2,19 @@ package GameState;
 
 import Entity.*;
 import Main.Camera;
-import Main.GamePanel;
+import TileMap.Background;
 import TileMap.TileMap;
 import TileMap.Vector2;
-import TileMap.Background;
 
 import java.awt.*;
 import java.util.ArrayList;
 
 public class Level1State extends GameState implements EntityObserver
 {
-    private Background bg;
+    private Background bg1;
+    private Background bg2;
+    private Background bg3;
+    private Background bg4;
 
     private TileMap tileMap;
     private Player player;
@@ -39,7 +41,18 @@ public class Level1State extends GameState implements EntityObserver
 
     private void initBackground()
     {
-        bg = new Background("forestbackground.png");
+        bg1 = new Background("bg1_2.png");
+        bg1.setScrollSpeed(new Vector2(0.9, 0.9));
+        bg1.setOffset(new Vector2(0, -70));
+        bg2 = new Background("bg2_2.png");
+        bg2.setScrollSpeed(new Vector2(0.7, 0.9));
+        bg2.setOffset(new Vector2(0, -130));
+        bg3 = new Background("bg3_2.png");
+        bg3.setScrollSpeed(new Vector2(0.5, 0.8));
+        bg3.setOffset(new Vector2(0, -100));
+        bg4 = new Background("bg4_2.png");
+        bg4.setScrollSpeed(new Vector2(0.3, 0.7));
+        bg4.setOffset(new Vector2(0, -110));
     }
 
     private void initMap()
@@ -78,16 +91,22 @@ public class Level1State extends GameState implements EntityObserver
         }
 
         camera.update();
-        bg.setPosition(tileMap.cameraPos);
+        bg1.setPosition(tileMap.cameraPos);
+        bg2.setPosition(tileMap.cameraPos);
+        bg3.setPosition(tileMap.cameraPos);
+        bg4.setPosition(tileMap.cameraPos);
     }
 
     public void draw(Graphics2D g)
     {
         // clear screen
-        g.setColor(Color.WHITE);
-        g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
+        //g.setColor(Color.WHITE);
+        //g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
-        bg.draw(g);
+        bg4.draw(g);
+        bg3.draw(g);
+        bg2.draw(g);
+        bg1.draw(g);
 
         player.draw(g);
         for (Enemy enemy : enemyList)
