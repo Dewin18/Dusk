@@ -309,7 +309,7 @@ public class OptionState extends GameState
         {
             checkForDuplicates();
         }
-        else if (KeyHandler.isValidKey(GamePanel.currentKey))
+        else if (KeyHandler.isValidKey(KeyHandler.getKeyPressed()))
         {
             setNewKey();
         }
@@ -319,14 +319,14 @@ public class OptionState extends GameState
     {
         duplicateWarning = false;
         
-        if (KeyHandler.isSpecialKey(GamePanel.currentKey))
+        if (KeyHandler.isSpecialKey(KeyHandler.getKeyPressed()))
         {
-            selection[currentControl] = KeyHandler.getSpecialKey(GamePanel.currentKey);
+            selection[currentControl] = KeyHandler.getSpecialKey(KeyHandler.getKeyPressed());
         }
         else
         {
             selection[currentControl] = Character
-                .toString((char) GamePanel.currentKey);
+                .toString((char)KeyHandler.getKeyPressed());
         }
     }
 

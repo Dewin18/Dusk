@@ -21,9 +21,12 @@ public class KeyHandler
     //Key Map for special keys (arrows and space)
     private static HashMap<Integer, String> specialKeysMap;
     
-    //store all new selected keys 
+    //store all new selected keys  //TODO
     private static String[] newKeys = new String[8];
 
+    //
+    private static int currentKeyPressed;
+    
     // Create a new keyState Array with the capacity of 10
     private static boolean keyState[] = new boolean[NUM_KEYS];
     // Create a new prevKeyState Array with the capacity of 10
@@ -123,5 +126,15 @@ public class KeyHandler
         }
         
         return newKeys;
+    }
+
+    public static void setKeyPressed(int keyCode)
+    {
+        currentKeyPressed = keyCode;
+    }
+    
+    public static int getKeyPressed()
+    {
+        return currentKeyPressed;
     }
 }
