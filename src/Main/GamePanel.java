@@ -10,6 +10,7 @@ import java.util.Arrays;
 import javax.swing.JPanel;
 
 import GameState.GameStateManager;
+import GameState.OptionState;
 import Handlers.KeyHandler;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener
@@ -19,6 +20,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     public static final int WIDTH = 1300;
     public static final int HEIGHT = 600;
     public static final int SCALE = 1;
+    public static int currentKey;
 
     // game thread
     private Thread thread;
@@ -32,7 +34,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
 
     // manager
     private GameStateManager gsm;
-    private KeyHandler keyHandler;
 
     public GamePanel()
     {
@@ -118,10 +119,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     public void keyPressed(KeyEvent key)
     {
         KeyHandler.keySet(key.getKeyCode(), true);
+        currentKey = key.getKeyCode();
     }
 
     public void keyReleased(KeyEvent key)
     {
         KeyHandler.keySet(key.getKeyCode(), false);
+       
     }
 }

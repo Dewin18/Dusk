@@ -8,6 +8,7 @@ public class GameStateManager
 
     public static final int MENUSTATE = 0;
     public static final int LEVEL1STATE = 1;
+    public static final int OPTIONSTATE = 2;
 
     public GameStateManager()
     {
@@ -27,6 +28,7 @@ public class GameStateManager
     {
         if (state == MENUSTATE) gameStates[state] = new MenuState(this);
         else if (state == LEVEL1STATE) gameStates[state] = new Level1State(this);
+        else if (state == OPTIONSTATE) gameStates[state] = new OptionState(this);
     }
 
     private void unloadState(int state)

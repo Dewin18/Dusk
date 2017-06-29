@@ -5,14 +5,14 @@ import java.awt.*;
 
 public class Game
 {
-
+    
     public static void main(String[] args)
     {
         System.setProperty("sun.java2d.opengl", "true");
         JFrame window = new JFrame("Dusk");
         GamePanel panel = new GamePanel();
-        panel.setLayout(null);
         Canvas canvas = new Canvas();
+        canvas.addKeyListener(panel);
         canvas.setIgnoreRepaint(true);
         canvas.setBounds(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
         panel.add(canvas);
@@ -25,5 +25,4 @@ public class Game
         canvas.createBufferStrategy(2);
         panel.strategy = canvas.getBufferStrategy();
     }
-
 }

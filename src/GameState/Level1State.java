@@ -58,8 +58,8 @@ public class Level1State extends GameState
 
     private void initEnemies()
     {
-        createEnemy("EvilTwin", new Vector2(700, 100), "enemy_spritesheet_128.png");
-        createEnemy("EvilTwin", new Vector2(600, 100), "enemy_spritesheet_128.png");
+            createEnemy("EvilTwin", new Vector2(600, 100), "enemy_spritesheet_128.png");
+            createEnemy("EvilTwin", new Vector2(700, 100), "enemy_spritesheet_128.png");
     }
 
 
