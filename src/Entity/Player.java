@@ -74,6 +74,7 @@ public class Player extends MovingObject
     {
         handleInputs();
         animation.update();
+        updateForce();
         updatePhysics();
         updateInvulnerability();
         checkCollision();
@@ -250,6 +251,7 @@ public class Player extends MovingObject
             if (attackCollider.overlaps(m.collisionBox))
             {
                 reactToAttackCollision(m);
+                addForce(new Vector2(-1, 0), 10);
             }
         }
         if (objectsToRemove != null)

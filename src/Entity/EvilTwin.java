@@ -9,10 +9,10 @@ import static Entity.CharacterState.WALKING;
 
 public class EvilTwin extends Enemy
 {
-    private final int[] NUMFRAMES = {1, 6};
-    private final int[] FRAMEWIDTHS = {128, 128};
-    private final int[] FRAMEHEIGHTS = {128, 128};
-    private final int[] SPRITEDELAYS = {-1, 8};
+    private final int[] NUMFRAMES = {1, 6, 3};
+    private final int[] FRAMEWIDTHS = {128, 128, 128};
+    private final int[] FRAMEHEIGHTS = {128, 128, 128};
+    private final int[] SPRITEDELAYS = {-1, 8, 6};
     protected int currentInvulnerableTime = invulnerableTime = 9;
     private double minFallSpeed;
     private int currentFlinchTime, flinchTime = 30;
@@ -127,7 +127,7 @@ public class EvilTwin extends Enemy
                 statenr = 0;
                 break;
             case FLINCHING:
-                statenr = 1;
+                statenr = 2;
                 break;
         }
         animation.setFrames(sprites.get(statenr));

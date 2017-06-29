@@ -58,7 +58,7 @@ public class Level1State extends GameState implements EntityObserver
     private void initMap()
     {
         tileMap = new TileMap(128);
-        tileMap.loadTiles("/Sprites/terrain_spritesheet_128_2.png");
+        tileMap.loadTiles("/Sprites/terrain_spritesheet_128_3.png");
         tileMap.loadMap("/Maps/level1-1.map");
         tileMap.setPosition(0, 0);
     }
@@ -76,8 +76,8 @@ public class Level1State extends GameState implements EntityObserver
 
     private void initEnemies()
     {
-            createEnemy("EvilTwin", new Vector2(600, 100), "enemy_spritesheet_128.png");
-            createEnemy("EvilTwin", new Vector2(700, 100), "enemy_spritesheet_128.png");
+        createEnemy("EvilTwin", new Vector2(600, 100), "enemy_spritesheet_128_2.png");
+        createEnemy("EvilTwin", new Vector2(700, 100), "enemy_spritesheet_128_2.png");
     }
 
 
