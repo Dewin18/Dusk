@@ -20,7 +20,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     public static final int WIDTH = 1300;
     public static final int HEIGHT = 600;
     public static final int SCALE = 1;
-    public static int currentKey;
 
     // game thread
     private Thread thread;
@@ -119,7 +118,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     public void keyPressed(KeyEvent key)
     {
         KeyHandler.keySet(key.getKeyCode(), true);
-        currentKey = key.getKeyCode();
+        KeyHandler.setKeyPressed(key.getKeyCode());
     }
 
     public void keyReleased(KeyEvent key)
