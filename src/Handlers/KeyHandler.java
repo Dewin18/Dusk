@@ -3,8 +3,6 @@ package Handlers;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
-import Main.GamePanel;
-
 /**
  * This Class handles all KeyEvents
  *
@@ -12,7 +10,6 @@ import Main.GamePanel;
  */
 public class KeyHandler
 {
-
     /**
      * NUM_KEYS is the number of all Keys. In this case we have 10 Keys
      */
@@ -21,10 +18,13 @@ public class KeyHandler
     //Key Map for special keys (arrows and space)
     private static HashMap<Integer, String> specialKeysMap;
     
+    private static boolean keysChanged = false;
+    
     //store all new selected keys  //TODO
     private static String[] newKeys = new String[8];
+    
+    private static int[] storedChoice = {0, 0};
 
-    //
     private static int currentKeyPressed;
     
     // Create a new keyState Array with the capacity of 10
@@ -120,11 +120,6 @@ public class KeyHandler
     
     public static String[] getNewKeys()
     {
-        for(int i =0; i < 8; i++)
-        {
-            System.out.println(newKeys[i]);
-        }
-        
         return newKeys;
     }
 
@@ -136,5 +131,35 @@ public class KeyHandler
     public static int getKeyPressed()
     {
         return currentKeyPressed;
+    }
+    
+    public static boolean keysChanged()
+    {
+        return keysChanged;
+    }
+    
+    public static void setKeysChanged(boolean used)
+    {
+        keysChanged = used;
+    }
+
+    /**
+     * 
+     * @param position
+     * @return
+     */
+    public static int getStoredChoice(int position)
+    {
+        return storedChoice[position];
+    }
+    
+    /**
+     * 
+     * @param choice
+     * @param position
+     */
+    public static void storeChoice(int choice, int position)
+    {
+        storedChoice[position] = choice;
     }
 }

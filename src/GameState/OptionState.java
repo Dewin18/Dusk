@@ -11,23 +11,40 @@ import Main.GamePanel;
 
 public class OptionState extends GameState
 {
-    private static boolean CHECK_INPUTS = false;
+    private static boolean CHECK_INPUTS = true;
     
-    private final int NAVIGATION_VGAP_INTERVAL = 380; 
+    private final int NAVIGATION_VGAP_INTERVAL = 560; 
     
     //GAP starts at center (GamePanel / 2)
     private final int TITLE_VGAP = 60;
     private final int TITLE_HGAP = 250;
     
-    //default value for selectable settings
-    private int currentChoice = 0;
-    private int currentControl = 0;
-    private int currentState = 0;
+    //constant colors for selection mode
+    private final Color SELECT_COLOR = Color.GREEN;
+    private final Color WARNING_COLOR = Color.RED;
+    private final Color DEFAULT_COLOR = Color.LIGHT_GRAY;
+    
+    //constant font style
+    private final String TITLE_FONT_SYTLE = "Arial";
+    private final String SETTINGS_FONTSTYLE = "Arial";
+    
+    //constant fontSize
+    private final int TITLE_FONT_SIZE = 25;
+    private final int SETTINGS_FONT_SIZE = 15;
+    
+    //current choice 
+    private int currentChoice;
+    
+    //current key state (up, down, left, right) selected
+    private int currentControl;
+    
+    //current state in boolean Array
+    private int currentState;
 
     private Font font;
     private Font titleFont;
     private Color titleColor;
-
+    
     private boolean[] selectionStates = new boolean[10];
     private boolean isNoKeySelected = true;
     private boolean duplicateWarning;
@@ -37,32 +54,44 @@ public class OptionState extends GameState
     private String[] settingTitles = {"SOUND", "DIFFICULTY"};
     private String[] subSoundSettings = {"ON", "OFF"};
     private String[] subDifficultySettings = {"EASY", "MEDIUM", "HARD"};
-    private String[] navigationSettings = {"BACK", "RESET", "CLEAR KEYS","SAVE"};
+    private String[] navigationSettings = {"SAVE AND BACK", "RESET", "CLEAR"};
     private String[] controlTitles = {"UP", "DOWN", "LEFT", "RIGHT", "JUMP", "HIT"};
   
- private String[] selection;
+    private String[] selection;
 
     public OptionState(GameStateManager gsm)
     {
         this.gsm = gsm;
         init();
-        System.out.println(KeyHandler.getNewKeys());
     }
 
     public void init()
     {
+        initChoiceAndStates();
         initStateList();
         initFonts();
         initDefaultSettings();
-        
         selectionStates[0] = true;
+        
+        if(KeyHandler.keysChanged())
+        {
+            selection = KeyHandler.getNewKeys();
+            currentChoice = KeyHandler.getStoredChoice(0);
+        }
+    }
+    
+    private void initChoiceAndStates()
+    {
+        currentChoice = 0;
+        currentControl = 0;
+        currentState = 0;
     }
 
     private void initFonts()
     {
-        titleFont = new Font("Arial", Font.PLAIN, 25);
+        titleFont = new Font(TITLE_FONT_SYTLE, Font.PLAIN, TITLE_FONT_SIZE);
         titleColor = new Color(0, 153, 255);
-        font = new Font("Arial", Font.PLAIN, 15);
+        font = new Font(SETTINGS_FONTSTYLE, Font.PLAIN, SETTINGS_FONT_SIZE);
     }
 
     private void initStateList()
@@ -94,13 +123,9 @@ public class OptionState extends GameState
     {
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
-        g.setColor(titleColor);
-        g.setFont(titleFont);
-
-        g.drawString("SETTINGS", GamePanel.WIDTH / 2 - TITLE_VGAP,
-                GamePanel.HEIGHT / 2 - TITLE_HGAP);
-
-        g.setColor(Color.LIGHT_GRAY);
+        drawTitle(g);
+        
+        g.setColor(DEFAULT_COLOR);
         g.setFont(font);
 
         //draw NOT selectable setting titles
@@ -113,6 +138,15 @@ public class OptionState extends GameState
         drawSoundSelection(g);
         drawDifficultySelection(g);
         drawNavigation(g);
+    }
+
+    private void drawTitle(Graphics2D g)
+    {
+        g.setColor(titleColor);
+        g.setFont(titleFont);
+
+        g.drawString("SETTINGS", GamePanel.WIDTH / 2 - TITLE_VGAP,
+                GamePanel.HEIGHT / 2 - TITLE_HGAP);
     }
 
     private void drawControls(Graphics2D g)
@@ -149,12 +183,12 @@ public class OptionState extends GameState
         {
             if(selectionStates[8])
             {
-                if (i == currentChoice) { g.setColor(Color.GREEN); } 
-                else { g.setColor(Color.LIGHT_GRAY); }
+                if (i == currentChoice) g.setColor(SELECT_COLOR);  
+                else g.setColor(DEFAULT_COLOR); 
             }
             else
             {
-                g.setColor(Color.LIGHT_GRAY);
+                g.setColor(DEFAULT_COLOR);
             }
             g.drawString(navigationSettings[i], 
                     GamePanel.WIDTH / 2 - 600 + i * NAVIGATION_VGAP_INTERVAL,
@@ -172,29 +206,22 @@ public class OptionState extends GameState
      */
     public void drawControl(Graphics2D g, Boolean controlState, int position, int yOffset)
     {
-        String drawString;
+        String drawString = selection[position];
         
         if (controlState)
         {
             if(duplicateWarning)
             {
-                g.setColor(Color.RED);
                 drawString = "KEY ALREADY USED!";
+                
+                g.setColor(WARNING_COLOR);
             }
-            else
-            {
-                g.setColor(Color.GREEN);
-                drawString = selection[position];
-            }
-            g.drawString(drawString, GamePanel.WIDTH / 2 + 150,
-                    GamePanel.HEIGHT / 2 - yOffset);
+            else g.setColor(SELECT_COLOR);
         }
-        else
-        {
-            g.setColor(Color.LIGHT_GRAY);
-            g.drawString(selection[position], GamePanel.WIDTH / 2 + 150,
-                    GamePanel.HEIGHT / 2 - yOffset);
-        }
+        else g.setColor(DEFAULT_COLOR);
+        
+        g.drawString(drawString, GamePanel.WIDTH / 2 + 150,
+                GamePanel.HEIGHT / 2 - yOffset);
     }
 
     //draw easy, medium, hard
@@ -204,12 +231,12 @@ public class OptionState extends GameState
         {
             if (selectionStates[1])
             {
-                g.setColor(Color.GREEN);
+                g.setColor(SELECT_COLOR);
                 difficultySelector();
             }
             else
             {
-                g.setColor(Color.LIGHT_GRAY);
+                g.setColor(DEFAULT_COLOR);
             }
             g.drawString(selection[1], GamePanel.WIDTH / 2 + 150,
                     GamePanel.HEIGHT / 2 - 135);
@@ -238,18 +265,17 @@ public class OptionState extends GameState
         {
             if (selectionStates[0])
             {
-                g.setColor(Color.GREEN);
+                g.setColor(SELECT_COLOR);
                 soundSelector();
             }
             else
             {
-                g.setColor(Color.LIGHT_GRAY);
+                g.setColor(DEFAULT_COLOR);
             }
             g.drawString(selection[0], GamePanel.WIDTH / 2 + 150,
                     GamePanel.HEIGHT / 2 - 180);
         }
     }
-
     
     private void soundSelector()
     {
@@ -271,11 +297,17 @@ public class OptionState extends GameState
         currentState++;
         selectionStates[currentState] = true;
         isNoKeySelected = true;
-        
-        if(selectionStates[9]) selectNavigation();
-        else currentChoice = 0;
+        getCurrentChoice();
     }
     
+    private void getCurrentChoice()
+    {
+        if(selectionStates[0]) currentChoice = getChoice(selection[0]);
+        else if(selectionStates[1]) currentChoice = getChoice(selection[1]);
+        else if(selectionStates[9]) selectNavigation();
+        
+    }
+
     /**
      * Update all selections
      */
@@ -345,6 +377,11 @@ public class OptionState extends GameState
         }
     }
 
+    /**
+     * Handles the keys pressed.
+     * 
+     * @param selection the selection array
+     */
     public void handleInput(String[] selection)
     {
         int selectionLength = selection.length;
@@ -352,67 +389,103 @@ public class OptionState extends GameState
         if (KeyHandler.hasJustBeenPressed(Keys.ENTER) 
                 || KeyHandler.hasJustBeenPressed(Keys.DOWN))
         {
+            if(currentState == 1) currentChoice = getChoice(selection[1]);
             selectDown();
         }
-        
-        if (KeyHandler.hasJustBeenPressed(Keys.LEFT))
+        else if (KeyHandler.hasJustBeenPressed(Keys.LEFT))
         {
-            currentChoice--;
-            if (currentChoice == -1)
-            {
-                currentChoice = selectionLength - 1;
-            }
+            selectNextLeft(selectionLength);
         }
-        if (KeyHandler.hasJustBeenPressed(Keys.RIGHT))
+        else if (KeyHandler.hasJustBeenPressed(Keys.RIGHT))
         {
-            currentChoice++;
-            if (currentChoice == selectionLength)
-            {
-                currentChoice = 0;
-            }
+            selectNextRight(selectionLength);
         }
     }
     
+    private void selectNextLeft(int selectionLength)
+    {
+        currentChoice--;
+        if (currentChoice == -1)
+        {
+            currentChoice = selectionLength - 1;
+        }
+    }
+    
+    private void selectNextRight(int selectionLength)
+    {
+        currentChoice++;
+        if (currentChoice == selectionLength)
+        {
+            currentChoice = 0;
+        }
+    }
+
     private void selectNavigation()
     {
-       if(currentChoice == 0)
-       {
-           initDefaultSettings();
-           gsm.setState(GameStateManager.MENUSTATE);
-           if(CHECK_INPUTS) checkInputs();
-       }   
-       else if(currentChoice == 1)
-       {
-           initDefaultSettings();
-           gotoFirstState();
-       }
-       else if(currentChoice == 2)
-       {
-           for(int i=2; i < 8; i++)
-           {
-               selection[i] = "NOT ASSIGNED";
-           }
-           
-           gotoFirstState();
-       }
-       else if(currentChoice == 3)
-       {
-           //KeyHandler.setNewKeys(selection); TODO
-           gsm.setState(GameStateManager.MENUSTATE);
-           if(CHECK_INPUTS) checkInputs();
-       }
+        switch(currentChoice)
+        {
+        case 0: 
+            backAndSave();
+            break;
+        case 1: 
+            resetSettings();
+            break;
+        case 2: 
+            clearKeys();
+            break;
+        }
     }
     
+    private void backAndSave()
+    {
+      //save new selected choices
+        KeyHandler.storeChoice(getChoice(selection[0]), 0);
+        KeyHandler.storeChoice(getChoice(selection[1]), 1);
+        
+        //save new key bindings
+        KeyHandler.setKeysChanged(true);
+        KeyHandler.setNewKeys(selection);
+        
+        gsm.setState(GameStateManager.MENUSTATE);
+        if(CHECK_INPUTS) checkInputs(KeyHandler.getNewKeys());
+    }
+
+    private void resetSettings()
+    {
+        initDefaultSettings(); // reset all key Bindings
+        initChoiceAndStates();
+        gotoFirstState();
+    }
+
+    private void clearKeys()
+    {
+        selection[1] = "EASY";
+        
+        for(int i=2; i < 8; i++)
+        {
+            selection[i] = "NOT ASSIGNED";
+        }
+        
+        initChoiceAndStates();
+        gotoFirstState();
+    }
+
     private void gotoFirstState()
     {
-        currentChoice = 0;
-        currentControl = 0;
-        currentState = 0;
-        
         selectionStates[9] = false;
         selectionStates[0] = true;
     }
 
+    public int getChoice(String mode)
+    {
+        if(mode.equals("ON")) return 0;
+        else if(mode.equals("OFF")) return 1;
+        else if(mode.equals("EASY")) return 0;
+        else if(mode.equals("MEDIUM")) return 1;
+        else if(mode.equals("HARD")) return 2;
+        else return 0;
+    }
+    
     /**
      * Check if all user key inputs for the movement controls are different
      * 
@@ -438,12 +511,13 @@ public class OptionState extends GameState
     }
     
     //Helper method to print all selection[] array elements at standard output
-    private void checkInputs()
+    private void checkInputs(String[] keyArray)
     {
-        for (int i = 0; i < selection.length; i++)
+        for (int i = 0; i < keyArray.length; i++)
         {
-            System.out.print(selection[i] + " ");
+            System.out.print(keyArray[i] + " ");
         }
+        System.out.println();
     }
     
     public void handleInput()
