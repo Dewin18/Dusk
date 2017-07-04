@@ -326,10 +326,10 @@ public class OptionState extends GameState
         currentState++;
         selectionStates[currentState] = true;
         isNoKeySelected = true;
-        getCurrentChoice();
+        handleCurrentChoice();
     }
     
-    private void getCurrentChoice()
+    private void handleCurrentChoice()
     {
         if(selectionStates[0]) currentChoice = getChoice(selection[0]);
         else if(selectionStates[1]) currentChoice = getChoice(selection[1]);

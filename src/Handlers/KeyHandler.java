@@ -20,7 +20,7 @@ public class KeyHandler
     
     private static boolean keysChanged = false;
     
-    //store all new selected keys  //TODO
+    //store all new selected keys  
     private static String[] newKeys = new String[8];
     
     private static int[] keyCodes = {38, 40, 37, 39, 32, 65};
