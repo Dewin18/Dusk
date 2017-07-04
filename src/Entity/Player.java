@@ -480,12 +480,12 @@ public class Player extends MovingObject
         rotation = 0;
     }
 
+    //---- Getters and setters ---------------------------------------------------------------------------------
     public int getHealth()
     {
         return health;
     }
-
-    //---- Getters and setters ---------------------------------------------------------------------------------
+    
     public void setHealth(int health)
     {
         this.health = health;

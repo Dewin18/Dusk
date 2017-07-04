@@ -5,13 +5,15 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import com.sun.glass.events.KeyEvent;
+
 import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.GamePanel;
 
 public class OptionState extends GameState
 {
-    private static boolean CHECK_INPUTS = true;
+    private static boolean CHECK_INPUTS = false;
     
     private final int NAVIGATION_VGAP_INTERVAL = 560; 
     
@@ -37,8 +39,9 @@ public class OptionState extends GameState
     
     //current key state (up, down, left, right) selected
     private int currentControl;
+   
     
-    //current state in boolean Array
+    //current state number in boolean Array
     private int currentState;
 
     private Font font;
@@ -59,6 +62,10 @@ public class OptionState extends GameState
   
     private String[] selection;
 
+    //store all key codes of all keys pressed
+    private int[] keyCodes;
+    private int keyCodeIndex;
+    
     public OptionState(GameStateManager gsm)
     {
         this.gsm = gsm;
@@ -71,6 +78,8 @@ public class OptionState extends GameState
         initStateList();
         initFonts();
         initDefaultSettings();
+        
+        //indicates that the first state (SOUND state) is selected
         selectionStates[0] = true;
         
         if(KeyHandler.keysChanged())
@@ -79,7 +88,7 @@ public class OptionState extends GameState
             currentChoice = KeyHandler.getStoredChoice(0);
         }
     }
-    
+
     private void initChoiceAndStates()
     {
         currentChoice = 0;
@@ -104,13 +113,33 @@ public class OptionState extends GameState
 
     public void initDefaultSettings()
     {
+        initSelections();
+        initKeyCodes();
+    }
+
+    private void initKeyCodes()
+    {
+       keyCodes = new int[6];
+        
+       keyCodes[0] = 38;
+       keyCodes[1] = 40;
+       keyCodes[2] = 37;
+       keyCodes[3] = 39;
+       keyCodes[4] = 32;
+       keyCodes[5] = 65;
+       
+       keyCodeIndex = 0;
+    }
+
+    private void initSelections()
+    {
         selection = new String[8];
         
-            //STATES
+        //STATES
         selection[0] = "ON";
         selection[1] = "EASY";
-            
-            // KEYS
+        
+        // KEYS
         selection[2] = "↑";
         selection[3] = "↓";
         selection[4] = "←";
@@ -360,6 +389,8 @@ public class OptionState extends GameState
             selection[currentControl] = Character
                 .toString((char)KeyHandler.getKeyPressed());
         }
+        
+        keyCodes[keyCodeIndex] = KeyHandler.getKeyPressed();
     }
 
     //helper method to check for duplicates and enable duplicate warning string
@@ -372,6 +403,7 @@ public class OptionState extends GameState
         else
         {
             duplicateWarning = false;
+            keyCodeIndex ++;
             currentChoice = 0;
             selectDown();
         }
@@ -422,6 +454,8 @@ public class OptionState extends GameState
 
     private void selectNavigation()
     {
+        keyCodeIndex = 0;
+        
         switch(currentChoice)
         {
         case 0: 
@@ -445,6 +479,7 @@ public class OptionState extends GameState
         //save new key bindings
         KeyHandler.setKeysChanged(true);
         KeyHandler.setNewKeys(selection);
+        KeyHandler.setKeyCodes(keyCodes);
         
         gsm.setState(GameStateManager.MENUSTATE);
         if(CHECK_INPUTS) checkInputs(KeyHandler.getNewKeys());
@@ -460,14 +495,25 @@ public class OptionState extends GameState
     private void clearKeys()
     {
         selection[1] = "EASY";
-        
-        for(int i=2; i < 8; i++)
+        setKeysNotAssigned();
+        initChoiceAndStates();
+        gotoFirstState();
+    }
+
+    private void setKeysNotAssigned()
+    {
+        for(int i=2; i < selection.length; i++)
         {
             selection[i] = "NOT ASSIGNED";
         }
         
-        initChoiceAndStates();
-        gotoFirstState();
+        keyCodes[0] = 38; //UP
+        keyCodes[1] = 40; //DOWN
+        
+        for(int i=2; i < keyCodes.length; i++)
+        {
+           keyCodes[i] = 0;
+        }
     }
 
     private void gotoFirstState()
@@ -510,7 +556,7 @@ public class OptionState extends GameState
         return duplicates;
     }
     
-    //Helper method to print all selection[] array elements at standard output
+    //Helper method to print all array elements at standard output
     private void checkInputs(String[] keyArray)
     {
         for (int i = 0; i < keyArray.length; i++)

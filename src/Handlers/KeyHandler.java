@@ -23,6 +23,8 @@ public class KeyHandler
     //store all new selected keys  //TODO
     private static String[] newKeys = new String[8];
     
+    private static int[] keyCodes = {38, 40, 37, 39, 32, 65};
+    
     private static int[] storedChoice = {0, 0};
 
     private static int currentKeyPressed;
@@ -31,15 +33,15 @@ public class KeyHandler
     private static boolean keyState[] = new boolean[NUM_KEYS];
     // Create a new prevKeyState Array with the capacity of 10
     private static boolean prevKeyState[] = new boolean[NUM_KEYS];
-    
+
     public static void keySet(int i, boolean b)
     {
-        if (i == KeyEvent.VK_UP) keyState[Keys.UP] = b;
-        else if (i == KeyEvent.VK_LEFT) keyState[Keys.LEFT] = b;
-        else if (i == KeyEvent.VK_DOWN) keyState[Keys.DOWN] = b;
-        else if (i == KeyEvent.VK_RIGHT) keyState[Keys.RIGHT] = b;
-        else if (i == KeyEvent.VK_SPACE) keyState[Keys.JUMP] = b;
-        else if (i == KeyEvent.VK_A) keyState[Keys.ATTACK] = b;
+        if (i == keyCodes[0]) keyState[Keys.UP] = b;
+        else if (i == keyCodes [1]) keyState[Keys.DOWN] = b;
+        else if (i == keyCodes [2]) keyState[Keys.LEFT] = b;
+        else if (i == keyCodes [3]) keyState[Keys.RIGHT] = b;
+        else if (i == keyCodes [4]) keyState[Keys.JUMP] = b;
+        else if (i == keyCodes [5]) keyState[Keys.ATTACK] = b;
         else if (i == KeyEvent.VK_S) keyState[Keys.DASH] = b;
         else if (i == KeyEvent.VK_D) keyState[Keys._SOMEOTHERBUTTON] = b;
         else if (i == KeyEvent.VK_ENTER) keyState[Keys.ENTER] = b;
@@ -123,6 +125,11 @@ public class KeyHandler
         return newKeys;
     }
 
+    /**
+     * The current key pressed
+     * 
+     * @param keyCode
+     */
     public static void setKeyPressed(int keyCode)
     {
         currentKeyPressed = keyCode;
@@ -161,5 +168,19 @@ public class KeyHandler
     public static void storeChoice(int choice, int position)
     {
         storedChoice[position] = choice;
+    }
+    
+    public static void setKeyCodes(int[] codes)
+    {
+        keyCodes = codes;
+    }
+    
+    /**
+     * 
+     * @return int[] array of key codes for up, down, left, right, jump, hit
+     */
+    public static int[] getKeyCodes()
+    {
+        return keyCodes;
     }
 }
