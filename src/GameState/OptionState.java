@@ -157,7 +157,7 @@ public class OptionState extends GameState
         g.setColor(DEFAULT_COLOR);
         g.setFont(font);
 
-        //draw NOT selectable setting titles
+        //draw NOT selectable titles
         drawOptionTitles(g);
 
         //draw changeable keys for controls
@@ -205,7 +205,7 @@ public class OptionState extends GameState
         }
     }
 
-    //draw back, reset, clear keys, save
+    //draw back and save, reset, clear
     private void drawNavigation(Graphics2D g)
     {
         for (int i = 0; i < navigationSettings.length; i++)
@@ -288,6 +288,7 @@ public class OptionState extends GameState
         }
     }
 
+    //draw on, off
     private void drawSoundSelection(Graphics2D g)
     {
         for (int i = 0; i < subSoundSettings.length; i++)
