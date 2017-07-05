@@ -5,8 +5,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import com.sun.glass.events.KeyEvent;
-
 import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.GamePanel;

@@ -1,7 +1,10 @@
 package GameState;
 
 import Entity.*;
+import Handlers.KeyHandler;
+import Handlers.Keys;
 import Main.Camera;
+import Main.GamePanel;
 import TileMap.Background;
 import TileMap.TileMap;
 import TileMap.Vector2;
@@ -19,6 +22,8 @@ public class Level1State extends GameState implements EntityObserver
     private TileMap tileMap;
     private Player player;
     private Camera camera;
+    
+    private boolean pause;
 
     //All Level1State enemies are stored in this list
     private ArrayList<Enemy> enemyList;
@@ -37,8 +42,80 @@ public class Level1State extends GameState implements EntityObserver
         initPlayer();
         initCamera();
         initEnemies();
+        
+        //some keys have changed through the settings
+        if(KeyHandler.keysChanged())
+        {
+            initSound();
+            initDifficulty();
+        }
     }
 
+    private void initSound()
+    {
+        String sound = KeyHandler.getNewKeys()[0];
+        
+        switch(sound)
+        {
+        case "ON" : enableSound();
+            break;
+        case "OFF" : disableSound();
+            break;
+        }
+    }
+    
+    private void enableSound()
+    {
+        // TODO ENABLE SOUND
+    }
+    
+    private void disableSound()
+    {
+        // TODO DISABLE SOUND
+    }
+
+    private void initDifficulty()
+    {
+        String difficulty = KeyHandler.getNewKeys()[1];
+        
+        switch(difficulty)
+        {
+        case "EASY" : setDifficutlyEasy();
+            break;
+        case "MEDIUM" : setDifficultyMedium();
+            break;
+        case "HARD" : setDifficultyHard();
+            break;
+        }
+    }
+
+    private void setDifficultyHard()
+    {
+        for (Enemy enemy : enemyList)
+        {
+            enemy.setWalkSpeed(5);
+            //TODO
+        }
+    }
+    
+    private void setDifficultyMedium()
+    {
+        for (Enemy enemy : enemyList)
+        {
+            enemy.setWalkSpeed(3);
+            //TODO
+        }
+    }
+
+    private void setDifficutlyEasy()
+    {
+        for (Enemy enemy : enemyList)
+        {
+            enemy.setWalkSpeed(2);
+            //TODO
+        }
+    }
+    
     private void initBackground()
     {
         bg1 = new Background("bg1_2.png");
@@ -78,60 +155,98 @@ public class Level1State extends GameState implements EntityObserver
     {
         createEnemy("EvilTwin", new Vector2(600, 100), "enemy_spritesheet_128_2.png");
         createEnemy("EvilTwin", new Vector2(700, 100), "enemy_spritesheet_128_2.png");
+        createEnemy("EvilTwin", new Vector2(2000, 100), "enemy_spritesheet_128_2.png");
     }
 
 
     public void update()
     {
-        player.update();
-
-        for (Enemy enemy : enemyList)
+        if(!pause)
         {
-            enemy.update();
-        }
+            player.update();
 
-        camera.update();
-        bg1.setPosition(tileMap.cameraPos);
-        bg2.setPosition(tileMap.cameraPos);
-        bg3.setPosition(tileMap.cameraPos);
-        bg4.setPosition(tileMap.cameraPos);
+            for (Enemy enemy : enemyList)
+            {
+                enemy.update();
+            }
+
+            camera.update();
+            bg1.setPosition(tileMap.cameraPos);
+            bg2.setPosition(tileMap.cameraPos);
+            bg3.setPosition(tileMap.cameraPos);
+            bg4.setPosition(tileMap.cameraPos);
+        }
+        
+        
+        handleInput();
     }
 
     public void draw(Graphics2D g)
     {
-        // clear screen
-        //g.setColor(Color.WHITE);
-        //g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
-
-        bg4.draw(g);
-        bg3.draw(g);
-        bg2.draw(g);
-        bg1.draw(g);
-
-        player.draw(g);
-        for (Enemy enemy : enemyList)
+        if(pause)
         {
-            enemy.draw(g);
+            drawPause(g);
         }
+        else
+        {
+            // clear screen
+            //g.setColor(Color.WHITE);
+            //g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
-        // draw tilemap
-        //tileMap.draw(g);
-        camera.draw(g);
+            bg4.draw(g);
+            bg3.draw(g);
+            bg2.draw(g);
+            bg1.draw(g);
+
+            player.draw(g);
+            for (Enemy enemy : enemyList)
+            {
+                enemy.draw(g);
+            }
+
+            // draw tilemap
+            //tileMap.draw(g);
+            camera.draw(g);
+        }
     }
 
-    public void handleInput(){}
+    private void drawPause(Graphics2D g)
+    {
+        g.setFont(new Font("SERIF", Font.PLAIN, 35));
+        g.setColor(Color.ORANGE);
+        g.drawString("PAUSE", GamePanel.WIDTH / 2,
+                GamePanel.HEIGHT / 2);
+    }
+
+    /**
+     * whenever Enter is pressed this method enable / disable the pause mode
+     */
+    public void handleInput()
+    {
+        if (KeyHandler.hasJustBeenPressed(Keys.ENTER))
+        {
+            if(pause)
+            {
+                pause = false;
+            }
+            else
+            {
+                pause = true;
+            }
+        }
+    }
 
     /**
      * Create new enemies by calling this method.
      *
-     * @param enemyName   The enemy name as String
-     * @param position    The map position as Vector2
-     * @param spriteSheet THe spriteSheet as String
+     * @param enemyName   Enemy name
+     * @param position    The map position
+     * @param spriteSheet THe spriteSheet
      */
     public void createEnemy(String enemyName, Vector2 position, String spriteSheet)
     {
         Enemy enemy = null;
-
+        
         switch (enemyName)
         {
             case "EvilTwin":

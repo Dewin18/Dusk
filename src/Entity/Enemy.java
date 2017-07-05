@@ -18,6 +18,8 @@ public abstract class Enemy extends MovingObject
      */
     protected int health;
 
+    protected int walkspeed;
+    
     /**
      * All enemies define their own Maximum damage
      */
@@ -117,5 +119,17 @@ public abstract class Enemy extends MovingObject
     @Override
     public void draw(Graphics2D g) {
         super.draw(g);
+    }
+    
+    //setter for all difficulty modes (easy, medium, hard)
+    
+    public void setWalkSpeed(int walkSpeed)
+    {
+        this.walkSpeed = walkSpeed;
+    }
+    
+    public void setHealth(int health)
+    {
+        this.health = health;
     }
 }

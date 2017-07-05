@@ -150,4 +150,6 @@ public class EvilTwin extends Enemy
     private void stopFlinching() {
         setAnimation(JUMPING);
     }
+    
+    //setter
 }
