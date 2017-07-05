@@ -225,14 +225,7 @@ public class Level1State extends GameState implements EntityObserver
     {
         if (KeyHandler.hasJustBeenPressed(Keys.ENTER))
         {
-            if(pause)
-            {
-                pause = false;
-            }
-            else
-            {
-                pause = true;
-            }
+            pause = pause ? false: true;
         }
     }
 

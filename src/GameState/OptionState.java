@@ -244,7 +244,7 @@ public class OptionState extends GameState
                 g.setColor(WARNING_COLOR);
             }
             else g.setColor(SELECT_COLOR);
-        }
+        } 
         else g.setColor(DEFAULT_COLOR);
         
         g.drawString(drawString, GamePanel.WIDTH / 2 + 150,
@@ -333,7 +333,6 @@ public class OptionState extends GameState
         if(selectionStates[0]) currentChoice = getChoice(selection[0]);
         else if(selectionStates[1]) currentChoice = getChoice(selection[1]);
         else if(selectionStates[9]) selectNavigation();
-        
     }
 
     /**
@@ -501,13 +500,13 @@ public class OptionState extends GameState
 
     private void setKeysNotAssigned()
     {
+        keyCodes[0] = 38; //UP
+        keyCodes[1] = 40; //DOWN
+        
         for(int i=2; i < selection.length; i++)
         {
             selection[i] = "NOT ASSIGNED";
         }
-        
-        keyCodes[0] = 38; //UP
-        keyCodes[1] = 40; //DOWN
         
         for(int i=2; i < keyCodes.length; i++)
         {
