@@ -12,6 +12,7 @@ public class Game
         JFrame window = new JFrame("Dusk");
         GamePanel panel = new GamePanel();
         Canvas canvas = new Canvas();
+        panel.setLayout(null);
         canvas.addKeyListener(panel);
         canvas.setIgnoreRepaint(true);
         canvas.setBounds(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);

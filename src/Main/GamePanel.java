@@ -74,8 +74,20 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
         {
             Time.updateDeltaTime();
             g = (Graphics2D)strategy.getDrawGraphics();
-            update();
-            draw();
+            Thread t1 = new Thread(this::update);
+            Thread t2 = new Thread(this::draw);
+            t1.run();
+            t2.run();
+            try
+            {
+                t1.join();
+                t2.join();
+            } catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+            //update();
+            //draw();
             //drawToScreen();
             g.dispose();
             strategy.show();
