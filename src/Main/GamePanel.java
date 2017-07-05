@@ -1,36 +1,30 @@
 package Main;
 
+import GameState.GameStateManager;
+import Handlers.KeyHandler;
+
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.awt.event.*;
-import java.security.Key;
-import java.util.Arrays;
-
-import javax.swing.JPanel;
-
-import GameState.GameStateManager;
-import GameState.OptionState;
-import Handlers.KeyHandler;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener
 {
-    private static final long serialVersionUID = 1L;
     // dimensions
     public static final int WIDTH = 1300;
     public static final int HEIGHT = 600;
     public static final int SCALE = 1;
-
+    private static final long serialVersionUID = 1L;
+    public Canvas canvas;
+    public BufferStrategy strategy;
     // game thread
     private Thread thread;
     private boolean isRunning;
-
     // image
     private BufferedImage image;
     private Graphics2D g;
-    public Canvas canvas;
-    public BufferStrategy strategy;
-
     // manager
     private GameStateManager gsm;
 
@@ -56,9 +50,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
 
     private void init()
     {
-        //image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-        //g = (Graphics2D) image.getGraphics();
-        //g = (Graphics2D)strategy.getDrawGraphics();
         isRunning = true;
 
         gsm = new GameStateManager();
@@ -86,9 +77,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
             {
                 e.printStackTrace();
             }
-            //update();
-            //draw();
-            //drawToScreen();
             g.dispose();
             strategy.show();
             wait = Time.calculateWaitTime();
