@@ -20,7 +20,7 @@ public class EvilTwin extends Enemy
     public EvilTwin(TileMap tm)
     {
         super(tm);
-        health = 10;
+        health = 30;
         damage = 1;
         minFallSpeed = 0.4;
         velocity = new Vector2(0, 0);
@@ -104,8 +104,8 @@ public class EvilTwin extends Enemy
                 }
                 break;
             case FLINCHING:
-                if (checkAndHandleStillFlinching()) ;
-                else stopFlinching();
+                //if (checkAndHandleStillFlinching()) ;
+                //else stopFlinching();
                 break;
         }
     }
@@ -149,7 +149,6 @@ public class EvilTwin extends Enemy
 
     private void stopFlinching() {
         setAnimation(JUMPING);
+        currentFlinchTime = 0;
     }
-    
-    //setter
 }
