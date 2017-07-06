@@ -30,7 +30,7 @@ public class OptionState extends GameState
     
     //constant fontSize
     private final int TITLE_FONT_SIZE = 25;
-    private final int SETTINGS_FONT_SIZE = 15;
+    private final int SETTINGS_FONT_SIZE = 20;
     
     //current choice 
     private int currentChoice;
@@ -82,6 +82,7 @@ public class OptionState extends GameState
         
         if(KeyHandler.keysChanged())
         {
+            keyCodes = KeyHandler.getKeyCodes();
             selection = KeyHandler.getNewKeys();
             currentChoice = KeyHandler.getStoredChoice(0);
         }
