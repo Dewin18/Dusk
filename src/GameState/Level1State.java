@@ -40,7 +40,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private Font pauseTitle;
     private Font optionTitles;
-
+    
     //All Level1State enemies are stored in this list
     private ArrayList<Enemy> enemyList;
 
@@ -181,12 +181,9 @@ public class Level1State extends GameState implements EntityObserver
 
     private void initEnemies()
     {
-        createEnemy("EvilTwin", new Vector2(600, 100),
-                "enemy_spritesheet_128_2.png");
-        createEnemy("EvilTwin", new Vector2(700, 100),
-                "enemy_spritesheet_128_2.png");
-        createEnemy("EvilTwin", new Vector2(2000, 100),
-                "enemy_spritesheet_128_2.png");
+        createEnemy("EvilTwin", new Vector2(600, 100),"enemy_spritesheet_128_2.png");
+        createEnemy("EvilTwin", new Vector2(700, 100),"enemy_spritesheet_128_2.png");
+        createEnemy("EvilTwin", new Vector2(2000, 100),"enemy_spritesheet_128_2.png");
     }
 
     public void update()
@@ -209,24 +206,18 @@ public class Level1State extends GameState implements EntityObserver
 
         handleInput();
     }
-
+    
     public void draw(Graphics2D g)
     {
-        if (pause)
-        {
-            drawPause(g);
-        }
-        else
-        {
             // clear screen
             //g.setColor(Color.WHITE);
             //g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
-
+            
             bg4.draw(g);
             bg3.draw(g);
             bg2.draw(g);
             bg1.draw(g);
-
+            
             player.draw(g);
             for (Enemy enemy : enemyList)
             {
@@ -236,14 +227,22 @@ public class Level1State extends GameState implements EntityObserver
             // draw tilemap
             //tileMap.draw(g);
             camera.draw(g);
-        }
+            
+            if (pause)
+            {
+                drawPause(g);
+            }
     }
 
     private void drawPause(Graphics2D g)
     {
+        //make screen opaque and darker
+        g.setColor(new Color(0, 0, 0, 80));
+        g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
+        
         g.setFont(pauseTitle);
         g.setColor(PAUSE_TITLE_COLOR);
-        g.drawString("PAUSE", GamePanel.WIDTH / 2, GamePanel.HEIGHT / 2);
+        g.drawString("PAUSE", GamePanel.WIDTH / 2 - 20, GamePanel.HEIGHT / 2);
 
         g.setFont(optionTitles);
 
@@ -257,7 +256,7 @@ public class Level1State extends GameState implements EntityObserver
             {
                 g.setColor(OPTIONS_DEFAULT_COLOR);
             }
-            g.drawString(options[i], GamePanel.WIDTH / 2,
+            g.drawString(options[i], GamePanel.WIDTH / 2 - 20,
                     GamePanel.HEIGHT / 2 + 30 + i * 30);
         }
     }
