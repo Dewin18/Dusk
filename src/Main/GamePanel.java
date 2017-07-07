@@ -37,6 +37,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
         requestFocus();
     }
 
+    //runs automatically
     public void addNotify()
     {
         super.addNotify();
@@ -51,7 +52,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     private void init()
     {
         isRunning = true;
-
         gsm = new GameStateManager();
     }
 
@@ -77,9 +77,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
             {
                 e.printStackTrace();
             }
+            
             g.dispose();
             strategy.show();
             wait = Time.calculateWaitTime();
+            
             if (wait < 0) wait = 10;
             try
             {
@@ -102,13 +104,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
         RenderingHints rh = new RenderingHints(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g.setRenderingHints(rh);
         gsm.draw(g);
-    }
-
-    private void drawToScreen()
-    {
-        Graphics g2 = getGraphics();
-        g2.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
-        g2.dispose();
     }
 
     public void keyTyped(KeyEvent key)

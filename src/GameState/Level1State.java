@@ -31,6 +31,9 @@ public class Level1State extends GameState implements EntityObserver
     private Player player;
     private Camera camera;
     private String[] options = {"RESUME", "BACK TO MENU", "QUIT"};
+    private int[] optionsAlign = {22, -2, 35};
+    private final int VGAP = -30; 
+    
     private boolean pause;
     private int currentChoice = 0;
     private Font pauseTitle;
@@ -248,7 +251,7 @@ public class Level1State extends GameState implements EntityObserver
         
         g.setFont(pauseTitle);
         g.setColor(PAUSE_TITLE_COLOR);
-        g.drawString("PAUSE", GamePanel.WIDTH / 2 - 20, GamePanel.HEIGHT / 2);
+        g.drawString("PAUSE", GamePanel.WIDTH / 2 + VGAP, GamePanel.HEIGHT / 2);
 
         g.setFont(optionTitles);
 
@@ -262,7 +265,8 @@ public class Level1State extends GameState implements EntityObserver
             {
                 g.setColor(OPTIONS_DEFAULT_COLOR);
             }
-            g.drawString(options[i], GamePanel.WIDTH / 2 - 20,
+            
+            g.drawString(options[i], GamePanel.WIDTH / 2 + VGAP + optionsAlign[i],
                     GamePanel.HEIGHT / 2 + 30 + i * 30);
         }
     }

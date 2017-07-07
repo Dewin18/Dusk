@@ -2,7 +2,6 @@ package GameState;
 
 public class GameStateManager
 {
-
     private GameState[] gameStates;
     private int currentState;
 
@@ -45,14 +44,5 @@ public class GameStateManager
     {
         if (gameStates[currentState] != null) gameStates[currentState].draw(g);
     }
-
+    
 }
-
-
-
-
-
-
-
-
-
