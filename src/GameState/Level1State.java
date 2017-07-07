@@ -25,7 +25,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private String[] options = {"RESUME", "BACK TO MENU", "QUIT"};
     private int[] optionsAlign = {22, -2, 35};
-    private final int VGAP = -20; 
+    private final int VGAP = -30; 
     
     private boolean pause;
     private int currentChoice = 0;
