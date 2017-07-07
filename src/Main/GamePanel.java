@@ -37,6 +37,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
         requestFocus();
     }
 
+    //runs automatically
     public void addNotify()
     {
         super.addNotify();
@@ -51,7 +52,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     private void init()
     {
         isRunning = true;
-
         gsm = new GameStateManager();
     }
 
@@ -80,6 +80,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
             g.dispose();
             strategy.show();
             wait = Time.calculateWaitTime();
+            
             if (wait < 0) wait = 10;
             try
             {

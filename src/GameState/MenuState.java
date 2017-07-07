@@ -34,6 +34,7 @@ public class MenuState extends GameState
 
     public void init()
     {
+        
     }
 
     public void draw(Graphics2D g)
