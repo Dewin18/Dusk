@@ -1,21 +1,20 @@
 package TileMap;
 
-import java.awt.*;
-import java.awt.image.*;
-
-import java.io.*;
-import java.util.Arrays;
-import javax.imageio.ImageIO;
-
 import Main.GamePanel;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class TileMap
 {
 
+    public Vector2 cameraPos = new Vector2(0, 0);
     // position
     private Vector2 position = new Vector2(0, 0);
-    public Vector2 cameraPos = new Vector2(0, 0);
-
     // bounds
     private int xmin;
     private int ymin;
@@ -57,15 +56,21 @@ public class TileMap
         {
             tileset = ImageIO.read(getClass().getResourceAsStream(s));
             numTilesAcross = tileset.getWidth() / tileSize;
-            tiles = new Tile[2][numTilesAcross];
+            tiles = new Tile[4][numTilesAcross];
 
             BufferedImage subimage;
             for (int col = 0; col < numTilesAcross; col++)
             {
-                subimage = tileset.getSubimage(col * tileSize, 0, tileSize, tileSize);
-                tiles[0][col] = new Tile(subimage, TileType.EMPTY);
-                subimage = tileset.getSubimage(col * tileSize, tileSize, tileSize, tileSize);
-                tiles[1][col] = new Tile(subimage, TileType.BLOCKED);
+                for (int row = 0; row < 4; row++) {
+                    subimage = tileset.getSubimage(col * tileSize, row * tileSize, tileSize, tileSize);
+                    if (row == 3) {
+                        tiles[row][col] = new Tile(subimage, TileType.ONEWAY);
+                    } else if (row == 0) {
+                        tiles[row][col] = new Tile(subimage, TileType.EMPTY);
+                    } else {
+                        tiles[row][col] = new Tile(subimage, TileType.BLOCKED);
+                    }
+                }
             }
         } catch (Exception e)
         {

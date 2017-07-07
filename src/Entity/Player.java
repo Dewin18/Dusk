@@ -55,7 +55,7 @@ public class Player extends MovingObject
     {
         setPosition(position);
         // set up speeds
-        jumpSpeed = -14;
+        jumpSpeed = -16;
         walkSpeed = 6;
         minJumpingSpeed = -2;
         maxFallingSpeed = 10;

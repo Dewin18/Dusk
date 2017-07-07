@@ -14,30 +14,25 @@ import java.util.ArrayList;
 
 public class Level1State extends GameState implements EntityObserver
 {
-    private Background bg1;
-    private Background bg2;
-    private Background bg3;
-    private Background bg4;
-
-    private TileMap tileMap;
-    private Player player;
-    private Camera camera;
-
-    private String[] options = {"RESUME", "BACK TO MENU", "QUIT"};
-    private boolean pause;
-    private int currentChoice = 0;
-
     //Pause Title
     private final int PAUSE_TITLE_SIZE = 35;
     private final String PAUSE_TITLE_STYLE = "Serif";
     private final Color PAUSE_TITLE_COLOR = Color.ORANGE;
-
     //Option Titles
     private final int OPTIONS_SIZE = 15;
     private final String OPTIONS_STYLE = "Arial";
     private final Color OPTIONS_SELECTED_COLOR = Color.GREEN;
     private final Color OPTIONS_DEFAULT_COLOR = Color.LIGHT_GRAY;
-
+    private Background bg1;
+    private Background bg2;
+    private Background bg3;
+    private Background bg4;
+    private TileMap tileMap;
+    private Player player;
+    private Camera camera;
+    private String[] options = {"RESUME", "BACK TO MENU", "QUIT"};
+    private boolean pause;
+    private int currentChoice = 0;
     private Font pauseTitle;
     private Font optionTitles;
     
@@ -146,32 +141,32 @@ public class Level1State extends GameState implements EntityObserver
 
     private void initBackground()
     {
-        bg1 = new Background("bg1_2.png");
+        bg1 = new Background("bg1_3.png");
         bg1.setScrollSpeed(new Vector2(0.9, 0.9));
-        bg1.setOffset(new Vector2(0, -70));
-        bg2 = new Background("bg2_2.png");
+        bg1.setOffset(new Vector2(0, 205));
+        bg2 = new Background("bg2_3.png");
         bg2.setScrollSpeed(new Vector2(0.7, 0.9));
-        bg2.setOffset(new Vector2(0, -130));
-        bg3 = new Background("bg3_2.png");
+        bg2.setOffset(new Vector2(0, 185));
+        bg3 = new Background("bg3_3.png");
         bg3.setScrollSpeed(new Vector2(0.5, 0.8));
-        bg3.setOffset(new Vector2(0, -100));
-        bg4 = new Background("bg4_2.png");
+        bg3.setOffset(new Vector2(0, 35));
+        bg4 = new Background("bg4_3.png");
         bg4.setScrollSpeed(new Vector2(0.3, 0.7));
-        bg4.setOffset(new Vector2(0, -110));
+        bg4.setOffset(new Vector2(0, -200));
     }
 
     private void initMap()
     {
         tileMap = new TileMap(128);
         tileMap.loadTiles("/Sprites/terrain_spritesheet_128_3.png");
-        tileMap.loadMap("/Maps/level1-1.map");
+        tileMap.loadMap("/Maps/duskmap.map");
         tileMap.setPosition(0, 0);
     }
 
     private void initPlayer()
     {
         player = new Player(tileMap);
-        player.initPlayer(new Vector2(150, 100));
+        player.initPlayer(new Vector2(6000, 309));
     }
 
     private void initCamera()
@@ -181,9 +176,11 @@ public class Level1State extends GameState implements EntityObserver
 
     private void initEnemies()
     {
-        createEnemy("EvilTwin", new Vector2(600, 100),"enemy_spritesheet_128_2.png");
-        createEnemy("EvilTwin", new Vector2(700, 100),"enemy_spritesheet_128_2.png");
-        createEnemy("EvilTwin", new Vector2(2000, 100),"enemy_spritesheet_128_2.png");
+        createEnemy("EvilTwin", new Vector2(4550, 809), "enemy_spritesheet_128_2.png");
+        createEnemy("EvilTwin", new Vector2(3633, 1065), "enemy_spritesheet_128_2.png");
+        createEnemy("EvilTwin", new Vector2(2315, 2345), "enemy_spritesheet_128_2.png");
+        createEnemy("EvilTwin", new Vector2(773, 2729), "enemy_spritesheet_128_2.png");
+        createEnemy("EvilTwin", new Vector2(1566, 2729), "enemy_spritesheet_128_2.png");
     }
 
     public void update()
@@ -194,7 +191,9 @@ public class Level1State extends GameState implements EntityObserver
 
             for (Enemy enemy : enemyList)
             {
-                enemy.update();
+                if (isOnCamera(enemy)) {
+                    enemy.update();
+                }
             }
 
             camera.update();
@@ -210,8 +209,8 @@ public class Level1State extends GameState implements EntityObserver
     public void draw(Graphics2D g)
     {
             // clear screen
-            //g.setColor(Color.WHITE);
-            //g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
             
             bg4.draw(g);
             bg3.draw(g);
@@ -221,7 +220,9 @@ public class Level1State extends GameState implements EntityObserver
             player.draw(g);
             for (Enemy enemy : enemyList)
             {
-                enemy.draw(g);
+                if (isOnCamera(enemy)) {
+                    enemy.draw(g);
+                }
             }
 
             // draw tilemap
@@ -232,6 +233,11 @@ public class Level1State extends GameState implements EntityObserver
             {
                 drawPause(g);
             }
+    }
+
+    private boolean isOnCamera(MapObject o) {
+        return (o.getPosition().x >= player.getPosition().x - GamePanel.WIDTH && o.getPosition().x <= player.getPosition().x + GamePanel.WIDTH) &&
+                (o.getPosition().y >= player.getPosition().y - GamePanel.HEIGHT && o.getPosition().y <= player.getPosition().y + GamePanel.HEIGHT);
     }
 
     private void drawPause(Graphics2D g)

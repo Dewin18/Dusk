@@ -34,7 +34,7 @@ public class Background
     private void setPosition(double x, double y)
     {
         position.x = (x * scrollSpeed.x) % dimension.x;
-        position.y = (y * scrollSpeed.y) % dimension.y;
+        position.y = (y * scrollSpeed.y);
     }
 
     public void setScrollSpeed(Vector2 scrollSpeed)

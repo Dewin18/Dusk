@@ -122,4 +122,8 @@ public class Camera
         tileMap.cameraPos = this.position;
 
     }
+
+    public Vector2 getPosition() {
+        return position;
+    }
 }

@@ -41,10 +41,10 @@ public abstract class MovingObject extends MapObject
     boolean wasAtCeiling;
     boolean isOnPlatform;
 
-    int framesPassedUntilDrop = 6;
     boolean isFacingRight = true;
     float alpha = 1.0f;
-    private int framesToIgnoreGround = 5;
+    private int framesToIgnoreGround = 16;
+    int framesPassedUntilDrop = framesToIgnoreGround;
     private double groundY, ceilingY, leftWallX, rightWallX;
     private int mapCollisionSensorDepth = 25;
     private double triggerLineY, triggerLineX, triggerLineX2, triggerLineY2;
@@ -146,7 +146,7 @@ public abstract class MovingObject extends MapObject
         // Check for ceiling
         if (velocity.y <= 0 && hasCeiling(oldPosition, position))
         {
-            position.y = ceilingY + collisionBox.halfSize.y + collisionOffset.y;
+            position.y = ceilingY + collisionBox.halfSize.y + collisionOffset.y - 15;
             velocity.y = 0;
             isAtCeiling = true;
         } else isAtCeiling = false;
@@ -171,7 +171,7 @@ public abstract class MovingObject extends MapObject
         int endY = tileMap.getMapTileYAtPoint(newBotLeft.y);
         int startY = Math.min(tileMap.getMapTileYAtPoint(oldBotLeft.y), endY);
         int dist = Math.max(Math.abs(endY - startY), 1);
-        if (framesPassedUntilDrop < 6) framesPassedUntilDrop++;
+        if (framesPassedUntilDrop < framesToIgnoreGround) framesPassedUntilDrop++;
         // debugging stuff
         if (debugging)
         {
@@ -200,7 +200,7 @@ public abstract class MovingObject extends MapObject
                     {
                         isOnPlatform = false;
                         return true;
-                    } else if (tileMap.isPlatform(tileIndexX, tileIndexY) && framesPassedUntilDrop > framesToIgnoreGround)
+                    } else if (tileMap.isPlatform(tileIndexX, tileIndexY) && framesPassedUntilDrop >= framesToIgnoreGround)
                     {
                         isOnPlatform = true;
                     }
