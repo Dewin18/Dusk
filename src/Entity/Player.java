@@ -22,10 +22,11 @@ public class Player extends MovingObject
     private final int[] FRAMEHEIGHTS = {128, 128, 128, 128};
     private final int[] SPRITEDELAYS = {-1, 7, -1, -1};
     double knockback = 15;
-    private int health;
+    private int health = 5;
     private int exp;
     private int lives;
     private int dmg = 3;
+    private HUD hud;
     private ArrayList<MapObject> objectsToRemove;
     private boolean isAttacking = false;
     private boolean isInvulnerable = false;
@@ -49,6 +50,8 @@ public class Player extends MovingObject
         width = FRAMEWIDTHS[0];
         height = FRAMEHEIGHTS[0];
         loadSprites("dusk_spritesheet_128.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
+
+        hud = new HUD(health);
     }
 
     public void initPlayer(Vector2 position)
@@ -58,7 +61,7 @@ public class Player extends MovingObject
         jumpSpeed = -16;
         walkSpeed = 6;
         minJumpingSpeed = -2;
-        maxFallingSpeed = 10;
+        maxFallingSpeed = 12;
         gravity = 0.5;
         minFallSpeed = 3;
         // set up collision box
@@ -72,6 +75,7 @@ public class Player extends MovingObject
     @Override
     public void update()
     {
+        updateHUD();
         handleInputs();
         animation.update();
         updateForce();
@@ -90,6 +94,16 @@ public class Player extends MovingObject
         super.draw(g);
         AlphaComposite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1);
         g.setComposite(a);
+    }
+
+    private void updateHUD()
+    {
+        hud.setCurrentHealth(health);
+    }
+
+    public void drawHUD(Graphics2D g)
+    {
+        hud.draw(g);
     }
 
     //---- State handling ---------------------------------------------------------------------------------
@@ -295,6 +309,7 @@ public class Player extends MovingObject
             }
             setInvulnerable(true);
             --health;
+            hud.setCurrentHealth(health);
             currentFlinchTime = 0;
             invulnerabilityTimer = 0;
             setAnimation(FLINCHING);
