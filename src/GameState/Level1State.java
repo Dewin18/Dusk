@@ -10,17 +10,18 @@ import TileMap.TileMap;
 import TileMap.Vector2;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Level1State extends GameState implements EntityObserver
 {
     //Pause Title
-    private final int PAUSE_TITLE_SIZE = 35;
-    private final String PAUSE_TITLE_STYLE = "Serif";
-    private final Color PAUSE_TITLE_COLOR = Color.ORANGE;
+    private final int PAUSE_TITLE_SIZE = 45;
+    private final String PAUSE_TITLE_STYLE = "Berlin Sans FB Demi Bold.ttf";
+    private final Color PAUSE_TITLE_COLOR = Color.WHITE;
     //Option Titles
-    private final int OPTIONS_SIZE = 15;
-    private final String OPTIONS_STYLE = "Arial";
+    private final int OPTIONS_SIZE = 25;
+    private final String OPTIONS_STYLE = "Berlin Sans FB Regular.ttf";
     private final Color OPTIONS_SELECTED_COLOR = Color.GREEN;
     private final Color OPTIONS_DEFAULT_COLOR = Color.LIGHT_GRAY;
     private Background bg1;
@@ -30,7 +31,7 @@ public class Level1State extends GameState implements EntityObserver
     private TileMap tileMap;
     private Player player;
     private Camera camera;
-    private String[] options = {"RESUME", "BACK TO MENU", "QUIT"};
+    private String[] options = {"Resume", "Back to menu", "Quit"};
     private int[] optionsAlign = {22, -2, 35};
     private final int VGAP = -30;
 
@@ -68,8 +69,14 @@ public class Level1State extends GameState implements EntityObserver
 
     private void initFonts()
     {
-        pauseTitle = new Font(PAUSE_TITLE_STYLE, Font.PLAIN, PAUSE_TITLE_SIZE);
-        optionTitles = new Font(OPTIONS_STYLE, Font.PLAIN, OPTIONS_SIZE);
+        try
+        {
+            optionTitles = loadFont(OPTIONS_STYLE, OPTIONS_SIZE);
+            pauseTitle = loadFont(PAUSE_TITLE_STYLE, PAUSE_TITLE_SIZE);
+        } catch (FontFormatException | IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private void initSound()
@@ -253,32 +260,27 @@ public class Level1State extends GameState implements EntityObserver
         g.setColor(new Color(0, 0, 0, 80));
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
-        g.setFont(pauseTitle);
-        g.setColor(PAUSE_TITLE_COLOR);
-        g.drawString("PAUSE", GamePanel.WIDTH / 2 + VGAP, GamePanel.HEIGHT / 2);
-
-        g.setFont(optionTitles);
+        g.setColor(Color.WHITE);
+        drawCenteredString(g, "PAUSE", new Rectangle(0, GamePanel.HEIGHT / 2 - PAUSE_TITLE_SIZE, GamePanel.WIDTH, PAUSE_TITLE_SIZE), pauseTitle);
 
         for (int i = 0; i < options.length; i++)
         {
             if (i == currentChoice)
             {
-                g.setColor(OPTIONS_SELECTED_COLOR);
+                drawCenteredString(g, "- " + options[i] + " -", new Rectangle(0, GamePanel.HEIGHT / 2 + 30 + i * 30, GamePanel.WIDTH, OPTIONS_SIZE), optionTitles);
             } else
             {
-                g.setColor(OPTIONS_DEFAULT_COLOR);
+                drawCenteredString(g, options[i], new Rectangle(0, GamePanel.HEIGHT / 2 + 30 + i * 30, GamePanel.WIDTH, OPTIONS_SIZE), optionTitles);
             }
-
-            g.drawString(options[i], GamePanel.WIDTH / 2 + VGAP + optionsAlign[i], GamePanel.HEIGHT / 2 + 30 + i * 30);
         }
     }
 
     /**
-     * whenever Enter is pressed this method enable / disable the pause mode
+     * Whenever Enter or Escape is pressed this method enable / disable the pause mode
      */
     public void handleInput()
     {
-        if (!pause && KeyHandler.hasJustBeenPressed(Keys.ENTER))
+        if (!pause && KeyHandler.hasJustBeenPressed(Keys.ENTER) || KeyHandler.hasJustBeenPressed(Keys.ESCAPE))
         {
             pause = true;
         } else if (pause)

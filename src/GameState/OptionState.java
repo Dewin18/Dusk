@@ -1,8 +1,7 @@
 package GameState;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
+import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import Handlers.KeyHandler;
@@ -25,8 +24,8 @@ public class OptionState extends GameState
     private final Color DEFAULT_COLOR = Color.LIGHT_GRAY;
     
     //constant font style
-    private final String TITLE_FONT_SYTLE = "Arial";
-    private final String SETTINGS_FONTSTYLE = "Arial";
+    private final String TITLE_FONT_SYTLE = "Berlin Sans FB Demi Bold.ttf";
+    private final String SETTINGS_FONTSTYLE = "Berlin Sans FB Regular.ttf";
     
     //constant fontSize
     private final int TITLE_FONT_SIZE = 25;
@@ -44,7 +43,8 @@ public class OptionState extends GameState
 
     private Font font;
     private Font titleFont;
-    private Color titleColor;
+    private Font arialFont;
+    private Color titleColor = new Color(0, 153, 255);;
     
     private boolean[] selectionStates = new boolean[10];
     private boolean isNoKeySelected = true;
@@ -97,9 +97,15 @@ public class OptionState extends GameState
 
     private void initFonts()
     {
-        titleFont = new Font(TITLE_FONT_SYTLE, Font.PLAIN, TITLE_FONT_SIZE);
-        titleColor = new Color(0, 153, 255);
-        font = new Font(SETTINGS_FONTSTYLE, Font.PLAIN, SETTINGS_FONT_SIZE);
+        try
+        {
+            arialFont = new Font(SETTINGS_FONTSTYLE, Font.PLAIN, SETTINGS_FONT_SIZE);
+            font = loadFont(SETTINGS_FONTSTYLE, SETTINGS_FONT_SIZE);
+            titleFont = loadFont(TITLE_FONT_SYTLE, TITLE_FONT_SIZE);
+        } catch (FontFormatException | IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     private void initStateList()
@@ -247,9 +253,12 @@ public class OptionState extends GameState
             else g.setColor(SELECT_COLOR);
         } 
         else g.setColor(DEFAULT_COLOR);
-        
+
+        if(drawString.equals("←") || drawString.equals("↑") || drawString.equals("→") || drawString.equals("↓"))
+            g.setFont(arialFont);
         g.drawString(drawString, GamePanel.WIDTH / 2 + 150,
                 GamePanel.HEIGHT / 2 - yOffset);
+        g.setFont(font);
     }
 
     //draw easy, medium, hard

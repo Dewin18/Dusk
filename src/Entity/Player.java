@@ -49,7 +49,7 @@ public class Player extends MovingObject
 
         width = FRAMEWIDTHS[0];
         height = FRAMEHEIGHTS[0];
-        loadSprites("dusk_spritesheet_128_test.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
+        loadSprites("dusk_spritesheet_128.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
 
         hud = new HUD(health);
     }

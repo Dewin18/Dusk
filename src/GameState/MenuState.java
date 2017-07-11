@@ -27,12 +27,14 @@ public class MenuState extends GameState
         this.gsm = gsm;
         bg = new Background("menu bg.jpg");
 
-        InputStream is = getClass().getResourceAsStream("/Fonts/Berlin Sans FB Regular.ttf");
+        initFonts();
+    }
+
+    private void initFonts()
+    {
         try {
-            font = Font.createFont(Font.TRUETYPE_FONT, is);
-            font = font.deriveFont(Font.PLAIN, FONT_SIZE);
-            boldFont = Font.createFont(Font.TRUETYPE_FONT, getClass().getResourceAsStream("/Fonts/Berlin Sans FB Bold.ttf"));
-            boldFont = boldFont.deriveFont(Font.PLAIN, FONT_SIZE);
+            font = loadFont("Berlin Sans FB Regular.ttf", FONT_SIZE);
+            boldFont = loadFont("Berlin Sans FB Bold.ttf", FONT_SIZE);
             titleImage = ImageIO.read(getClass().getResourceAsStream("/Fonts/dusk title.png"));
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
@@ -41,7 +43,6 @@ public class MenuState extends GameState
 
     public void init()
     {
-        
     }
 
     public void draw(Graphics2D g)
@@ -115,24 +116,4 @@ public class MenuState extends GameState
         handleInput();
     }
 
-
-    /**
-     * Draw a String centered in the middle of a Rectangle.
-     *
-     * @param g    The Graphics instance.
-     * @param text The String to draw.
-     * @param rect The Rectangle to center the text in.
-     */
-    private void drawCenteredString(Graphics g, String text, Rectangle rect, Font font) {
-        // Get the FontMetrics
-        FontMetrics metrics = g.getFontMetrics(font);
-        // Determine the X coordinate for the text
-        int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
-        // Determine the Y coordinate for the text (note we add the ascent, as in java 2d 0 is top of the screen)
-        int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
-        // Set the font
-        g.setFont(font);
-        // Draw the String
-        g.drawString(text, x, y);
-    }
 }
