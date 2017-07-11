@@ -35,30 +35,21 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
         setFocusable(true);
         setIgnoreRepaint(true);
         requestFocus();
-
+        start();
     }
 
-    //runs automatically
-    public void addNotify()
-    {
-        super.addNotify();
-        if (thread == null)
-        {
-            thread = new Thread(this);
-            addKeyListener(this);
-            thread.start();
-        }
-    }
-
-    private void init()
+    public void start()
     {
         isRunning = true;
-        gsm = new GameStateManager();
+        thread = new Thread(this);
+        addKeyListener(this);
+        thread.start();
     }
+    
 
     public void run()
     {
-        init();
+        gsm = new GameStateManager();
         long wait;
 
         // game loop
