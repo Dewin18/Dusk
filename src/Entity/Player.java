@@ -39,6 +39,8 @@ public class Player extends MovingObject
     private int currentFlinchTime = flinchTime;
     private int currentAttackTime = attackTime;
     private boolean isBlinking = false;
+    private boolean hittenByEnemy;
+    
     private int invulnerabilityTimer = invulnerabilityTime;
     private ArrayList<MapObject> mapObjects = new ArrayList<>();
 
@@ -91,6 +93,8 @@ public class Player extends MovingObject
         AlphaComposite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1);
         g.setComposite(a);
     }
+
+
 
     //---- State handling ---------------------------------------------------------------------------------
     private void handleInputs()
@@ -295,10 +299,15 @@ public class Player extends MovingObject
             }
             setInvulnerable(true);
             --health;
+            
+            //TODO System.out.println(health);
+            setHittenByEnemy(true);
             currentFlinchTime = 0;
             invulnerabilityTimer = 0;
             setAnimation(FLINCHING);
         }
+        
+       
     }
 
     //---- Helpers for state handling ---------------------------------------------------------------------------------
@@ -499,5 +508,15 @@ public class Player extends MovingObject
     public double getMinFallSpeed()
     {
         return minFallSpeed;
+    }
+    
+    public void setHittenByEnemy(boolean b)
+    {
+        hittenByEnemy = b;
+    }
+    
+    public boolean isHittenByEnemy()
+    {
+        return hittenByEnemy;
     }
 }

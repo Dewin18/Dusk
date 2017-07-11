@@ -299,6 +299,7 @@ public class OptionState extends GameState
             }
             else
             {
+                
                 g.setColor(DEFAULT_COLOR);
             }
             g.drawString(selection[0], GamePanel.WIDTH / 2 + 150,

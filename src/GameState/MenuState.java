@@ -54,6 +54,7 @@ public class MenuState extends GameState
 
         // draw menu options
         g.setColor(Color.WHITE);
+        
         for (int i = 0; i < options.length; i++)
         {
             if (i == currentChoice)

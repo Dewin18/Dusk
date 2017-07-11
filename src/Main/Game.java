@@ -13,7 +13,7 @@ public class Game
         GamePanel panel = new GamePanel();
         Canvas canvas = new Canvas();
         panel.setLayout(null);
-        canvas.addKeyListener(panel);
+        canvas.addKeyListener(panel); // WHY?
         canvas.setIgnoreRepaint(true);
         canvas.setBounds(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
         panel.add(canvas);
