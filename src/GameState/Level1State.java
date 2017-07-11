@@ -13,6 +13,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
+
 public class Level1State extends GameState implements EntityObserver
 {
     //Pause Title
@@ -31,17 +33,27 @@ public class Level1State extends GameState implements EntityObserver
     private TileMap tileMap;
     private Player player;
     private Camera camera;
-    private String[] options = {"Resume", "Back to menu", "Quit"};
+    private String[] pauseOptions = {"Resume", "Back to menu", "Exit"};
+    private String[] gameOverOptions = {"Restart", "Back to menu", "Exit"};
     private int[] optionsAlign = {22, -2, 35};
-    private final int VGAP = -30;
-
+    private final int VGAP = -30; 
+    
     private boolean pause;
     private int currentChoice = 0;
     private Font pauseTitle;
     private Font optionTitles;
-
+    
     //All Level1State enemies are stored in this list
     private ArrayList<Enemy> enemyList;
+
+    private int lives;
+    private float healthBar;
+    private float healthInterval;
+    private boolean gameOver;
+    private int lowerBorder;
+    private Image liveSymbol;
+    private int upperBorder;
+    private boolean liveLost;
 
     public Level1State(GameStateManager gsm)
     {
@@ -55,15 +67,48 @@ public class Level1State extends GameState implements EntityObserver
         initBackground();
         initMap();
         initPlayer();
+        initHUD();
         initCamera();
         initEnemies();
         initFonts();
 
+        //HUD
+        healthBar = 100;
+        healthInterval = 80; // the player lose 20 health every hit
+
+        //Game Over text border from center at Y-AXIS
+        lowerBorder = 70;
+
+        //dusk life symbol position at Y-AXIS
+        upperBorder = 10;
+
         //some keys have changed through the settings
-        if (KeyHandler.keysChanged())
+        if (KeyHandler.keysChanged()) //TODO
         {
             initSound();
             initDifficulty();
+        }
+        else
+        {
+            setDifficutlyEasy();
+            enableSound();
+        }
+
+    }
+
+    private void initHUD()
+    {
+        try
+        {
+            liveSymbol = ImageIO.read(
+                    getClass().getResourceAsStream("/Backgrounds/lsymbol.png"));
+
+            liveSymbol = liveSymbol.getScaledInstance(50, 40,
+                    Image.SCALE_SMOOTH);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 
@@ -124,6 +169,8 @@ public class Level1State extends GameState implements EntityObserver
 
     private void setDifficultyHard()
     {
+        lives = 0;
+
         for (Enemy enemy : enemyList)
         {
             enemy.setWalkSpeed(5);
@@ -133,6 +180,8 @@ public class Level1State extends GameState implements EntityObserver
 
     private void setDifficultyMedium()
     {
+        lives = 1;
+
         for (Enemy enemy : enemyList)
         {
             enemy.setWalkSpeed(3);
@@ -142,6 +191,8 @@ public class Level1State extends GameState implements EntityObserver
 
     private void setDifficutlyEasy()
     {
+        lives = 2;
+
         for (Enemy enemy : enemyList)
         {
             enemy.setWalkSpeed(2);
@@ -189,13 +240,13 @@ public class Level1State extends GameState implements EntityObserver
         createEnemy("EvilTwin", new Vector2(4550, 809), "enemy_spritesheet_128_2.png");
         createEnemy("EvilTwin", new Vector2(3633, 1065), "enemy_spritesheet_128_2.png");
         createEnemy("EvilTwin", new Vector2(2315, 2345), "enemy_spritesheet_128_2.png");
-        createEnemy("EvilTwin", new Vector2(773, 2729), "enemy_spritesheet_128_2.png");
+        createEnemy("EvilTwin", new Vector2(773, 2729),  "enemy_spritesheet_128_2.png");
         createEnemy("EvilTwin", new Vector2(1566, 2729), "enemy_spritesheet_128_2.png");
     }
 
     public void update()
     {
-        if (!pause)
+        if (!pause && !gameOver)
         {
             player.update();
 
@@ -212,10 +263,40 @@ public class Level1State extends GameState implements EntityObserver
             bg2.setPosition(tileMap.cameraPos);
             bg3.setPosition(tileMap.cameraPos);
             bg4.setPosition(tileMap.cameraPos);
+
+            if (player.isHittenByEnemy())
+            {
+                handleHealthBar();
+            }
         }
 
         handleInput();
     }
+
+    private void handleHealthBar()
+    {
+        healthBar -= 1;
+
+        if (healthBar <= healthInterval)
+        {
+            player.setHittenByEnemy(false);
+            healthInterval -= 20;
+        }
+
+        if (healthBar == 0)
+        {
+            lives--;
+            healthBar = 100; // fill HealthBar slowly
+            healthInterval = 80;
+        }
+
+        if (lives < 0)
+        {
+            lives = 0;
+            gameOver = true;
+        }
+    }
+
 
     public void draw(Graphics2D g)
     {
@@ -238,20 +319,123 @@ public class Level1State extends GameState implements EntityObserver
         }
 
         // draw tilemap
+        //tileMap.draw(g);
         camera.draw(g);
-
-        // draw hud
-        player.drawHUD(g);
+        drawHUD(g);
 
         if (pause)
         {
             drawPause(g);
         }
+        else if (gameOver)
+        {
+            drawGameOver(g);
+        }
+    }
+
+    private void drawGameOver(Graphics2D g)
+    {
+        g.setColor(new Color(0, 0, 0, 80));
+        g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
+
+        g.setColor(new Color(0, 153, 255));
+        g.setFont(new Font("Arial", Font.PLAIN, 70));
+        g.drawString("GAME OVER", GamePanel.WIDTH / 2 - 170,
+                GamePanel.HEIGHT / 2 + lowerBorder);
+
+        if (lowerBorder > 0)
+        {
+            lowerBorder--;
+        }
+        else
+        {
+            g.setFont(optionTitles);
+            drawOptions(gameOverOptions, g);
+        }
+    }
+
+    public void drawOptions(String[] selections, Graphics2D g)
+    {
+        for (int i = 0; i < selections.length; i++)
+        {
+            if (i == currentChoice)
+            {
+                g.setColor(OPTIONS_SELECTED_COLOR);
+            }
+            else
+            {
+                g.setColor(OPTIONS_DEFAULT_COLOR);
+            }
+
+            g.drawString(selections[i],
+                    GamePanel.WIDTH / 2 + VGAP + optionsAlign[i],
+                    GamePanel.HEIGHT / 2 + 30 + i * 30);
+        }
+    }
+
+    private void drawHUD(Graphics2D g)
+    {
+        g.drawImage(liveSymbol, 55, 10, null);
+
+        Font HUDFont = new Font("Arial", Font.BOLD, 25);
+        g.setFont(HUDFont);
+        //g.drawString("LIVES", 20, 30);
+
+        g.drawString(String.valueOf(lives) + " x", 10, 40);
+
+        g.setColor(Color.BLACK);
+        g.drawRect(120, 20, 100, 20);
+
+        if (healthBar >= 65)
+            g.setColor(Color.GREEN);
+        else if (healthBar >= 35)
+            g.setColor(Color.YELLOW);
+        else
+            g.setColor(Color.RED);
+
+        g.fillRect(120, 20, (int) healthBar, 20);
+
+        if (healthBar <= 1)
+        {
+            liveLost = true;
+        }
+
+        if (liveLost)
+        {
+            float op = 0.5f;
+            g.setComposite(
+                    AlphaComposite.getInstance(AlphaComposite.SRC_OVER, op));
+            g.drawImage(liveSymbol, 55, upperBorder, null);
+            drawLiveLostAnimation(g);
+        }
+
+        if (lives <= 0)
+        {
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        }
+
+    }
+
+    private void drawLiveLostAnimation(Graphics2D g)
+    {
+        upperBorder -= 1;
+
+        if (upperBorder == -100)
+        {
+            upperBorder = 10;
+            liveLost = false;
+        }
     }
 
     private boolean isOnCamera(MapObject o)
     {
-        return (o.getPosition().x >= player.getPosition().x - GamePanel.WIDTH && o.getPosition().x <= player.getPosition().x + GamePanel.WIDTH) && (o.getPosition().y >= player.getPosition().y - GamePanel.HEIGHT && o.getPosition().y <= player.getPosition().y + GamePanel.HEIGHT);
+        return (o.getPosition().x >= player.getPosition().x - GamePanel.WIDTH
+                && o.getPosition().x <= player.getPosition().x
+                        + GamePanel.WIDTH)
+                && (o.getPosition().y >= player.getPosition().y
+                        - GamePanel.HEIGHT
+                        && o.getPosition().y <= player.getPosition().y
+                                + GamePanel.HEIGHT);
     }
 
     private void drawPause(Graphics2D g)
@@ -260,19 +444,12 @@ public class Level1State extends GameState implements EntityObserver
         g.setColor(new Color(0, 0, 0, 80));
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
-        g.setColor(Color.WHITE);
-        drawCenteredString(g, "PAUSE", new Rectangle(0, GamePanel.HEIGHT / 2 - PAUSE_TITLE_SIZE, GamePanel.WIDTH, PAUSE_TITLE_SIZE), pauseTitle);
+        g.setFont(pauseTitle);
+        g.setColor(PAUSE_TITLE_COLOR);
+        g.drawString("PAUSE", GamePanel.WIDTH / 2 + VGAP, GamePanel.HEIGHT / 2);
 
-        for (int i = 0; i < options.length; i++)
-        {
-            if (i == currentChoice)
-            {
-                drawCenteredString(g, "- " + options[i] + " -", new Rectangle(0, GamePanel.HEIGHT / 2 + 30 + i * 30, GamePanel.WIDTH, OPTIONS_SIZE), optionTitles);
-            } else
-            {
-                drawCenteredString(g, options[i], new Rectangle(0, GamePanel.HEIGHT / 2 + 30 + i * 30, GamePanel.WIDTH, OPTIONS_SIZE), optionTitles);
-            }
-        }
+        g.setFont(optionTitles);
+        drawOptions(pauseOptions, g);
     }
 
     /**
@@ -280,32 +457,64 @@ public class Level1State extends GameState implements EntityObserver
      */
     public void handleInput()
     {
-        if (!pause && KeyHandler.hasJustBeenPressed(Keys.ENTER) || KeyHandler.hasJustBeenPressed(Keys.ESCAPE))
+        if (!gameOver && !pause && KeyHandler.hasJustBeenPressed(Keys.ENTER) || KeyHandler.hasJustBeenPressed(Keys.ESCAPE))
         {
             pause = true;
         } else if (pause)
         {
-            if (KeyHandler.hasJustBeenPressed(Keys.ENTER)) select();
-            else if (KeyHandler.hasJustBeenPressed(Keys.UP))
+            if (KeyHandler.hasJustBeenPressed(Keys.ENTER))
+                selectPause();
+            else
+                selectChoice();
+        }
+        else if (gameOver)
+        {
+            if (KeyHandler.hasJustBeenPressed(Keys.ENTER))
+                selectGameOver();
+            else
+                selectChoice();
+        }
+    }
+
+    private void selectChoice()
+    {
+        if (KeyHandler.hasJustBeenPressed(Keys.UP))
+        {
+            currentChoice--;
+            if (currentChoice == -1)
             {
-                currentChoice--;
-                if (currentChoice == -1)
-                {
-                    currentChoice = options.length - 1;
-                }
+                currentChoice = pauseOptions.length - 1;
             }
-            if (KeyHandler.hasJustBeenPressed(Keys.DOWN))
+        }
+        else if (KeyHandler.hasJustBeenPressed(Keys.DOWN))
+        {
+            currentChoice++;
+            if (currentChoice == pauseOptions.length)
             {
-                currentChoice++;
-                if (currentChoice == options.length)
-                {
-                    currentChoice = 0;
-                }
+                currentChoice = 0;
             }
         }
     }
 
-    private void select()
+    private void selectGameOver()
+    {
+        switch (currentChoice)
+        {
+        case 0:
+            lives = 2;
+            gsm.setState(GameStateManager.LEVEL1STATE);
+            break;
+        case 1:
+            gsm.setState(GameStateManager.MENUSTATE);
+            break;
+        case 2:
+            System.exit(0);
+            break;
+        }
+        gameOver = false;
+    }
+
+    private void selectPause()
     {
         switch (currentChoice)
         {

@@ -18,7 +18,7 @@ public class GameStateManager
 
     public void setState(int state)
     {
-        unloadState(currentState);
+        //unloadState(currentState);
         currentState = state;
         loadState(currentState);
     }

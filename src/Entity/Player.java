@@ -26,7 +26,6 @@ public class Player extends MovingObject
     private int exp;
     private int lives;
     private int dmg = 3;
-    private HUD hud;
     private ArrayList<MapObject> objectsToRemove;
     private boolean isAttacking = false;
     private boolean isInvulnerable = false;
@@ -40,6 +39,8 @@ public class Player extends MovingObject
     private int currentFlinchTime = flinchTime;
     private int currentAttackTime = attackTime;
     private boolean isBlinking = false;
+    private boolean hittenByEnemy;
+
     private int invulnerabilityTimer = invulnerabilityTime;
     private ArrayList<MapObject> mapObjects = new ArrayList<>();
 
@@ -50,8 +51,6 @@ public class Player extends MovingObject
         width = FRAMEWIDTHS[0];
         height = FRAMEHEIGHTS[0];
         loadSprites("dusk_spritesheet_128.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
-
-        hud = new HUD(health);
     }
 
     public void initPlayer(Vector2 position)
@@ -75,7 +74,6 @@ public class Player extends MovingObject
     @Override
     public void update()
     {
-        updateHUD();
         handleInputs();
         animation.update();
         updateForce();
@@ -94,16 +92,6 @@ public class Player extends MovingObject
         super.draw(g);
         AlphaComposite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1);
         g.setComposite(a);
-    }
-
-    private void updateHUD()
-    {
-        hud.setCurrentHealth(health);
-    }
-
-    public void drawHUD(Graphics2D g)
-    {
-        hud.draw(g);
     }
 
     //---- State handling ---------------------------------------------------------------------------------
@@ -309,7 +297,9 @@ public class Player extends MovingObject
             }
             setInvulnerable(true);
             --health;
-            hud.setCurrentHealth(health);
+
+            //TODO System.out.println(health);
+            setHittenByEnemy(true);
             currentFlinchTime = 0;
             invulnerabilityTimer = 0;
             setAnimation(FLINCHING);
@@ -520,5 +510,15 @@ public class Player extends MovingObject
     public double getMinFallSpeed()
     {
         return minFallSpeed;
+    }
+
+    public void setHittenByEnemy(boolean b)
+    {
+        hittenByEnemy = b;
+    }
+
+    public boolean isHittenByEnemy()
+    {
+        return hittenByEnemy;
     }
 }
