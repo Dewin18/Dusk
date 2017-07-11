@@ -39,7 +39,7 @@ public class Player extends MovingObject
     private int currentFlinchTime = flinchTime;
     private int currentAttackTime = attackTime;
     private boolean isBlinking = false;
-    private boolean hittenByEnemy;
+    private boolean hitByEnemy;
 
     private int invulnerabilityTimer = invulnerabilityTime;
     private ArrayList<MapObject> mapObjects = new ArrayList<>();
@@ -299,7 +299,7 @@ public class Player extends MovingObject
             --health;
 
             //TODO System.out.println(health);
-            setHittenByEnemy(true);
+            setHitByEnemy(true);
             currentFlinchTime = 0;
             invulnerabilityTimer = 0;
             setAnimation(FLINCHING);
@@ -512,13 +512,13 @@ public class Player extends MovingObject
         return minFallSpeed;
     }
 
-    public void setHittenByEnemy(boolean b)
+    public void setHitByEnemy(boolean b)
     {
-        hittenByEnemy = b;
+        hitByEnemy = b;
     }
 
-    public boolean isHittenByEnemy()
+    public boolean isHitByEnemy()
     {
-        return hittenByEnemy;
+        return hitByEnemy;
     }
 }

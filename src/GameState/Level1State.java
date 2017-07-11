@@ -25,7 +25,7 @@ public class Level1State extends GameState implements EntityObserver
     private final int OPTIONS_SIZE = 25;
     private final String OPTIONS_STYLE = "Berlin Sans FB Regular.ttf";
     private final Color OPTIONS_SELECTED_COLOR = Color.GREEN;
-    private final Color OPTIONS_DEFAULT_COLOR = Color.LIGHT_GRAY;
+    private final Color OPTIONS_DEFAULT_COLOR = Color.WHITE;
     private Background bg1;
     private Background bg2;
     private Background bg3;
@@ -93,7 +93,6 @@ public class Level1State extends GameState implements EntityObserver
             setDifficutlyEasy();
             enableSound();
         }
-
     }
 
     private void initHUD()
@@ -264,7 +263,7 @@ public class Level1State extends GameState implements EntityObserver
             bg3.setPosition(tileMap.cameraPos);
             bg4.setPosition(tileMap.cameraPos);
 
-            if (player.isHittenByEnemy())
+            if (player.isHitByEnemy())
             {
                 handleHealthBar();
             }
@@ -279,7 +278,7 @@ public class Level1State extends GameState implements EntityObserver
 
         if (healthBar <= healthInterval)
         {
-            player.setHittenByEnemy(false);
+            player.setHitByEnemy(false);
             healthInterval -= 20;
         }
 
@@ -318,8 +317,6 @@ public class Level1State extends GameState implements EntityObserver
             }
         }
 
-        // draw tilemap
-        //tileMap.draw(g);
         camera.draw(g);
         drawHUD(g);
 
@@ -338,10 +335,8 @@ public class Level1State extends GameState implements EntityObserver
         g.setColor(new Color(0, 0, 0, 80));
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
-        g.setColor(new Color(0, 153, 255));
-        g.setFont(new Font("Arial", Font.PLAIN, 70));
-        g.drawString("GAME OVER", GamePanel.WIDTH / 2 - 170,
-                GamePanel.HEIGHT / 2 + lowerBorder);
+        g.setColor(Color.WHITE);
+        drawCenteredString(g, "GAME OVER", new Rectangle(0, GamePanel.HEIGHT/2 + lowerBorder - PAUSE_TITLE_SIZE, GamePanel.WIDTH, PAUSE_TITLE_SIZE), pauseTitle);
 
         if (lowerBorder > 0)
         {
@@ -360,16 +355,14 @@ public class Level1State extends GameState implements EntityObserver
         {
             if (i == currentChoice)
             {
-                g.setColor(OPTIONS_SELECTED_COLOR);
+                drawCenteredString(g, "- " + selections[i] + " -", new Rectangle(0, GamePanel.HEIGHT/2 + OPTIONS_SIZE + i*OPTIONS_SIZE, GamePanel.WIDTH, OPTIONS_SIZE), optionTitles);
             }
             else
             {
-                g.setColor(OPTIONS_DEFAULT_COLOR);
+                drawCenteredString(g, selections[i], new Rectangle(0, GamePanel.HEIGHT/2 + OPTIONS_SIZE + i*OPTIONS_SIZE, GamePanel.WIDTH, OPTIONS_SIZE), optionTitles);
             }
 
-            g.drawString(selections[i],
-                    GamePanel.WIDTH / 2 + VGAP + optionsAlign[i],
-                    GamePanel.HEIGHT / 2 + 30 + i * 30);
+            //g.drawString(selections[i], GamePanel.WIDTH / 2 + VGAP + optionsAlign[i], GamePanel.HEIGHT / 2 + 30 + i * 30);
         }
     }
 
@@ -377,7 +370,7 @@ public class Level1State extends GameState implements EntityObserver
     {
         g.drawImage(liveSymbol, 55, 10, null);
 
-        Font HUDFont = new Font("Arial", Font.BOLD, 25);
+        Font HUDFont = optionTitles;
         g.setFont(HUDFont);
         //g.drawString("LIVES", 20, 30);
 
@@ -444,11 +437,8 @@ public class Level1State extends GameState implements EntityObserver
         g.setColor(new Color(0, 0, 0, 80));
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
-        g.setFont(pauseTitle);
         g.setColor(PAUSE_TITLE_COLOR);
-        g.drawString("PAUSE", GamePanel.WIDTH / 2 + VGAP, GamePanel.HEIGHT / 2);
-
-        g.setFont(optionTitles);
+        drawCenteredString(g, "PAUSE", new Rectangle(0, GamePanel.HEIGHT/2 - PAUSE_TITLE_SIZE, GamePanel.WIDTH, PAUSE_TITLE_SIZE), pauseTitle);
         drawOptions(pauseOptions, g);
     }
 
@@ -548,6 +538,7 @@ public class Level1State extends GameState implements EntityObserver
                 break;
         }
 
+        assert enemy != null;
         enemy.initEnemy(position, spriteSheet);
         enemy.addObserver(this);
         enemyList.add(enemy);
