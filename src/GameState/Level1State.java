@@ -32,13 +32,13 @@ public class Level1State extends GameState implements EntityObserver
     private Camera camera;
     private String[] options = {"RESUME", "BACK TO MENU", "QUIT"};
     private int[] optionsAlign = {22, -2, 35};
-    private final int VGAP = -30; 
-    
+    private final int VGAP = -30;
+
     private boolean pause;
     private int currentChoice = 0;
     private Font pauseTitle;
     private Font optionTitles;
-    
+
     //All Level1State enemies are stored in this list
     private ArrayList<Enemy> enemyList;
 
@@ -78,12 +78,12 @@ public class Level1State extends GameState implements EntityObserver
 
         switch (sound)
         {
-        case "ON":
-            enableSound();
-            break;
-        case "OFF":
-            disableSound();
-            break;
+            case "ON":
+                enableSound();
+                break;
+            case "OFF":
+                disableSound();
+                break;
         }
     }
 
@@ -103,15 +103,15 @@ public class Level1State extends GameState implements EntityObserver
 
         switch (difficulty)
         {
-        case "EASY":
-            setDifficutlyEasy();
-            break;
-        case "MEDIUM":
-            setDifficultyMedium();
-            break;
-        case "HARD":
-            setDifficultyHard();
-            break;
+            case "EASY":
+                setDifficutlyEasy();
+                break;
+            case "MEDIUM":
+                setDifficultyMedium();
+                break;
+            case "HARD":
+                setDifficultyHard();
+                break;
         }
     }
 
@@ -194,7 +194,8 @@ public class Level1State extends GameState implements EntityObserver
 
             for (Enemy enemy : enemyList)
             {
-                if (isOnCamera(enemy)) {
+                if (isOnCamera(enemy))
+                {
                     enemy.update();
                 }
             }
@@ -208,39 +209,42 @@ public class Level1State extends GameState implements EntityObserver
 
         handleInput();
     }
-    
+
     public void draw(Graphics2D g)
     {
-            // clear screen
+        // clear screen
         g.setColor(Color.WHITE);
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
-            
-            bg4.draw(g);
-            bg3.draw(g);
-            bg2.draw(g);
-            bg1.draw(g);
-            
-            player.draw(g);
-            for (Enemy enemy : enemyList)
-            {
-                if (isOnCamera(enemy)) {
-                    enemy.draw(g);
-                }
-            }
 
-            // draw tilemap
-            //tileMap.draw(g);
-            camera.draw(g);
-            
-            if (pause)
+        bg4.draw(g);
+        bg3.draw(g);
+        bg2.draw(g);
+        bg1.draw(g);
+
+        player.draw(g);
+        for (Enemy enemy : enemyList)
+        {
+            if (isOnCamera(enemy))
             {
-                drawPause(g);
+                enemy.draw(g);
             }
+        }
+
+        // draw tilemap
+        camera.draw(g);
+
+        // draw hud
+        player.drawHUD(g);
+
+        if (pause)
+        {
+            drawPause(g);
+        }
     }
 
-    private boolean isOnCamera(MapObject o) {
-        return (o.getPosition().x >= player.getPosition().x - GamePanel.WIDTH && o.getPosition().x <= player.getPosition().x + GamePanel.WIDTH) &&
-                (o.getPosition().y >= player.getPosition().y - GamePanel.HEIGHT && o.getPosition().y <= player.getPosition().y + GamePanel.HEIGHT);
+    private boolean isOnCamera(MapObject o)
+    {
+        return (o.getPosition().x >= player.getPosition().x - GamePanel.WIDTH && o.getPosition().x <= player.getPosition().x + GamePanel.WIDTH) && (o.getPosition().y >= player.getPosition().y - GamePanel.HEIGHT && o.getPosition().y <= player.getPosition().y + GamePanel.HEIGHT);
     }
 
     private void drawPause(Graphics2D g)
@@ -248,7 +252,7 @@ public class Level1State extends GameState implements EntityObserver
         //make screen opaque and darker
         g.setColor(new Color(0, 0, 0, 80));
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
-        
+
         g.setFont(pauseTitle);
         g.setColor(PAUSE_TITLE_COLOR);
         g.drawString("PAUSE", GamePanel.WIDTH / 2 + VGAP, GamePanel.HEIGHT / 2);
@@ -260,14 +264,12 @@ public class Level1State extends GameState implements EntityObserver
             if (i == currentChoice)
             {
                 g.setColor(OPTIONS_SELECTED_COLOR);
-            }
-            else
+            } else
             {
                 g.setColor(OPTIONS_DEFAULT_COLOR);
             }
-            
-            g.drawString(options[i], GamePanel.WIDTH / 2 + VGAP + optionsAlign[i],
-                    GamePanel.HEIGHT / 2 + 30 + i * 30);
+
+            g.drawString(options[i], GamePanel.WIDTH / 2 + VGAP + optionsAlign[i], GamePanel.HEIGHT / 2 + 30 + i * 30);
         }
     }
 
@@ -279,11 +281,9 @@ public class Level1State extends GameState implements EntityObserver
         if (!pause && KeyHandler.hasJustBeenPressed(Keys.ENTER))
         {
             pause = true;
-        }
-        else if (pause)
+        } else if (pause)
         {
-            if (KeyHandler.hasJustBeenPressed(Keys.ENTER))
-                select();
+            if (KeyHandler.hasJustBeenPressed(Keys.ENTER)) select();
             else if (KeyHandler.hasJustBeenPressed(Keys.UP))
             {
                 currentChoice--;
@@ -307,15 +307,15 @@ public class Level1State extends GameState implements EntityObserver
     {
         switch (currentChoice)
         {
-        case 0:
-            pause = false;
-            break;
-        case 1:
-            gsm.setState(GameStateManager.MENUSTATE);
-            break;
-        case 2:
-            System.exit(0);
-            break;
+            case 0:
+                pause = false;
+                break;
+            case 1:
+                gsm.setState(GameStateManager.MENUSTATE);
+                break;
+            case 2:
+                System.exit(0);
+                break;
         }
     }
 
@@ -326,16 +326,15 @@ public class Level1State extends GameState implements EntityObserver
      * @param position    The map position
      * @param spriteSheet THe spriteSheet
      */
-    public void createEnemy(String enemyName, Vector2 position,
-            String spriteSheet)
+    public void createEnemy(String enemyName, Vector2 position, String spriteSheet)
     {
         Enemy enemy = null;
 
         switch (enemyName)
         {
-        case "EvilTwin":
-            enemy = new EvilTwin(tileMap);
-            break;
+            case "EvilTwin":
+                enemy = new EvilTwin(tileMap);
+                break;
         }
 
         enemy.initEnemy(position, spriteSheet);
