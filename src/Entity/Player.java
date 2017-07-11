@@ -17,10 +17,10 @@ public class Player extends MovingObject
     private final int flinchTime = 5;
     private final int attackTime = 8;
     private final int invulnerabilityTime = 80;
-    private final int[] NUMFRAMES = {1, 6, 1, 1};
-    private final int[] FRAMEWIDTHS = {128, 128, 128, 256};
-    private final int[] FRAMEHEIGHTS = {128, 128, 128, 128};
-    private final int[] SPRITEDELAYS = {-1, 7, -1, -1};
+    private final int[] NUMFRAMES = {4, 6, 1, 1, 2, 2};
+    private final int[] FRAMEWIDTHS = {128, 128, 128, 256, 128, 128};
+    private final int[] FRAMEHEIGHTS = {128, 128, 128, 128, 128, 128};
+    private final int[] SPRITEDELAYS = {12, 7, -1, -1, 8, 8};
     double knockback = 15;
     private int health = 5;
     private int exp;
@@ -49,7 +49,7 @@ public class Player extends MovingObject
 
         width = FRAMEWIDTHS[0];
         height = FRAMEHEIGHTS[0];
-        loadSprites("dusk_spritesheet_128.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
+        loadSprites("dusk_spritesheet_128_test.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
 
         hud = new HUD(health);
     }
@@ -128,8 +128,6 @@ public class Player extends MovingObject
                 else if (checkAndHandleJump()) break;
                 break;
             case JUMPING:
-                updateIsRising();
-                updateYVelocity();
                 if (isOnGround)
                 {
                     if (checkAndHandleIdling()) ;
@@ -140,6 +138,8 @@ public class Player extends MovingObject
                     }
                     if (checkAndHandleJumpReleased()) ;
                 }
+                updateIsRising();
+                updateYVelocity();
                 checkForEarlyReleaseOfJump();
                 updateIsFalling();
                 if (checkAndHandleJumpDirectionChange()) ;
@@ -169,8 +169,8 @@ public class Player extends MovingObject
                     statenr = 1;
                     break;
                 case JUMPING:
-                    if (isFalling) statenr = 0;
-                    else statenr = 0;
+                    if (isFalling) statenr = 5;
+                    else statenr = 4;
                     break;
                 case FLINCHING:
                     statenr = 2;
@@ -470,12 +470,18 @@ public class Player extends MovingObject
 
     private void updateIsRising()
     {
+        boolean oldIsRising = isRising;
         isRising = velocity.y < 0;
+        if (oldIsRising != isRising)
+            setAnimation(JUMPING);
     }
 
     private void updateIsFalling()
     {
+        boolean oldIsFalling = isFalling;
         isFalling = velocity.y > 0;
+        if (oldIsFalling != isFalling)
+            setAnimation(JUMPING);
     }
 
     private boolean checkAndHandleStillFlinching()
