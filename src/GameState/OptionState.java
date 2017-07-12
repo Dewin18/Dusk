@@ -36,6 +36,8 @@ public class OptionState extends GameState
     //controls blink animation
     private final int BLINK_TIME = 50;
     private int blinkTimer = 0;
+    private float smoothLimit = 1f;
+    private final float SMOOTH_SCALE = 0.1f;
     
     //current choice 
     private int currentChoice;
@@ -275,14 +277,20 @@ public class OptionState extends GameState
 
     private void blink(Graphics2D g)
     {
-        blinkTimer ++;
-        
-        if(blinkTimer >= BLINK_TIME / 2)
+        blinkTimer++;
+
+        if (blinkTimer >= BLINK_TIME / 2)
         {
             g.setComposite(
-                  AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.0f));
-            
-            if(blinkTimer == BLINK_TIME)  blinkTimer=0;
+                    AlphaComposite.getInstance(AlphaComposite.SRC_OVER, smoothLimit));
+                
+                if(smoothLimit > 0.1f) smoothLimit -= SMOOTH_SCALE;
+        }
+        
+        if (blinkTimer == BLINK_TIME) 
+        {
+            smoothLimit = 1f;
+            blinkTimer = 0;
         }
     }
 
