@@ -2,8 +2,10 @@ package GameState;
 
 import java.awt.*;
 import java.io.IOException;
+import java.security.Key;
 import java.util.ArrayList;
 
+import Audio.JukeBox;
 import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.GamePanel;
@@ -426,19 +428,22 @@ public class OptionState extends GameState
     public void handleInput(String[] selection)
     {
         int selectionLength = selection.length;
-        
-        if (KeyHandler.hasJustBeenPressed(Keys.ENTER) 
-                || KeyHandler.hasJustBeenPressed(Keys.DOWN))
+
+        if (KeyHandler.hasJustBeenPressed(Keys.ENTER)) JukeBox.play("menupick");
+
+        if (KeyHandler.hasJustBeenPressed(Keys.ENTER) || KeyHandler.hasJustBeenPressed(Keys.DOWN))
         {
             if(currentState == 1) currentChoice = getChoice(selection[1]);
             selectDown();
         }
         else if (KeyHandler.hasJustBeenPressed(Keys.LEFT))
         {
+            JukeBox.play("menuchoice");
             selectNextLeft(selectionLength);
         }
         else if (KeyHandler.hasJustBeenPressed(Keys.RIGHT))
         {
+            JukeBox.play("menuchoice");
             selectNextRight(selectionLength);
         }
     }

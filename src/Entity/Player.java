@@ -1,5 +1,6 @@
 package Entity;
 
+import Audio.JukeBox;
 import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.Time;
@@ -17,10 +18,10 @@ public class Player extends MovingObject
     private final int flinchTime = 5;
     private final int attackTime = 8;
     private final int invulnerabilityTime = 80;
-    private final int[] NUMFRAMES = {4, 6, 1, 1, 2, 2};
-    private final int[] FRAMEWIDTHS = {128, 128, 128, 256, 128, 128};
-    private final int[] FRAMEHEIGHTS = {128, 128, 128, 128, 128, 128};
-    private final int[] SPRITEDELAYS = {12, 7, -1, -1, 8, 8};
+    private final int[] NUMFRAMES = {4, 6, 1, 1, 1, 2, 2, 2};
+    private final int[] FRAMEWIDTHS = {128, 128, 128, 256, 128, 128, 128, 128};
+    private final int[] FRAMEHEIGHTS = {128, 128, 128, 128, 128, 128, 128, 128};
+    private final int[] SPRITEDELAYS = {12, 7, -1, -1, 8, 8, 8, 8};
     double knockback = 15;
     private int health = 5;
     private int exp;
@@ -32,6 +33,8 @@ public class Player extends MovingObject
     private boolean isRising = false;
     private boolean isFalling = false;
     private double minFallSpeed;
+    private int fallingTime = 0;
+    private int fallingLinesTriggerTime = 60;
     private boolean hasJumped; // for canceling repeat jumps by keeping the button pressed
     private boolean hasAttack = true;
     private boolean hasDoubleJump = false;
@@ -44,6 +47,9 @@ public class Player extends MovingObject
     private int invulnerabilityTimer = invulnerabilityTime;
     private ArrayList<MapObject> mapObjects = new ArrayList<>();
 
+    private int stepSoundMaxTime = 20;
+    private int currentStepSoundTime = stepSoundMaxTime;
+
     public Player(TileMap tm)
     {
         super(tm);
@@ -51,6 +57,12 @@ public class Player extends MovingObject
         width = FRAMEWIDTHS[0];
         height = FRAMEHEIGHTS[0];
         loadSprites("dusk_spritesheet_128.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
+        JukeBox.load("grass_step1.mp3", "grassstep1");
+        JukeBox.load("grass_step2.mp3", "grassstep2");
+        JukeBox.load("grass_step3.mp3", "grassstep3");
+        JukeBox.load("grass_step4.mp3", "grassstep4");
+        JukeBox.load("jump.mp3", "jump");
+        JukeBox.load("landing.mp3", "landing");
     }
 
     public void initPlayer(Vector2 position)
@@ -109,6 +121,7 @@ public class Player extends MovingObject
                 break;
             case WALKING:
                 if (checkAndHandleInAir()) break;
+                playWalkingSound();
                 if (checkAndHandleJumpReleased()) ;
                 if (checkAndHandleIdling()) break;
                 if (checkAndHandleWalls()) ;
@@ -118,6 +131,8 @@ public class Player extends MovingObject
             case JUMPING:
                 if (isOnGround)
                 {
+                    JukeBox.play("landing");
+                    JukeBox.play("grassstep4");
                     if (checkAndHandleIdling()) ;
                     else
                     {
@@ -130,6 +145,7 @@ public class Player extends MovingObject
                 updateYVelocity();
                 checkForEarlyReleaseOfJump();
                 updateIsFalling();
+                updateFallingTime();
                 if (checkAndHandleJumpDirectionChange()) ;
                 if (checkAndHandleLeftAndRightPressed()) break;
                 else if (checkAndHandleWalls()) ;
@@ -139,6 +155,18 @@ public class Player extends MovingObject
                 else stopFlinching();
                 break;
         }
+    }
+
+    private void playWalkingSound()
+    {
+        if (currentStepSoundTime < stepSoundMaxTime)
+        {
+            currentStepSoundTime++;
+            return;
+        }
+        String s = "grassstep" + (int)(Math.random()*4+1);
+        JukeBox.play(s);
+        currentStepSoundTime = 0;
     }
 
     @Override
@@ -157,7 +185,15 @@ public class Player extends MovingObject
                     statenr = 1;
                     break;
                 case JUMPING:
-                    if (isFalling) statenr = 5;
+                    if (isFalling)
+                    {
+                        statenr = 5;
+                        if (fallingTime > fallingLinesTriggerTime)
+                        {
+                            statenr = 7;
+                            fallingTime = 0;
+                        }
+                    }
                     else statenr = 4;
                     break;
                 case FLINCHING:
@@ -341,6 +377,7 @@ public class Player extends MovingObject
         if (!isOnGround)
         {
             setAnimation(JUMPING);
+            currentStepSoundTime = stepSoundMaxTime;
             return true;
         }
         return false;
@@ -362,6 +399,7 @@ public class Player extends MovingObject
         {
             setAnimation(IDLE);
             setVelocity(0, 0);
+            currentStepSoundTime = stepSoundMaxTime;
             return true;
         }
         return false;
@@ -388,9 +426,11 @@ public class Player extends MovingObject
     {
         if (KeyHandler.isPressed(Keys.JUMP) && !hasJumped)
         {
+            JukeBox.play("jump");
             velocity.y = jumpSpeed;
             setAnimation(JUMPING);
             hasJumped = true;
+            currentStepSoundTime = stepSoundMaxTime;
             return true;
         }
         return false;
@@ -472,6 +512,13 @@ public class Player extends MovingObject
         isFalling = velocity.y > 0;
         if (oldIsFalling != isFalling)
             setAnimation(JUMPING);
+    }
+
+    private void updateFallingTime()
+    {
+        if (isRising) fallingTime = 0;
+        if (isFalling) fallingTime++;
+        if (fallingTime > fallingLinesTriggerTime) setAnimation(JUMPING);
     }
 
     private boolean checkAndHandleStillFlinching()

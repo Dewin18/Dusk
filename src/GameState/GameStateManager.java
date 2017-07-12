@@ -1,5 +1,7 @@
 package GameState;
 
+import Audio.JukeBox;
+
 public class GameStateManager
 {
     private GameState[] gameStates;
@@ -11,6 +13,7 @@ public class GameStateManager
 
     public GameStateManager()
     {
+        JukeBox.init();
         gameStates = new GameState[12];
         currentState = MENUSTATE;
         loadState(currentState);

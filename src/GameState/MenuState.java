@@ -1,5 +1,6 @@
 package GameState;
 
+import Audio.JukeBox;
 import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.GamePanel;
@@ -28,6 +29,10 @@ public class MenuState extends GameState
         bg = new Background("menu bg.jpg");
 
         initFonts();
+        JukeBox.load("/Audio/title_music.mp3", "titlemusic");
+        JukeBox.load("menu_pick.mp3", "menupick");
+        JukeBox.load("menu_choice.mp3", "menuchoice");
+        JukeBox.loop("titlemusic");
     }
 
     private void initFonts()
@@ -76,6 +81,7 @@ public class MenuState extends GameState
 
     private void select()
     {
+        JukeBox.play("menupick");
         if (currentChoice == 0)
         {
             gsm.setState(GameStateManager.LEVEL1STATE);
@@ -96,6 +102,7 @@ public class MenuState extends GameState
         
         if (KeyHandler.hasJustBeenPressed(Keys.UP))
         {
+            JukeBox.play("menuchoice");
             currentChoice--;
             if (currentChoice == -1)
             {
@@ -104,6 +111,7 @@ public class MenuState extends GameState
         }
         if (KeyHandler.hasJustBeenPressed(Keys.DOWN))
         {
+            JukeBox.play("menuchoice");
             currentChoice++;
             if (currentChoice == options.length)
             {
