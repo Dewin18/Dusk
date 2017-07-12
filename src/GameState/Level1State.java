@@ -25,8 +25,6 @@ public class Level1State extends GameState implements EntityObserver
     //Option Titles
     private final int OPTIONS_SIZE = 25;
     private final String OPTIONS_STYLE = "Berlin Sans FB Regular.ttf";
-    private final Color OPTIONS_SELECTED_COLOR = Color.GREEN;
-    private final Color OPTIONS_DEFAULT_COLOR = Color.WHITE;
     private Background bg1;
     private Background bg2;
     private Background bg3;
@@ -36,8 +34,6 @@ public class Level1State extends GameState implements EntityObserver
     private Camera camera;
     private String[] pauseOptions = {"Resume", "Back to menu", "Exit"};
     private String[] gameOverOptions = {"Restart", "Back to menu", "Exit"};
-    private int[] optionsAlign = {22, -2, 35};
-    private final int VGAP = -30; 
     
     private boolean pause;
     private int currentChoice = 0;
@@ -55,6 +51,10 @@ public class Level1State extends GameState implements EntityObserver
     private Image liveSymbol;
     private int upperBorder;
     private boolean liveLost;
+    
+    //health blink animation
+    private final int BLINK_TIME = 50;
+    private int blinkTimer = 0;
 
     public Level1State(GameStateManager gsm)
     {
@@ -384,13 +384,17 @@ public class Level1State extends GameState implements EntityObserver
         g.setColor(Color.BLACK);
         g.drawRect(120, 20, 100, 20);
 
+        
         if (healthBar >= 65)
             g.setColor(Color.GREEN);
         else if (healthBar >= 35)
             g.setColor(Color.YELLOW);
         else
-            g.setColor(Color.RED);
-
+        {
+            g.setColor(Color.RED); 
+            if(!pause)blink(g);
+        }
+         
         g.fillRect(120, 20, (int) healthBar, 20);
 
         if (healthBar <= 1)
@@ -407,11 +411,25 @@ public class Level1State extends GameState implements EntityObserver
             drawLiveLostAnimation(g);
         }
 
-        if (lives <= 0)
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        g.setColor(Color.BLACK);
+        for(int i=140; i <= 200; i+=20)
         {
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+            g.drawLine(i, 20, i, 40);
         }
+    }
 
+    private void blink(Graphics2D g)
+    {
+        blinkTimer ++;
+          
+        if(blinkTimer >= BLINK_TIME / 2)
+        {
+            g.setComposite(
+                  AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.0f));
+            
+            if(blinkTimer == BLINK_TIME) blinkTimer = 0;
+        }
     }
 
     private void drawLiveLostAnimation(Graphics2D g)

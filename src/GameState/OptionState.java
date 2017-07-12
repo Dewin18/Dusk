@@ -33,6 +33,10 @@ public class OptionState extends GameState
     private final int TITLE_FONT_SIZE = 25;
     private final int SETTINGS_FONT_SIZE = 20;
     
+    //controls blink animation
+    private final int BLINK_TIME = 50;
+    private int blinkTimer = 0;
+    
     //current choice 
     private int currentChoice;
     
@@ -219,13 +223,11 @@ public class OptionState extends GameState
         {
             if(selectionStates[8])
             {
-                if (i == currentChoice) g.setColor(SELECT_COLOR);  
-                else g.setColor(DEFAULT_COLOR); 
+                if (i == currentChoice)  g.setColor(SELECT_COLOR);  
+                else  g.setColor(DEFAULT_COLOR); 
             }
-            else
-            {
-                g.setColor(DEFAULT_COLOR);
-            }
+            else g.setColor(DEFAULT_COLOR);
+            
             g.drawString(navigationSettings[i], 
                     GamePanel.WIDTH / 2 - 600 + i * NAVIGATION_VGAP_INTERVAL,
                     GamePanel.HEIGHT / 2 + 270);
@@ -249,18 +251,39 @@ public class OptionState extends GameState
             if(duplicateWarning)
             {
                 drawString = "KEY ALREADY USED!";
-                
                 g.setColor(WARNING_COLOR);
             }
-            else g.setColor(SELECT_COLOR);
+            else 
+            {
+                g.setColor(SELECT_COLOR);
+                blink(g);
+            } 
         } 
-        else g.setColor(DEFAULT_COLOR);
+        else 
+        {
+            g.setColor(DEFAULT_COLOR);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        }
 
         if(drawString.equals("←") || drawString.equals("↑") || drawString.equals("→") || drawString.equals("↓"))
             g.setFont(arialFont);
+        
         g.drawString(drawString, GamePanel.WIDTH / 2 + 150,
                 GamePanel.HEIGHT / 2 - yOffset);
         g.setFont(font);
+    }
+
+    private void blink(Graphics2D g)
+    {
+        blinkTimer ++;
+        
+        if(blinkTimer >= BLINK_TIME / 2)
+        {
+            g.setComposite(
+                  AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.0f));
+            
+            if(blinkTimer == BLINK_TIME)  blinkTimer=0;
+        }
     }
 
     //draw easy, medium, hard
@@ -275,8 +298,10 @@ public class OptionState extends GameState
             }
             else
             {
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
                 g.setColor(DEFAULT_COLOR);
             }
+            
             g.drawString(selection[1], GamePanel.WIDTH / 2 + 150,
                     GamePanel.HEIGHT / 2 - 135);
         }
@@ -310,7 +335,7 @@ public class OptionState extends GameState
             }
             else
             {
-                
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
                 g.setColor(DEFAULT_COLOR);
             }
             g.drawString(selection[0], GamePanel.WIDTH / 2 + 150,
