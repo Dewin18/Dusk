@@ -309,9 +309,9 @@ public class Level1State extends GameState implements EntityObserver
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
         bg4.draw(g);
-        //bg3.draw(g);
-        //bg2.draw(g);
-        //bg1.draw(g);
+        bg3.draw(g);
+        bg2.draw(g);
+        bg1.draw(g);
 
         player.draw(g);
         for (Enemy enemy : enemyList)
