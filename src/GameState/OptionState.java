@@ -17,7 +17,7 @@ public class OptionState extends GameState
     private final int NAVIGATION_VGAP_INTERVAL = 560; 
     
     //GAP starts at center (GamePanel / 2)
-    private final int TITLE_VGAP = 60;
+    private final int TITLE_VGAP = 20;
     private final int TITLE_HGAP = 250;
     
     //constant colors for selection mode
@@ -34,17 +34,15 @@ public class OptionState extends GameState
     private final int SETTINGS_FONT_SIZE = 20;
     
     //controls blink animation
-    private final int BLINK_TIME = 50;
-    private int blinkTimer = 0;
+    private boolean healthVisibility = true;
     private float smoothLimit = 1f;
-    private final float SMOOTH_SCALE = 0.1f;
+    private final float SMOOTH_SCALE = 0.02f;
     
     //current choice 
     private int currentChoice;
     
     //current key state (up, down, left, right) selected
     private int currentControl;
-   
     
     //current state number in boolean Array
     private int currentState;
@@ -163,6 +161,7 @@ public class OptionState extends GameState
 
     public void draw(Graphics2D g)
     {
+        g.setColor(Color.BLACK);
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
         drawTitle(g);
@@ -277,21 +276,17 @@ public class OptionState extends GameState
 
     private void blink(Graphics2D g)
     {
-        blinkTimer++;
-
-        if (blinkTimer >= BLINK_TIME / 2)
-        {
-            g.setComposite(
-                    AlphaComposite.getInstance(AlphaComposite.SRC_OVER, smoothLimit));
-                
-                if(smoothLimit > 0.1f) smoothLimit -= SMOOTH_SCALE;
-        }
+        if(smoothLimit == 1.0f) healthVisibility = true;
         
-        if (blinkTimer == BLINK_TIME) 
+        if(healthVisibility)
         {
-            smoothLimit = 1f;
-            blinkTimer = 0;
+            if(smoothLimit > 0.1f) smoothLimit -= SMOOTH_SCALE;
+            if(smoothLimit <= 0.1f) healthVisibility = false;
         }
+        else if(smoothLimit < 1.0f) smoothLimit += SMOOTH_SCALE;
+
+        g.setComposite(
+                AlphaComposite.getInstance(AlphaComposite.SRC_OVER, smoothLimit));
     }
 
     //draw easy, medium, hard

@@ -53,10 +53,9 @@ public class Level1State extends GameState implements EntityObserver
     private boolean liveLost;
 
     //health blink animation
-    private final int BLINK_TIME = 50;
-    private int blinkTimer = 0;
+    private boolean healthVisibility = true;
     private float smoothLimit = 1f;
-    private final float SMOOTH_SCALE = 0.05f;
+    private final float SMOOTH_SCALE = 0.02f;
 
     public Level1State(GameStateManager gsm)
     {
@@ -433,21 +432,17 @@ public class Level1State extends GameState implements EntityObserver
 
     private void blink(Graphics2D g)
     {
-        blinkTimer++;
-
-        if (blinkTimer >= BLINK_TIME / 2)
-        {
-            g.setComposite(
-                    AlphaComposite.getInstance(AlphaComposite.SRC_OVER, smoothLimit));
-                
-                if(smoothLimit > 0.1f) smoothLimit -= SMOOTH_SCALE;
-        }
+        if(smoothLimit == 1.0f) healthVisibility = true;
         
-        if (blinkTimer == BLINK_TIME) 
+        if(healthVisibility)
         {
-            smoothLimit = 1f;
-            blinkTimer = 0;
+            if(smoothLimit > 0.1f) smoothLimit -= SMOOTH_SCALE;
+            if(smoothLimit <= 0.1f) healthVisibility = false;
         }
+        else if(smoothLimit < 1.0f) smoothLimit += SMOOTH_SCALE;
+
+        g.setComposite(
+                AlphaComposite.getInstance(AlphaComposite.SRC_OVER, smoothLimit));
     }
 
     private void drawLiveLostAnimation(Graphics2D g)
