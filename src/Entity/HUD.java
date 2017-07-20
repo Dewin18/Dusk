@@ -7,45 +7,164 @@ import java.io.IOException;
 
 public class HUD
 {
-    private BufferedImage fullHeart;
-    private BufferedImage emptyHeart;
-    private final int HEART_WIDTH;
-    private final int HEART_HEIGHT;
+    private Player player;
+    
+    private int lives;
+    private float healthBar;
+    private float healthInterval;
+    private Image liveSymbol;
+    private int liveSymbolPosition;
+    private boolean liveLost;
+    private boolean gameOver = false;
+    
+    //health blink animation
+    private boolean healthVisibility = true;
+    private float blinkSpeedLimit = 1f;
+    private final float BLINK_SPEED = 0.02f;
+    
+    private Font hudFont;
 
-    private int maxHealth;
-    private int currentHealth;
-
-    public HUD(int maxHealth)
+    private boolean pause = false;
+    
+    public HUD(Player player, Font hudFont)
     {
+        this.player = player;
+        this.hudFont = hudFont;
+        
+        healthBar = 100;
+        healthInterval = 80; // the player lose 20 health every hit
+        
+        //dusk life symbol position at Y-AXIS
+        liveSymbolPosition = 10;
+        
         try
         {
-            fullHeart = ImageIO.read(getClass().getResourceAsStream("/HUD/heart_full.png"));
-            emptyHeart = ImageIO.read(getClass().getResourceAsStream("/HUD/heart_empty.png"));
-        } catch (IOException e)
+            liveSymbol = ImageIO.read(
+                    getClass().getResourceAsStream("/Backgrounds/lsymbol.png"));
+
+            liveSymbol = liveSymbol.getScaledInstance(50, 40,
+                    Image.SCALE_SMOOTH);
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
         }
-
-        this.maxHealth = maxHealth;
-        currentHealth = maxHealth;
-        HEART_HEIGHT = fullHeart.getHeight();
-        HEART_WIDTH = fullHeart.getWidth();
     }
 
     public void draw(Graphics2D g)
     {
-        for (int i = 0; i < currentHealth; i++)
+        drawHUD(g);
+    }
+    
+    public void handleHealthBar()
+    {
+        healthBar -= 1;
+
+        if (healthBar <= healthInterval)
         {
-            g.drawImage(fullHeart, (int)(HEART_WIDTH*0.3 + HEART_WIDTH*1.3*i), (int)(HEART_HEIGHT*0.3), null);
+            player.setHitByEnemy(false);
+            healthInterval -= 20;
         }
-        for (int i = currentHealth; i < maxHealth; i++)
+
+        if (healthBar == 0)
         {
-            g.drawImage(emptyHeart, (int)(HEART_WIDTH*0.3 + HEART_WIDTH*1.3*i), (int)(HEART_HEIGHT*0.3), null);
+            lives--;
+            healthBar = 100; // fill HealthBar slowly
+            healthInterval = 80;
+        }
+
+        if (lives < 0)
+        {
+            lives = 0;
+            gameOver = true;
         }
     }
 
-    public void setCurrentHealth(int currentHealth)
+    private void drawHUD(Graphics2D g)
     {
-        this.currentHealth = currentHealth;
+        g.drawImage(liveSymbol, 55, 10, null);
+
+        g.setFont(hudFont);
+
+        g.drawString(String.valueOf(lives) + " x", 10, 40);
+
+        g.setColor(Color.BLACK);
+        g.drawRect(120, 20, 100, 20);
+
+        if (healthBar >= 65)
+            g.setColor(Color.GREEN);
+        else if (healthBar >= 35)
+            g.setColor(Color.YELLOW);
+        else
+        {
+            g.setColor(Color.RED);
+            if (!pause ) blink(g);
+        }
+
+        g.fillRect(120, 20, (int) healthBar, 20);
+
+        if (healthBar <= 1)
+        {
+            liveLost = true;
+        }
+
+        if (liveLost)
+        {
+            float op = 0.5f;
+            g.setComposite(
+                    AlphaComposite.getInstance(AlphaComposite.SRC_OVER, op));
+            g.drawImage(liveSymbol, 55, liveSymbolPosition, null);
+            drawLiveLostAnimation(g);
+        }
+
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        g.setColor(Color.BLACK);
+        for (int i = 140; i <= 200; i += 20) g.drawLine(i, 20, i, 40);
+    }
+
+    private void blink(Graphics2D g)
+    {
+        if(blinkSpeedLimit == 1.0f) healthVisibility = true;
+        
+        if(healthVisibility)
+        {
+            if(blinkSpeedLimit > 0.1f) blinkSpeedLimit -= BLINK_SPEED;
+            if(blinkSpeedLimit <= 0.1f) healthVisibility = false;
+        }
+        else if(blinkSpeedLimit < 1.0f) blinkSpeedLimit += BLINK_SPEED;
+
+        g.setComposite(
+                AlphaComposite.getInstance(AlphaComposite.SRC_OVER, blinkSpeedLimit));
+    }
+
+    private void drawLiveLostAnimation(Graphics2D g)
+    {
+        liveSymbolPosition -= 1;
+
+        if (liveSymbolPosition == -100)
+        {
+            liveSymbolPosition = 10;
+            liveLost = false;
+        }
+    }
+    
+    public void setLives(int lives)
+    {
+        this.lives = lives;
+    }
+    
+    public boolean isGameOver()
+    {
+        return gameOver;
+    }
+    
+    public void setGameOver(boolean state)
+    {
+        gameOver = state;
+    }
+    
+    public void setHealthBlinking(boolean blinking)
+    {
+        pause = blinking;
     }
 }

@@ -43,19 +43,8 @@ public class Level1State extends GameState implements EntityObserver
     //All Level1State enemies are stored in this list
     private ArrayList<Enemy> enemyList;
 
-    private int lives;
-    private float healthBar;
-    private float healthInterval;
-    private boolean gameOver;
-    private int lowerBorder;
-    private Image liveSymbol;
-    private int upperBorder;
-    private boolean liveLost;
-
-    //health blink animation
-    private boolean healthVisibility = true;
-    private float smoothLimit = 1f;
-    private final float SMOOTH_SCALE = 0.02f;
+    private HUD hud;
+    private int gameOverTextPosition;
 
     public Level1State(GameStateManager gsm)
     {
@@ -70,23 +59,16 @@ public class Level1State extends GameState implements EntityObserver
         initBackground();
         initMap();
         initPlayer();
+        initFonts();
         initHUD();
         initCamera();
         initEnemies();
-        initFonts();
-
-        //HUD
-        healthBar = 100;
-        healthInterval = 80; // the player lose 20 health every hit
-
+      
         //Game Over text border from center at Y-AXIS
-        lowerBorder = 70;
-
-        //dusk life symbol position at Y-AXIS
-        upperBorder = 10;
+        gameOverTextPosition = 70;
 
         //some keys have changed through the settings
-        if (KeyHandler.keysChanged()) //TODO
+        if (KeyHandler.keysChanged())
         {
             initSound();
             initDifficulty();
@@ -100,18 +82,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private void initHUD()
     {
-        try
-        {
-            liveSymbol = ImageIO.read(
-                    getClass().getResourceAsStream("/Backgrounds/lsymbol.png"));
-
-            liveSymbol = liveSymbol.getScaledInstance(50, 40,
-                    Image.SCALE_SMOOTH);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+       hud = new HUD(player, optionTitles);
     }
 
     private void initFonts()
@@ -175,7 +146,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private void setDifficultyHard()
     {
-        lives = 0;
+        hud.setLives(0);
 
         for (Enemy enemy : enemyList)
         {
@@ -186,7 +157,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private void setDifficultyMedium()
     {
-        lives = 1;
+        hud.setLives(2);
 
         for (Enemy enemy : enemyList)
         {
@@ -197,7 +168,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private void setDifficutlyEasy()
     {
-        lives = 2;
+        hud.setLives(3);
 
         for (Enemy enemy : enemyList)
         {
@@ -252,7 +223,7 @@ public class Level1State extends GameState implements EntityObserver
 
     public void update()
     {
-        if (!pause && !gameOver)
+        if (!pause && !hud.isGameOver())
         {
             player.update();
 
@@ -272,36 +243,13 @@ public class Level1State extends GameState implements EntityObserver
 
             if (player.isHitByEnemy())
             {
-                handleHealthBar();
+                hud.handleHealthBar();
             }
         }
-
         handleInput();
     }
 
-    private void handleHealthBar()
-    {
-        healthBar -= 1;
-
-        if (healthBar <= healthInterval)
-        {
-            player.setHitByEnemy(false);
-            healthInterval -= 20;
-        }
-
-        if (healthBar == 0)
-        {
-            lives--;
-            healthBar = 100; // fill HealthBar slowly
-            healthInterval = 80;
-        }
-
-        if (lives < 0)
-        {
-            lives = 0;
-            gameOver = true;
-        }
-    }
+    
 
     public void draw(Graphics2D g)
     {
@@ -324,13 +272,14 @@ public class Level1State extends GameState implements EntityObserver
         }
 
         camera.draw(g);
-        drawHUD(g);
-
+        hud.draw(g);
+        
         if (pause)
         {
+            // TODO stop Blink
             drawPause(g);
         }
-        else if (gameOver)
+        else if (hud.isGameOver())
         {
             drawGameOver(g);
         }
@@ -344,13 +293,13 @@ public class Level1State extends GameState implements EntityObserver
         g.setColor(Color.WHITE);
         drawCenteredString(g, "GAME OVER",
                 new Rectangle(0,
-                        GamePanel.HEIGHT / 2 + lowerBorder - PAUSE_TITLE_SIZE,
+                        GamePanel.HEIGHT / 2 + gameOverTextPosition - PAUSE_TITLE_SIZE,
                         GamePanel.WIDTH, PAUSE_TITLE_SIZE),
                 pauseTitle);
 
-        if (lowerBorder > 0)
+        if (gameOverTextPosition > 0)
         {
-            lowerBorder--;
+            gameOverTextPosition--;
         }
         else
         {
@@ -386,75 +335,7 @@ public class Level1State extends GameState implements EntityObserver
         }
     }
 
-    private void drawHUD(Graphics2D g)
-    {
-        g.drawImage(liveSymbol, 55, 10, null);
-
-        Font HUDFont = optionTitles;
-        g.setFont(HUDFont);
-        //g.drawString("LIVES", 20, 30);
-
-        g.drawString(String.valueOf(lives) + " x", 10, 40);
-
-        g.setColor(Color.BLACK);
-        g.drawRect(120, 20, 100, 20);
-
-        if (healthBar >= 65)
-            g.setColor(Color.GREEN);
-        else if (healthBar >= 35)
-            g.setColor(Color.YELLOW);
-        else
-        {
-            g.setColor(Color.RED);
-            if (!pause) blink(g);
-        }
-
-        g.fillRect(120, 20, (int) healthBar, 20);
-
-        if (healthBar <= 1)
-        {
-            liveLost = true;
-        }
-
-        if (liveLost)
-        {
-            float op = 0.5f;
-            g.setComposite(
-                    AlphaComposite.getInstance(AlphaComposite.SRC_OVER, op));
-            g.drawImage(liveSymbol, 55, upperBorder, null);
-            drawLiveLostAnimation(g);
-        }
-
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-        g.setColor(Color.BLACK);
-        for (int i = 140; i <= 200; i += 20) g.drawLine(i, 20, i, 40);
-    }
-
-    private void blink(Graphics2D g)
-    {
-        if(smoothLimit == 1.0f) healthVisibility = true;
-        
-        if(healthVisibility)
-        {
-            if(smoothLimit > 0.1f) smoothLimit -= SMOOTH_SCALE;
-            if(smoothLimit <= 0.1f) healthVisibility = false;
-        }
-        else if(smoothLimit < 1.0f) smoothLimit += SMOOTH_SCALE;
-
-        g.setComposite(
-                AlphaComposite.getInstance(AlphaComposite.SRC_OVER, smoothLimit));
-    }
-
-    private void drawLiveLostAnimation(Graphics2D g)
-    {
-        upperBorder -= 1;
-
-        if (upperBorder == -100)
-        {
-            upperBorder = 10;
-            liveLost = false;
-        }
-    }
+   
 
     private boolean isOnCamera(MapObject o)
     {
@@ -486,19 +367,23 @@ public class Level1State extends GameState implements EntityObserver
      */
     public void handleInput()
     {
-        if (!gameOver && !pause && KeyHandler.hasJustBeenPressed(Keys.ENTER)
+        if (!hud.isGameOver() && !pause && KeyHandler.hasJustBeenPressed(Keys.ENTER)
                 || KeyHandler.hasJustBeenPressed(Keys.ESCAPE))
         {
             pause = true;
+            hud.setHealthBlinking(true);
         }
         else if (pause)
         {
             if (KeyHandler.hasJustBeenPressed(Keys.ENTER))
+            {
                 selectPause();
+                hud.setHealthBlinking(false);
+            }
             else
                 selectChoice();
         }
-        else if (gameOver)
+        else if (hud.isGameOver())
         {
             if (KeyHandler.hasJustBeenPressed(Keys.ENTER))
                 selectGameOver();
@@ -532,7 +417,7 @@ public class Level1State extends GameState implements EntityObserver
         switch (currentChoice)
         {
         case 0:
-            lives = 2;
+            hud.setLives(2); 
             gsm.setState(GameStateManager.LEVEL1STATE);
             break;
         case 1:
@@ -542,7 +427,7 @@ public class Level1State extends GameState implements EntityObserver
             System.exit(0);
             break;
         }
-        gameOver = false;
+        hud.setGameOver(false);
     }
 
     private void selectPause()
