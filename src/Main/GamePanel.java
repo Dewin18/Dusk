@@ -1,6 +1,7 @@
 package Main;
 
 import GameState.GameStateManager;
+import Handlers.FontHandler;
 import Handlers.KeyHandler;
 
 import javax.swing.*;
@@ -27,6 +28,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     private Graphics2D g;
     // manager
     private GameStateManager gsm;
+    private FontHandler fh;
 
     public GamePanel()
     {
@@ -43,6 +45,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
         isRunning = true;
         thread = new Thread(this);
         addKeyListener(this);
+        fh = new FontHandler();
         thread.start();
     }
     
@@ -66,11 +69,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
             if (wait < 0) {
                 wait = 6;
             }
-            try
-            {
+            try {
                 Thread.sleep(wait);
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

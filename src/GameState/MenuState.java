@@ -1,26 +1,26 @@
 package GameState;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import Audio.JukeBox;
+import Handlers.FontHandler;
 import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.GamePanel;
 import TileMap.Background;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-
 public class MenuState extends GameState
 {
-
-    private final int FONT_SIZE = 27;
     private Background bg;
     private int currentChoice = 0;
     private String[] options = {"Start Game", "Options", "Exit"};
-    private Font font;
-    private Font boldFont;
     private BufferedImage titleImage;
 
     public MenuState(GameStateManager gsm)
@@ -28,20 +28,18 @@ public class MenuState extends GameState
         this.gsm = gsm;
         bg = new Background("menu bg.jpg");
 
-        initFonts();
+        initTitleImage();
         JukeBox.load("/Audio/title_music.mp3", "titlemusic");
         JukeBox.load("menu_pick.mp3", "menupick");
         JukeBox.load("menu_choice.mp3", "menuchoice");
         JukeBox.loop("titlemusic");
     }
 
-    private void initFonts()
+    private void initTitleImage()
     {
         try {
-            font = loadFont("Berlin Sans FB Regular.ttf", FONT_SIZE);
-            boldFont = loadFont("Berlin Sans FB Bold.ttf", FONT_SIZE);
             titleImage = ImageIO.read(getClass().getResourceAsStream("/Fonts/dusk title.png"));
-        } catch (FontFormatException | IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -63,18 +61,18 @@ public class MenuState extends GameState
         
         for (int i = 0; i < options.length; i++)
         {
-            if (i == currentChoice)
+            if (i == currentChoice) 
             {
-                drawCenteredString(g,
+                FontHandler.drawCenteredString(g,
                         " - " + options[i] + " - ",
-                        new Rectangle(0, (int) (GamePanel.HEIGHT * 0.6 + i * FONT_SIZE * 1.6), GamePanel.WIDTH, FONT_SIZE),
-                        font.deriveFont(Font.PLAIN, FONT_SIZE + 3));
+                        new Rectangle(0, (int) (GamePanel.HEIGHT * 0.6 + i * FontHandler.MENUSTATE_SELECTION_SIZE * 1.6), GamePanel.WIDTH, FontHandler.MENUSTATE_SELECTION_SIZE),
+                        FontHandler.getMenuStateFont().deriveFont(Font.PLAIN, FontHandler.MENUSTATE_SELECTION_SIZE + 3));
             } else
             {
-                drawCenteredString(g,
+                FontHandler.drawCenteredString(g,
                         options[i],
-                        new Rectangle(0, (int) (GamePanel.HEIGHT * 0.6 + i * FONT_SIZE * 1.6), GamePanel.WIDTH, FONT_SIZE),
-                        font);
+                        new Rectangle(0, (int) (GamePanel.HEIGHT * 0.6 + i * FontHandler.MENUSTATE_SELECTION_SIZE * 1.6), GamePanel.WIDTH, FontHandler.MENUSTATE_SELECTION_SIZE),
+                        FontHandler.getMenuStateFont());
             }
         }
     }

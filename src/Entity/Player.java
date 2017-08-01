@@ -1,5 +1,16 @@
 package Entity;
 
+import static Entity.CharacterState.FLINCHING;
+import static Entity.CharacterState.IDLE;
+import static Entity.CharacterState.JUMPING;
+import static Entity.CharacterState.WALKING;
+
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+
 import Audio.JukeBox;
 import Handlers.KeyHandler;
 import Handlers.Keys;
@@ -7,14 +18,9 @@ import Main.Time;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
-import java.awt.*;
-import java.util.ArrayList;
-
-import static Entity.CharacterState.*;
-
 public class Player extends MovingObject
 {
-
+   
     private final int flinchTime = 5;
     private final int attackTime = 8;
     private final int invulnerabilityTime = 80;
@@ -43,6 +49,8 @@ public class Player extends MovingObject
     private int currentAttackTime = attackTime;
     private boolean isBlinking = false;
     private boolean hitByEnemy;
+    
+    private HUD hud;
 
     private int invulnerabilityTimer = invulnerabilityTime;
     private ArrayList<MapObject> mapObjects = new ArrayList<>();
@@ -67,6 +75,9 @@ public class Player extends MovingObject
 
     public void initPlayer(Vector2 position)
     {
+        //hud = new HUD(this, new Font("Arial", Font.PLAIN, 23));
+        
+        
         setPosition(position);
         // set up speeds
         jumpSpeed = -16;

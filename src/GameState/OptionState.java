@@ -103,15 +103,9 @@ public class OptionState extends GameState
 
     private void initFonts()
     {
-        try
-        {
-            arialFont = new Font(SETTINGS_FONTSTYLE, Font.PLAIN, SETTINGS_FONT_SIZE);
-            font = loadFont(SETTINGS_FONTSTYLE, SETTINGS_FONT_SIZE);
-            titleFont = loadFont(TITLE_FONT_SYTLE, TITLE_FONT_SIZE);
-        } catch (FontFormatException | IOException e)
-        {
-            e.printStackTrace();
-        }
+        arialFont = new Font(SETTINGS_FONTSTYLE, Font.PLAIN, SETTINGS_FONT_SIZE);
+        font = new Font(SETTINGS_FONTSTYLE, Font.PLAIN, SETTINGS_FONT_SIZE);
+        titleFont = new Font(TITLE_FONT_SYTLE,Font.PLAIN, TITLE_FONT_SIZE);
     }
 
     private void initStateList()

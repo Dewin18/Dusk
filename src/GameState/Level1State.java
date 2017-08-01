@@ -2,6 +2,7 @@ package GameState;
 
 import Audio.JukeBox;
 import Entity.*;
+import Handlers.FontHandler;
 import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.Camera;
@@ -19,12 +20,8 @@ import javax.imageio.ImageIO;
 public class Level1State extends GameState implements EntityObserver
 {
     //Pause Title
-    private final int PAUSE_TITLE_SIZE = 45;
-    private final String PAUSE_TITLE_STYLE = "Berlin Sans FB Demi Bold.ttf";
     private final Color PAUSE_TITLE_COLOR = Color.WHITE;
-    //Option Titles
-    private final int OPTIONS_SIZE = 25;
-    private final String OPTIONS_STYLE = "Berlin Sans FB Regular.ttf";
+
     private Background bg1;
     private Background bg2;
     private Background bg3;
@@ -37,14 +34,13 @@ public class Level1State extends GameState implements EntityObserver
 
     private boolean pause;
     private int currentChoice = 0;
-    private Font pauseTitle;
-    private Font optionTitles;
 
     //All Level1State enemies are stored in this list
     private ArrayList<Enemy> enemyList;
 
     private HUD hud;
     private int gameOverTextPosition;
+
 
     public Level1State(GameStateManager gsm)
     {
@@ -59,7 +55,6 @@ public class Level1State extends GameState implements EntityObserver
         initBackground();
         initMap();
         initPlayer();
-        initFonts();
         initHUD();
         initCamera();
         initEnemies();
@@ -82,20 +77,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private void initHUD()
     {
-       hud = new HUD(player, optionTitles);
-    }
-
-    private void initFonts()
-    {
-        try
-        {
-            optionTitles = loadFont(OPTIONS_STYLE, OPTIONS_SIZE);
-            pauseTitle = loadFont(PAUSE_TITLE_STYLE, PAUSE_TITLE_SIZE);
-        }
-        catch (FontFormatException | IOException e)
-        {
-            e.printStackTrace();
-        }
+       hud = new HUD(player, FontHandler.getPauseSelectionFont());
     }
 
     private void initSound()
@@ -261,8 +243,9 @@ public class Level1State extends GameState implements EntityObserver
         bg3.draw(g);
         bg2.draw(g);
         bg1.draw(g);
-
+        camera.draw(g);
         player.draw(g);
+        
         for (Enemy enemy : enemyList)
         {
             if (isOnCamera(enemy))
@@ -271,7 +254,7 @@ public class Level1State extends GameState implements EntityObserver
             }
         }
 
-        camera.draw(g);
+   
         hud.draw(g);
         
         if (pause)
@@ -291,11 +274,11 @@ public class Level1State extends GameState implements EntityObserver
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
         g.setColor(Color.WHITE);
-        drawCenteredString(g, "GAME OVER",
+        FontHandler.drawCenteredString(g, "GAME OVER",
                 new Rectangle(0,
-                        GamePanel.HEIGHT / 2 + gameOverTextPosition - PAUSE_TITLE_SIZE,
-                        GamePanel.WIDTH, PAUSE_TITLE_SIZE),
-                pauseTitle);
+                        GamePanel.HEIGHT / 2 + gameOverTextPosition - FontHandler.GAMEOVER_TITLE_SIZE,
+                        GamePanel.WIDTH, FontHandler.GAMEOVER_TITLE_SIZE),
+                FontHandler.getGameOverFont());
 
         if (gameOverTextPosition > 0)
         {
@@ -303,7 +286,7 @@ public class Level1State extends GameState implements EntityObserver
         }
         else
         {
-            g.setFont(optionTitles);
+            g.setFont(FontHandler.getGameOverSelectionFont());
             drawOptions(gameOverOptions, g);
         }
     }
@@ -314,21 +297,21 @@ public class Level1State extends GameState implements EntityObserver
         {
             if (i == currentChoice)
             {
-                drawCenteredString(g, "- " + selections[i] + " -",
+                FontHandler.drawCenteredString(g, "- " + selections[i] + " -",
                         new Rectangle(0,
-                                GamePanel.HEIGHT / 2 + OPTIONS_SIZE
-                                        + i * OPTIONS_SIZE,
-                                GamePanel.WIDTH, OPTIONS_SIZE),
-                        optionTitles);
+                                GamePanel.HEIGHT / 2 + FontHandler.PAUSE_SELECTION_SIZE
+                                        + i * FontHandler.PAUSE_SELECTION_SIZE,
+                                GamePanel.WIDTH,FontHandler.PAUSE_SELECTION_SIZE),
+                        FontHandler.getPauseSelectionFont());
             }
             else
             {
-                drawCenteredString(g, selections[i],
+                FontHandler.drawCenteredString(g, selections[i],
                         new Rectangle(0,
-                                GamePanel.HEIGHT / 2 + OPTIONS_SIZE
-                                        + i * OPTIONS_SIZE,
-                                GamePanel.WIDTH, OPTIONS_SIZE),
-                        optionTitles);
+                                GamePanel.HEIGHT / 2 + FontHandler.PAUSE_SELECTION_SIZE
+                                        + i * FontHandler.PAUSE_SELECTION_SIZE,
+                                GamePanel.WIDTH, FontHandler.PAUSE_SELECTION_SIZE),
+                        FontHandler.getPauseSelectionFont());
             }
 
             //g.drawString(selections[i], GamePanel.WIDTH / 2 + VGAP + optionsAlign[i], GamePanel.HEIGHT / 2 + 30 + i * 30);
@@ -355,10 +338,10 @@ public class Level1State extends GameState implements EntityObserver
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
         g.setColor(PAUSE_TITLE_COLOR);
-        drawCenteredString(g, "PAUSE",
-                new Rectangle(0, GamePanel.HEIGHT / 2 - PAUSE_TITLE_SIZE,
-                        GamePanel.WIDTH, PAUSE_TITLE_SIZE),
-                pauseTitle);
+        FontHandler.drawCenteredString(g, "PAUSE",
+                new Rectangle(0, GamePanel.HEIGHT / 2 - FontHandler.PAUSE_TITLE_SIZE,
+                        GamePanel.WIDTH, FontHandler.PAUSE_TITLE_SIZE),
+                FontHandler.getPauseTitleFont());
         drawOptions(pauseOptions, g);
     }
 
