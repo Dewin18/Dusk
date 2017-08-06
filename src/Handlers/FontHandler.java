@@ -9,16 +9,21 @@ import java.io.IOException;
 
 public class FontHandler
 {
+    private static String Regular = "Berlin Sans FB Regular.ttf";
+    private static String DemiBold = "Berlin Sans FB Demi Bold.ttf";
+    
     //###### MENU STATE FONTS ######
-    private static Font menuStateFont;
+    private static Font menuStateSelectionFont;
     public static final int MENUSTATE_SELECTION_SIZE = 27;
     
     //###### OPTION STATE FONTS ######
     private static Font optionStateTitleFont;
     private static final int OPTIONSTATE_TITLE_SIZE = 25;
     
-    private static Font optionStateFont;
+    private static Font optionStateSelectionFont;
     public static final int OPTIONSTATE_SELECTION_SIZE = 20;
+    
+    private static Font optionStateKeyBindingsFont;
     
     //###### GAME OVER FONTS ######
     private static Font gameOverTitleFont;
@@ -33,31 +38,39 @@ public class FontHandler
     
     private static Font pauseSelectionFont;
     public static final int PAUSE_SELECTION_SIZE = 25;
+    
+    //###### HUD FONT ######
+    private static Font hudFont;
+    public static final int HUD_TEXT_SIZE = 25; 
   
     
     static
     {
-        initCustomFonts();
+        initGameFonts();
     }
     
-    private static void initCustomFonts()
+    private static void initGameFonts()
     {
         try
         {
             //MENU STATE FONTS
-            menuStateFont = loadFont("Berlin Sans FB Regular.ttf", MENUSTATE_SELECTION_SIZE);
+            menuStateSelectionFont = loadFont(Regular, MENUSTATE_SELECTION_SIZE);
             
             //OPTION STATE FONTS
-            optionStateTitleFont =  loadFont("Berlin Sans FB Demi Bold.ttf", OPTIONSTATE_TITLE_SIZE);
-            optionStateFont = loadFont("Berlin Sans FB Regular.ttf", OPTIONSTATE_SELECTION_SIZE);
+            optionStateTitleFont =  loadFont(DemiBold, OPTIONSTATE_TITLE_SIZE);
+            optionStateSelectionFont = loadFont(Regular, OPTIONSTATE_SELECTION_SIZE);
+            optionStateKeyBindingsFont = new Font(Regular, Font.PLAIN, 20);
             
             //GAME OVER FONTS
-            gameOverTitleFont = loadFont("Berlin Sans FB Demi Bold.ttf", GAMEOVER_TITLE_SIZE);
-            gameOverSelectionFont = loadFont("Berlin Sans FB Regular.ttf", GAMEOVER_SELECTION_SIZE);
+            gameOverTitleFont = loadFont(DemiBold, GAMEOVER_TITLE_SIZE);
+            gameOverSelectionFont = loadFont(Regular, GAMEOVER_SELECTION_SIZE);
             
             //PAUSE FONTS
-            pauseTitleFont = loadFont("Berlin Sans FB Demi Bold.ttf", PAUSE_TITLE_SIZE);
-            pauseSelectionFont = loadFont("Berlin Sans FB Regular.ttf", PAUSE_SELECTION_SIZE);
+            pauseTitleFont = loadFont(DemiBold, PAUSE_TITLE_SIZE);
+            pauseSelectionFont = loadFont(Regular, PAUSE_SELECTION_SIZE);
+            
+            //HUD FFONT
+            hudFont = loadFont(Regular, HUD_TEXT_SIZE);
         }
         catch (IOException | FontFormatException e)
         {
@@ -108,12 +121,22 @@ public class FontHandler
      
      public static Font getMenuStateFont()
      {
-         return menuStateFont;
+         return menuStateSelectionFont;
      }
 
-     public static Font getOptionStateFont()
+     public static Font getOptionStateSelectionFont()
      {
-         return optionStateFont;
+         return optionStateSelectionFont;
+     }
+     
+     public static Font getOptionStateTitleFont()
+     {
+         return optionStateTitleFont;
+     }
+     
+     public static Font getOptionStateKeyBindingsFont()
+     {
+         return optionStateKeyBindingsFont;
      }
 
      public static Font getGameOverFont()
@@ -135,4 +158,10 @@ public class FontHandler
      {
          return pauseSelectionFont;
      }
+     
+     public static Font getHudFont()
+     {
+         return hudFont;
+     }
+     
 }

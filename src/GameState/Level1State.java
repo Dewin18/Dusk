@@ -2,6 +2,7 @@ package GameState;
 
 import Audio.JukeBox;
 import Entity.*;
+import Handlers.AnimationHandler;
 import Handlers.FontHandler;
 import Handlers.KeyHandler;
 import Handlers.Keys;
@@ -38,10 +39,6 @@ public class Level1State extends GameState implements EntityObserver
     //All Level1State enemies are stored in this list
     private ArrayList<Enemy> enemyList;
 
-    private HUD hud;
-    private int gameOverTextPosition;
-
-
     public Level1State(GameStateManager gsm)
     {
         enemyList = new ArrayList<>();
@@ -55,13 +52,9 @@ public class Level1State extends GameState implements EntityObserver
         initBackground();
         initMap();
         initPlayer();
-        initHUD();
         initCamera();
         initEnemies();
       
-        //Game Over text border from center at Y-AXIS
-        gameOverTextPosition = 70;
-
         //some keys have changed through the settings
         if (KeyHandler.keysChanged())
         {
@@ -73,11 +66,6 @@ public class Level1State extends GameState implements EntityObserver
             setDifficutlyEasy();
             enableSound();
         }
-    }
-
-    private void initHUD()
-    {
-       hud = new HUD(player, FontHandler.getPauseSelectionFont());
     }
 
     private void initSound()
@@ -128,7 +116,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private void setDifficultyHard()
     {
-        hud.setLives(0);
+        player.setLives(0);
 
         for (Enemy enemy : enemyList)
         {
@@ -139,7 +127,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private void setDifficultyMedium()
     {
-        hud.setLives(2);
+        player.setLives(2);
 
         for (Enemy enemy : enemyList)
         {
@@ -150,7 +138,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private void setDifficutlyEasy()
     {
-        hud.setLives(3);
+        player.setLives(3);
 
         for (Enemy enemy : enemyList)
         {
@@ -205,7 +193,7 @@ public class Level1State extends GameState implements EntityObserver
 
     public void update()
     {
-        if (!pause && !hud.isGameOver())
+        if (!pause ^ player.isGameOver())
         {
             player.update();
 
@@ -222,11 +210,6 @@ public class Level1State extends GameState implements EntityObserver
             bg2.setPosition(tileMap.cameraPos);
             bg3.setPosition(tileMap.cameraPos);
             bg4.setPosition(tileMap.cameraPos);
-
-            if (player.isHitByEnemy())
-            {
-                hud.handleHealthBar();
-            }
         }
         handleInput();
     }
@@ -254,15 +237,12 @@ public class Level1State extends GameState implements EntityObserver
             }
         }
 
-   
-        hud.draw(g);
-        
         if (pause)
         {
             // TODO stop Blink
             drawPause(g);
         }
-        else if (hud.isGameOver())
+        else if (player.isGameOver())
         {
             drawGameOver(g);
         }
@@ -270,19 +250,11 @@ public class Level1State extends GameState implements EntityObserver
 
     private void drawGameOver(Graphics2D g)
     {
-        g.setColor(new Color(0, 0, 0, 80));
-        g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
-
-        g.setColor(Color.WHITE);
-        FontHandler.drawCenteredString(g, "GAME OVER",
-                new Rectangle(0,
-                        GamePanel.HEIGHT / 2 + gameOverTextPosition - FontHandler.GAMEOVER_TITLE_SIZE,
-                        GamePanel.WIDTH, FontHandler.GAMEOVER_TITLE_SIZE),
-                FontHandler.getGameOverFont());
-
-        if (gameOverTextPosition > 0)
+        AnimationHandler.drawGameOverText(g);
+        
+        if (AnimationHandler.getGameOverTextPosition() > 0)
         {
-            gameOverTextPosition--;
+            AnimationHandler.decreaseGameOverTextPosition();
         }
         else
         {
@@ -318,8 +290,6 @@ public class Level1State extends GameState implements EntityObserver
         }
     }
 
-   
-
     private boolean isOnCamera(MapObject o)
     {
         return (o.getPosition().x >= player.getPosition().x - GamePanel.WIDTH
@@ -350,23 +320,23 @@ public class Level1State extends GameState implements EntityObserver
      */
     public void handleInput()
     {
-        if (!hud.isGameOver() && !pause && KeyHandler.hasJustBeenPressed(Keys.ENTER)
+        if (!player.isGameOver() && !pause && KeyHandler.hasJustBeenPressed(Keys.ENTER)
                 || KeyHandler.hasJustBeenPressed(Keys.ESCAPE))
         {
             pause = true;
-            hud.setHealthBlinking(true);
+            //hud.setHealthBlinking(true);
         }
         else if (pause)
         {
             if (KeyHandler.hasJustBeenPressed(Keys.ENTER))
             {
                 selectPause();
-                hud.setHealthBlinking(false);
+                //hud.setHealthBlinking(false);
             }
             else
                 selectChoice();
         }
-        else if (hud.isGameOver())
+        else if (player.isGameOver())
         {
             if (KeyHandler.hasJustBeenPressed(Keys.ENTER))
                 selectGameOver();
@@ -400,7 +370,6 @@ public class Level1State extends GameState implements EntityObserver
         switch (currentChoice)
         {
         case 0:
-            hud.setLives(2); 
             gsm.setState(GameStateManager.LEVEL1STATE);
             break;
         case 1:
@@ -410,7 +379,6 @@ public class Level1State extends GameState implements EntityObserver
             System.exit(0);
             break;
         }
-        hud.setGameOver(false);
     }
 
     private void selectPause()
@@ -434,7 +402,7 @@ public class Level1State extends GameState implements EntityObserver
      *
      * @param enemyName   Enemy name
      * @param position    The map position
-     * @param spriteSheet THe spriteSheet
+     * @param spriteSheet The spriteSheet
      */
     public void createEnemy(String enemyName, Vector2 position,
             String spriteSheet)
