@@ -569,27 +569,13 @@ public class Player extends MovingObject
         rotation = 0;
     }
 
-    //---- Getters and setters ---------------------------------------------------------------------------------
-    public int getHealth()
-    {
-        return health;
-    }
-    
-    public void setHealth(int health)
-    {
-        this.health = health;
-    }
-    
+    //---- Getters and setters ---------------------------------------------------------------------------------    
+  
     public void setLives(int lives)
     {
         this.lives = lives;
     }
     
-    public int getLives()
-    {
-        return lives;
-    }
-
     public CharacterState getCharacterState()
     {
         return currentState;
@@ -600,16 +586,6 @@ public class Player extends MovingObject
         return minFallSpeed;
     }
 
-    public void setHitByEnemy(boolean b)
-    {
-        hitByEnemy = b;
-    }
-
-    public boolean isHitByEnemy()
-    {
-        return hitByEnemy;
-    }
-    
     public boolean isGameOver()
     {
         return isGameOver;
