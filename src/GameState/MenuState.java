@@ -29,7 +29,7 @@ public class MenuState extends GameState
         bg = new Background("menu bg.jpg");
 
         initTitleImage();
-        JukeBox.load("/Audio/title_music.mp3", "titlemusic");
+        JukeBox.load("title_music.mp3", "titlemusic");
         JukeBox.load("menu_pick.mp3", "menupick");
         JukeBox.load("menu_choice.mp3", "menuchoice");
         JukeBox.loop("titlemusic");

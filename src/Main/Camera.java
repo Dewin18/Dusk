@@ -152,6 +152,7 @@ public class Camera
         if (player.isHitByEnemy())
         {
             shake(50, 12);
+            player.setHitByEnemy(false);
         }
         if (player.getHitEnemy())
         {
