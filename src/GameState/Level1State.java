@@ -2,6 +2,8 @@ package GameState;
 
 import Audio.JukeBox;
 import Entity.*;
+import Handlers.AnimationHandler;
+import Handlers.FontHandler;
 import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.Camera;
@@ -20,12 +22,8 @@ import javax.imageio.ImageIO;
 public class Level1State extends GameState implements EntityObserver
 {
     //Pause Title
-    private final int PAUSE_TITLE_SIZE = 45;
-    private final String PAUSE_TITLE_STYLE = "Berlin Sans FB Demi Bold.ttf";
     private final Color PAUSE_TITLE_COLOR = Color.WHITE;
-    //Option Titles
-    private final int OPTIONS_SIZE = 25;
-    private final String OPTIONS_STYLE = "Berlin Sans FB Regular.ttf";
+
     private Background bg1;
     private Background bg2;
     private Background bg3;
@@ -38,24 +36,9 @@ public class Level1State extends GameState implements EntityObserver
     
     private boolean pause = true;
     private int currentChoice = 0;
-    private Font pauseTitle;
-    private Font optionTitles;
-    
+
     //All Level1State enemies are stored in this list
     private ArrayList<Enemy> enemyList;
-
-    private int lives;
-    private float healthBar;
-    private float healthInterval;
-    private boolean gameOver;
-    private int lowerBorder;
-    private Image liveSymbol;
-    private int upperBorder;
-    private boolean liveLost;
-    
-    //health blink animation
-    private final int BLINK_TIME = 50;
-    private int blinkTimer = 0;
 
     public Level1State(GameStateManager gsm)
     {
@@ -67,26 +50,14 @@ public class Level1State extends GameState implements EntityObserver
     public void init()
     {
         JukeBox.close("titlemusic");
+        initBackground();
         initMap();
-        initHUD();
         initPlayer();
         initCamera();
         initEnemies();
-        initFonts();
-        initBackground();
-
-        //HUD
-        healthBar = 100;
-        healthInterval = 80; // the player lose 20 health every hit
-
-        //Game Over text border from center at Y-AXIS
-        lowerBorder = 70;
-
-        //dusk life symbol position at Y-AXIS
-        upperBorder = 10;
 
         //some keys have changed through the settings
-        if (KeyHandler.keysChanged()) //TODO
+        if (KeyHandler.keysChanged())
         {
             initSound();
             initDifficulty();
@@ -95,34 +66,6 @@ public class Level1State extends GameState implements EntityObserver
         {
             setDifficutlyEasy();
             enableSound();
-        }
-    }
-
-    private void initHUD()
-    {
-        try
-        {
-            liveSymbol = ImageIO.read(
-                    getClass().getResourceAsStream("/Backgrounds/lsymbol.png"));
-
-            liveSymbol = liveSymbol.getScaledInstance(50, 40,
-                    Image.SCALE_SMOOTH);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    private void initFonts()
-    {
-        try
-        {
-            optionTitles = loadFont(OPTIONS_STYLE, OPTIONS_SIZE);
-            pauseTitle = loadFont(PAUSE_TITLE_STYLE, PAUSE_TITLE_SIZE);
-        } catch (FontFormatException | IOException e)
-        {
-            e.printStackTrace();
         }
     }
 
@@ -174,7 +117,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private void setDifficultyHard()
     {
-        lives = 0;
+        player.setLives(0);
 
         for (Enemy enemy : enemyList)
         {
@@ -185,7 +128,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private void setDifficultyMedium()
     {
-        lives = 1;
+        player.setLives(2);
 
         for (Enemy enemy : enemyList)
         {
@@ -196,7 +139,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private void setDifficutlyEasy()
     {
-        lives = 2;
+        player.setLives(3);
 
         for (Enemy enemy : enemyList)
         {
@@ -245,13 +188,13 @@ public class Level1State extends GameState implements EntityObserver
         createEnemy("EvilTwin", new Vector2(4550, 809), "enemy_spritesheet_128_2.png");
         createEnemy("EvilTwin", new Vector2(3633, 1065), "enemy_spritesheet_128_2.png");
         createEnemy("EvilTwin", new Vector2(2315, 2345), "enemy_spritesheet_128_2.png");
-        createEnemy("EvilTwin", new Vector2(773, 2729),  "enemy_spritesheet_128_2.png");
+        createEnemy("EvilTwin", new Vector2(773, 2729), "enemy_spritesheet_128_2.png");
         createEnemy("EvilTwin", new Vector2(1566, 2729), "enemy_spritesheet_128_2.png");
     }
 
     public void update()
     {
-        if (!pause && !gameOver)
+        if (!pause ^ player.isGameOver())
         {
             player.update();
 
@@ -268,39 +211,10 @@ public class Level1State extends GameState implements EntityObserver
             bg2.setPosition(tileMap.cameraPos);
             bg3.setPosition(tileMap.cameraPos);
             bg4.setPosition(tileMap.cameraPos);
-
-            if (player.isHitByEnemy())
-            {
-                handleHealthBar();
-            }
         }
-
         handleInput();
     }
 
-    private void handleHealthBar()
-    {
-        healthBar -= 1;
-
-        if (healthBar <= healthInterval)
-        {
-            player.setHitByEnemy(false);
-            healthInterval -= 20;
-        }
-
-        if (healthBar == 0)
-        {
-            lives--;
-            healthBar = 100; // fill HealthBar slowly
-            healthInterval = 80;
-        }
-
-        if (lives < 0)
-        {
-            lives = 0;
-            gameOver = true;
-        }
-    }
 
 
     public void draw(Graphics2D g)
@@ -313,8 +227,9 @@ public class Level1State extends GameState implements EntityObserver
         bg3.draw(g);
         bg2.draw(g);
         bg1.draw(g);
-
+        camera.draw(g);
         player.draw(g);
+
         for (Enemy enemy : enemyList)
         {
             if (isOnCamera(enemy))
@@ -323,14 +238,11 @@ public class Level1State extends GameState implements EntityObserver
             }
         }
 
-        camera.draw(g);
-        drawHUD(g);
-
         if (pause)
         {
             drawPause(g);
         }
-        else if (gameOver)
+        else if (player.isGameOver())
         {
             drawGameOver(g);
         }
@@ -338,19 +250,15 @@ public class Level1State extends GameState implements EntityObserver
 
     private void drawGameOver(Graphics2D g)
     {
-        g.setColor(new Color(0, 0, 0, 80));
-        g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
+        AnimationHandler.drawGameOverText(g);
 
-        g.setColor(Color.WHITE);
-        drawCenteredString(g, "GAME OVER", new Rectangle(0, GamePanel.HEIGHT/2 + lowerBorder - PAUSE_TITLE_SIZE, GamePanel.WIDTH, PAUSE_TITLE_SIZE), pauseTitle);
-
-        if (lowerBorder > 0)
+        if (AnimationHandler.getGameOverTextPosition() > 0)
         {
-            lowerBorder--;
+            AnimationHandler.decreaseGameOverTextPosition();
         }
         else
         {
-            g.setFont(optionTitles);
+            g.setFont(FontHandler.getGameOverSelectionFont());
             drawOptions(gameOverOptions, g);
         }
     }
@@ -361,86 +269,24 @@ public class Level1State extends GameState implements EntityObserver
         {
             if (i == currentChoice)
             {
-                drawCenteredString(g, "- " + selections[i] + " -", new Rectangle(0, GamePanel.HEIGHT/2 + OPTIONS_SIZE + i*OPTIONS_SIZE, GamePanel.WIDTH, OPTIONS_SIZE), optionTitles);
+                FontHandler.drawCenteredString(g, "- " + selections[i] + " -",
+                        new Rectangle(0,
+                                GamePanel.HEIGHT / 2 + FontHandler.PAUSE_SELECTION_SIZE
+                                        + i * FontHandler.PAUSE_SELECTION_SIZE,
+                                GamePanel.WIDTH,FontHandler.PAUSE_SELECTION_SIZE),
+                        FontHandler.getPauseSelectionFont());
             }
             else
             {
-                drawCenteredString(g, selections[i], new Rectangle(0, GamePanel.HEIGHT/2 + OPTIONS_SIZE + i*OPTIONS_SIZE, GamePanel.WIDTH, OPTIONS_SIZE), optionTitles);
+                FontHandler.drawCenteredString(g, selections[i],
+                        new Rectangle(0,
+                                GamePanel.HEIGHT / 2 + FontHandler.PAUSE_SELECTION_SIZE
+                                        + i * FontHandler.PAUSE_SELECTION_SIZE,
+                                GamePanel.WIDTH, FontHandler.PAUSE_SELECTION_SIZE),
+                        FontHandler.getPauseSelectionFont());
             }
 
             //g.drawString(selections[i], GamePanel.WIDTH / 2 + VGAP + optionsAlign[i], GamePanel.HEIGHT / 2 + 30 + i * 30);
-        }
-    }
-
-    private void drawHUD(Graphics2D g)
-    {
-        g.drawImage(liveSymbol, 55, 10, null);
-
-        Font HUDFont = optionTitles;
-        g.setFont(HUDFont);
-        //g.drawString("LIVES", 20, 30);
-
-        g.drawString(String.valueOf(lives) + " x", 10, 40);
-
-        g.setColor(Color.BLACK);
-        g.drawRect(120, 20, 100, 20);
-
-        
-        if (healthBar >= 65)
-            g.setColor(Color.GREEN);
-        else if (healthBar >= 35)
-            g.setColor(Color.YELLOW);
-        else
-        {
-            g.setColor(Color.RED); 
-            if(!pause)blink(g);
-        }
-         
-        g.fillRect(120, 20, (int) healthBar, 20);
-
-        if (healthBar <= 1)
-        {
-            liveLost = true;
-        }
-
-        if (liveLost)
-        {
-            float op = 0.5f;
-            g.setComposite(
-                    AlphaComposite.getInstance(AlphaComposite.SRC_OVER, op));
-            g.drawImage(liveSymbol, 55, upperBorder, null);
-            drawLiveLostAnimation(g);
-        }
-
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-        g.setColor(Color.BLACK);
-        for(int i=140; i <= 200; i+=20)
-        {
-            g.drawLine(i, 20, i, 40);
-        }
-    }
-
-    private void blink(Graphics2D g)
-    {
-        blinkTimer ++;
-          
-        if(blinkTimer >= BLINK_TIME / 2)
-        {
-            g.setComposite(
-                  AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.0f));
-            
-            if(blinkTimer == BLINK_TIME) blinkTimer = 0;
-        }
-    }
-
-    private void drawLiveLostAnimation(Graphics2D g)
-    {
-        upperBorder -= 1;
-
-        if (upperBorder == -100)
-        {
-            upperBorder = 10;
-            liveLost = false;
         }
     }
 
@@ -462,7 +308,10 @@ public class Level1State extends GameState implements EntityObserver
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
         g.setColor(PAUSE_TITLE_COLOR);
-        drawCenteredString(g, "PAUSE", new Rectangle(0, GamePanel.HEIGHT/2 - PAUSE_TITLE_SIZE, GamePanel.WIDTH, PAUSE_TITLE_SIZE), pauseTitle);
+        FontHandler.drawCenteredString(g, "PAUSE",
+                new Rectangle(0, GamePanel.HEIGHT / 2 - FontHandler.PAUSE_TITLE_SIZE,
+                        GamePanel.WIDTH, FontHandler.PAUSE_TITLE_SIZE),
+                FontHandler.getPauseTitleFont());
         drawOptions(pauseOptions, g);
     }
 
@@ -471,17 +320,25 @@ public class Level1State extends GameState implements EntityObserver
      */
     public void handleInput()
     {
-        if (!gameOver && !pause && KeyHandler.hasJustBeenPressed(Keys.ENTER) || KeyHandler.hasJustBeenPressed(Keys.ESCAPE))
+        if (!player.isGameOver() && !pause && KeyHandler.hasJustBeenPressed(Keys.ENTER)
+                || KeyHandler.hasJustBeenPressed(Keys.ESCAPE))
         {
             pause = true;
-        } else if (pause)
+            //hud.setHealthBlinking(true);
+        }
+        else if (pause)
         {
             if (KeyHandler.hasJustBeenPressed(Keys.ENTER))
+            {
                 selectPause();
+                //hud.setHealthBlinking(false);
+            }
             else
+            {
                 selectChoice();
+            }
         }
-        else if (gameOver)
+        else if (player.isGameOver())
         {
             if (KeyHandler.hasJustBeenPressed(Keys.ENTER))
                 selectGameOver();
@@ -515,7 +372,6 @@ public class Level1State extends GameState implements EntityObserver
         switch (currentChoice)
         {
         case 0:
-            lives = 2;
             gsm.setState(GameStateManager.LEVEL1STATE);
             break;
         case 1:
@@ -525,7 +381,6 @@ public class Level1State extends GameState implements EntityObserver
             System.exit(0);
             break;
         }
-        gameOver = false;
     }
 
     private void selectPause()
@@ -549,7 +404,7 @@ public class Level1State extends GameState implements EntityObserver
      *
      * @param enemyName   Enemy name
      * @param position    The map position
-     * @param spriteSheet THe spriteSheet
+     * @param spriteSheet The spriteSheet
      */
     public void createEnemy(String enemyName, Vector2 position, String spriteSheet)
     {

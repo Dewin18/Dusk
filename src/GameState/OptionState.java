@@ -1,11 +1,11 @@
 package GameState;
 
 import java.awt.*;
-import java.io.IOException;
-import java.security.Key;
 import java.util.ArrayList;
 
 import Audio.JukeBox;
+import Handlers.AnimationHandler;
+import Handlers.FontHandler;
 import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.GamePanel;
@@ -17,7 +17,7 @@ public class OptionState extends GameState
     private final int NAVIGATION_VGAP_INTERVAL = 560; 
     
     //GAP starts at center (GamePanel / 2)
-    private final int TITLE_VGAP = 60;
+    private final int TITLE_VGAP = 20;
     private final int TITLE_HGAP = 250;
     
     //constant colors for selection mode
@@ -25,31 +25,18 @@ public class OptionState extends GameState
     private final Color WARNING_COLOR = Color.RED;
     private final Color DEFAULT_COLOR = Color.LIGHT_GRAY;
     
-    //constant font style
-    private final String TITLE_FONT_SYTLE = "Berlin Sans FB Demi Bold.ttf";
-    private final String SETTINGS_FONTSTYLE = "Berlin Sans FB Regular.ttf";
-    
-    //constant fontSize
-    private final int TITLE_FONT_SIZE = 25;
-    private final int SETTINGS_FONT_SIZE = 20;
-    
     //controls blink animation
-    private final int BLINK_TIME = 50;
-    private int blinkTimer = 0;
+    private AnimationHandler animation;
     
     //current choice 
     private int currentChoice;
     
     //current key state (up, down, left, right) selected
     private int currentControl;
-   
     
     //current state number in boolean Array
     private int currentState;
 
-    private Font font;
-    private Font titleFont;
-    private Font arialFont;
     private Color titleColor = new Color(0, 153, 255);;
     
     private boolean[] selectionStates = new boolean[10];
@@ -78,9 +65,9 @@ public class OptionState extends GameState
 
     public void init()
     {
+        animation = new AnimationHandler();
         initChoiceAndStates();
         initStateList();
-        initFonts();
         initDefaultSettings();
         
         //indicates that the first state (SOUND state) is selected
@@ -99,19 +86,6 @@ public class OptionState extends GameState
         currentChoice = 0;
         currentControl = 0;
         currentState = 0;
-    }
-
-    private void initFonts()
-    {
-        try
-        {
-            arialFont = new Font(SETTINGS_FONTSTYLE, Font.PLAIN, SETTINGS_FONT_SIZE);
-            font = loadFont(SETTINGS_FONTSTYLE, SETTINGS_FONT_SIZE);
-            titleFont = loadFont(TITLE_FONT_SYTLE, TITLE_FONT_SIZE);
-        } catch (FontFormatException | IOException e)
-        {
-            e.printStackTrace();
-        }
     }
 
     private void initStateList()
@@ -161,12 +135,13 @@ public class OptionState extends GameState
 
     public void draw(Graphics2D g)
     {
+        g.setColor(Color.BLACK);
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
         drawTitle(g);
         
         g.setColor(DEFAULT_COLOR);
-        g.setFont(font);
+        g.setFont(FontHandler.getOptionStateSelectionFont());
 
         //draw NOT selectable titles
         drawOptionTitles(g);
@@ -183,7 +158,7 @@ public class OptionState extends GameState
     private void drawTitle(Graphics2D g)
     {
         g.setColor(titleColor);
-        g.setFont(titleFont);
+        g.setFont(FontHandler.getOptionStateTitleFont());
 
         g.drawString("SETTINGS", GamePanel.WIDTH / 2 - TITLE_VGAP,
                 GamePanel.HEIGHT / 2 - TITLE_HGAP);
@@ -256,7 +231,7 @@ public class OptionState extends GameState
             else 
             {
                 g.setColor(SELECT_COLOR);
-                blink(g);
+                animation.startBlinkAnimation(g);
             } 
         } 
         else 
@@ -266,24 +241,11 @@ public class OptionState extends GameState
         }
 
         if(drawString.equals("←") || drawString.equals("↑") || drawString.equals("→") || drawString.equals("↓"))
-            g.setFont(arialFont);
+            g.setFont(FontHandler.getOptionStateKeyBindingsFont());
         
         g.drawString(drawString, GamePanel.WIDTH / 2 + 150,
                 GamePanel.HEIGHT / 2 - yOffset);
-        g.setFont(font);
-    }
-
-    private void blink(Graphics2D g)
-    {
-        blinkTimer ++;
-        
-        if(blinkTimer >= BLINK_TIME / 2)
-        {
-            g.setComposite(
-                  AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.0f));
-            
-            if(blinkTimer == BLINK_TIME)  blinkTimer=0;
-        }
+        g.setFont(FontHandler.getOptionStateSelectionFont());
     }
 
     //draw easy, medium, hard
@@ -432,7 +394,9 @@ public class OptionState extends GameState
     //helper method to check for duplicates and enable duplicate warning string
     private void checkForDuplicates()
     {
-        if(containsDuplicates())
+        boolean keyAlreadyDefined = duplicateCheck();
+        
+        if(keyAlreadyDefined)
         {
             duplicateWarning = true;
         }
@@ -576,9 +540,9 @@ public class OptionState extends GameState
      * 
      * @return true if contains duplicates false otherwise
      */
-    public boolean containsDuplicates()
+    public boolean duplicateCheck()
     {
-        boolean duplicates = false;
+        boolean containsDuplicates = false;
         String noKey = "NOT ASSIGNED";
         
         for(int i = 0; i < selection.length; i++)
@@ -588,11 +552,11 @@ public class OptionState extends GameState
                 if(!selection[i].equals(noKey) && !selection[j].equals(noKey) 
                   && i != j && selection[i].equals(selection[j]))
                 {
-                    duplicates = true;
+                    containsDuplicates = true;
                 }
             }
         }
-        return duplicates;
+        return containsDuplicates;
     }
     
     //Helper method to print all array elements at standard output

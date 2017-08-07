@@ -1,51 +1,112 @@
 package Entity;
 
 import javax.imageio.ImageIO;
+
+import Handlers.AnimationHandler;
+import Handlers.FontHandler;
+
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 public class HUD
 {
-    private BufferedImage fullHeart;
-    private BufferedImage emptyHeart;
-    private final int HEART_WIDTH;
-    private final int HEART_HEIGHT;
-
-    private int maxHealth;
-    private int currentHealth;
-
-    public HUD(int maxHealth)
+    private float healthBar;
+    private Image liveSymbol;
+    private int liveSymbolPosition;
+    private boolean liveLost;
+    
+    public HUD()
     {
+        healthBar = 100;
+        
+        //dusk life symbol position at Y-AXIS
+        liveSymbolPosition = 10;
+        
         try
         {
-            fullHeart = ImageIO.read(getClass().getResourceAsStream("/HUD/heart_full.png"));
-            emptyHeart = ImageIO.read(getClass().getResourceAsStream("/HUD/heart_empty.png"));
-        } catch (IOException e)
+            liveSymbol = ImageIO.read(
+                    getClass().getResourceAsStream("/Backgrounds/lsymbol.png"));
+
+            liveSymbol = liveSymbol.getScaledInstance(50, 40,
+                    Image.SCALE_SMOOTH);
+        }
+        catch (Exception e)
         {
             e.printStackTrace();
         }
-
-        this.maxHealth = maxHealth;
-        currentHealth = maxHealth;
-        HEART_HEIGHT = fullHeart.getHeight();
-        HEART_WIDTH = fullHeart.getWidth();
     }
 
-    public void draw(Graphics2D g)
+    public void draw(Graphics2D g, int health, int lives)
     {
-        for (int i = 0; i < currentHealth; i++)
+        drawHUD(g, lives);
+        handleHealthBar(g, health);
+        
+        if(liveLost)
         {
-            g.drawImage(fullHeart, (int)(HEART_WIDTH*0.3 + HEART_WIDTH*1.3*i), (int)(HEART_HEIGHT*0.3), null);
-        }
-        for (int i = currentHealth; i < maxHealth; i++)
-        {
-            g.drawImage(emptyHeart, (int)(HEART_WIDTH*0.3 + HEART_WIDTH*1.3*i), (int)(HEART_HEIGHT*0.3), null);
+            drawLiveLostAnimation(g);
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
         }
     }
-
-    public void setCurrentHealth(int currentHealth)
+    
+    public void handleHealthBar(Graphics2D g, int border)
     {
-        this.currentHealth = currentHealth;
+        if(healthBar > border)
+        {
+            healthBar -= 1;
+        }
+        
+        if(healthBar <= 0)
+        {
+            liveLost = true;
+        }
+    }
+    
+    private void drawHUD(Graphics2D g, int lives)
+    {
+        g.drawImage(liveSymbol, 55, 10, null);
+        g.setFont(FontHandler.getHudFont());
+        g.drawString(String.valueOf(lives) + " x", 10, 40);
+        g.setColor(Color.BLACK);
+        g.drawRect(120, 20, 100, 20);
+
+        if (healthBar >= 65)
+            g.setColor(Color.GREEN);
+        else if (healthBar >= 35)
+            g.setColor(Color.YELLOW);
+        else
+        {
+            g.setColor(Color.RED);
+            AnimationHandler.startBlinkAnimation(g);
+        }
+
+        g.fillRect(120, 20, (int) healthBar, 20);
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        g.setColor(Color.BLACK);
+        for (int i = 140; i <= 200; i += 20) g.drawLine(i, 20, i, 40);
+    }
+
+    private void drawLiveLostAnimation(Graphics2D g)
+    {
+        float op = 0.5f;
+        g.setComposite(
+                AlphaComposite.getInstance(AlphaComposite.SRC_OVER, op));
+        g.drawImage(liveSymbol, 55, liveSymbolPosition, null);
+        
+        liveSymbolPosition -= 1;
+
+        if (liveSymbolPosition == -100)
+        {
+            liveSymbolPosition = 10;
+            liveLost = false;
+        }
+    }
+    
+    public void setHealthBarValue(float health)
+    {
+        healthBar = health;
+    }
+    
+    public float getHealthBarValue()
+    {
+        return healthBar;
     }
 }

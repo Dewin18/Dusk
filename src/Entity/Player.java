@@ -1,5 +1,9 @@
 package Entity;
 
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+
 import Audio.JukeBox;
 import Entity.PlayerState.IdleState;
 import Entity.PlayerState.PlayerState;
@@ -8,9 +12,6 @@ import Handlers.Keys;
 import Main.Time;
 import TileMap.TileMap;
 import TileMap.Vector2;
-
-import java.awt.*;
-import java.util.ArrayList;
 
 import static Entity.AnimationState.*;
 
@@ -25,9 +26,9 @@ public class Player extends MovingObject
     private final int[] FRAMEHEIGHTS = {128, 128, 128, 128, 128, 128, 128, 128};
     private final int[] SPRITEDELAYS = {12, 7, -1, -1, 8, 8, 8, 8};
     private double knockback = 2;
-    private int health = 5;
+    private int health = 100;
     private int exp;
-    private int lives;
+    private int lives = 3;
     private int dmg = 3;
     private ArrayList<MapObject> objectsToRemove;
     private boolean isAttacking = false;
@@ -41,6 +42,9 @@ public class Player extends MovingObject
     private boolean isFlinching = false;
     private boolean hitByEnemy;
     private boolean hitEnemy;
+    private boolean isGameOver = false;
+
+    private HUD hud;
 
     private int invulnerabilityTimer = invulnerabilityTime;
     private ArrayList<MapObject> mapObjects = new ArrayList<>();
@@ -48,6 +52,7 @@ public class Player extends MovingObject
     public Player(TileMap tm)
     {
         super(tm);
+        hud = new HUD();
 
         width = FRAMEWIDTHS[0];
         height = FRAMEHEIGHTS[0];
@@ -106,6 +111,26 @@ public class Player extends MovingObject
         super.draw(g);
         AlphaComposite a = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1);
         g.setComposite(a);
+        drawHUD(g);
+    }
+
+    private void drawHUD(Graphics2D g)
+    {
+        hud.draw(g, health, lives);
+
+        if(hud.getHealthBarValue() <= 0)
+        {
+            lives--;
+
+            if(lives < 0)
+            {
+                isGameOver = true;
+                lives = 0;
+            }
+
+            health = 100;
+            hud.setHealthBarValue(100);
+        }
     }
 
     //---- State handling ---------------------------------------------------------------------------------
@@ -321,8 +346,7 @@ public class Player extends MovingObject
             }
             Time.freeze(15);
             setInvulnerable(true);
-            --health;
-
+            health-= 20;
             setHitByEnemy(true);
             currentFlinchTime = 0;
             invulnerabilityTimer = 0;
@@ -366,14 +390,9 @@ public class Player extends MovingObject
 
     //---- Getters and setters ---------------------------------------------------------------------------------
 
-    public int getHealth()
+    public void setLives(int lives)
     {
-        return health;
-    }
-    
-    public void setHealth(int health)
-    {
-        this.health = health;
+        this.lives = lives;
     }
 
     public AnimationState getCharacterState()
@@ -394,6 +413,11 @@ public class Player extends MovingObject
     public boolean isHitByEnemy()
     {
         return hitByEnemy;
+    }
+
+    public boolean isGameOver()
+    {
+        return isGameOver;
     }
 
     public boolean isOnGround()
