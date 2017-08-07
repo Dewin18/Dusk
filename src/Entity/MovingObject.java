@@ -23,14 +23,13 @@ public abstract class MovingObject extends MapObject
     double gravity = 0.5;
     double maxFallingSpeed;
     double minJumpingSpeed;
-    double knockback;
 
     // Attack collision
     CollisionBox attackCollider;
     Vector2 attackColliderOffset;
 
     // collision states
-    CharacterState currentState = CharacterState.IDLE;
+    AnimationState currentState = AnimationState.IDLE;
     boolean isPushingRightWall;
     boolean pushedRightWall;
     boolean isPushingLeftWall;
@@ -65,6 +64,16 @@ public abstract class MovingObject extends MapObject
             return;
         }
         this.velocity.x = x;
+        this.velocity.y = y;
+    }
+
+    public void setVelocityX(double x)
+    {
+        this.velocity.x = x;
+    }
+
+    public void setVelocityY(double y)
+    {
         this.velocity.y = y;
     }
 
@@ -116,13 +125,6 @@ public abstract class MovingObject extends MapObject
      */
     private void checkMapCollision()
     {
-        // Check for ground
-        if (velocity.y >= 0 && hasGround(oldPosition, position))
-        {
-            position.y = groundY - collisionBox.halfSize.y - collisionOffset.y - 1;
-            velocity.y = 0;
-            isOnGround = true;
-        } else isOnGround = false;
         // Check for left tile
         if (velocity.x <= 0 && collidesWithLeftWall(oldPosition, position))
         {
@@ -143,6 +145,13 @@ public abstract class MovingObject extends MapObject
             }
             velocity.x = Math.max(velocity.x, 0);
         } else isPushingRightWall = false;
+        // Check for ground
+        if (velocity.y >= 0 && hasGround(oldPosition, position))
+        {
+            position.y = groundY - collisionBox.halfSize.y - collisionOffset.y - 1;
+            velocity.y = 0;
+            isOnGround = true;
+        } else isOnGround = false;
         // Check for ceiling
         if (velocity.y <= 0 && hasCeiling(oldPosition, position))
         {
@@ -374,7 +383,7 @@ public abstract class MovingObject extends MapObject
     }
 
 
-    abstract void setAnimation(CharacterState state);
+    abstract void setAnimation(AnimationState state);
 
     public void update() {
         super.update();

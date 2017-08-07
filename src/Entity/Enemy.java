@@ -28,7 +28,7 @@ public abstract class Enemy extends MovingObject
     protected boolean isInvulnerable;
     protected int invulnerableTime;
     protected int currentInvulnerableTime;
-    protected double knockback = 6.75;
+    protected double knockback = 3;
 
     public Enemy(TileMap tm)
     {
@@ -51,15 +51,14 @@ public abstract class Enemy extends MovingObject
     public void getHit(int damage, double playerXPosition)
     {
         if (!isInvulnerable) {
-            setAnimation(CharacterState.FLINCHING);
+            setAnimation(AnimationState.FLINCHING);
             setInvulnerable(true);
-            //velocity.x += knockback;
             if (playerXPosition < position.x)
             {
-                addForce(new Vector2(knockback, 0), 30);
+                addForce(new Vector2(knockback, 0), 5);
             } else
             {
-                addForce(new Vector2(-knockback, 0), 30);
+                addForce(new Vector2(-knockback, 0), 5);
             }
             health -= damage;
             if (health <= 0) {
@@ -77,7 +76,7 @@ public abstract class Enemy extends MovingObject
             currentInvulnerableTime += Math.round(Time.deltaTime);
         } else if (isInvulnerable) {
             setInvulnerable(false);
-            setAnimation(CharacterState.JUMPING);
+            setAnimation(AnimationState.JUMPING);
         }
     }
 

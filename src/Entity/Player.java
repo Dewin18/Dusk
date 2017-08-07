@@ -1,6 +1,8 @@
 package Entity;
 
 import Audio.JukeBox;
+import Entity.PlayerState.IdleState;
+import Entity.PlayerState.PlayerState;
 import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.Time;
@@ -10,11 +12,11 @@ import TileMap.Vector2;
 import java.awt.*;
 import java.util.ArrayList;
 
-import static Entity.CharacterState.*;
+import static Entity.AnimationState.*;
 
 public class Player extends MovingObject
 {
-
+    private PlayerState currentPlayerState;
     private final int flinchTime = 5;
     private final int attackTime = 8;
     private final int invulnerabilityTime = 80;
@@ -22,33 +24,26 @@ public class Player extends MovingObject
     private final int[] FRAMEWIDTHS = {128, 128, 128, 256, 128, 128, 128, 128};
     private final int[] FRAMEHEIGHTS = {128, 128, 128, 128, 128, 128, 128, 128};
     private final int[] SPRITEDELAYS = {12, 7, -1, -1, 8, 8, 8, 8};
-    double knockback = 15;
+    private double knockback = 2;
     private int health = 5;
     private int exp;
     private int lives;
     private int dmg = 3;
     private ArrayList<MapObject> objectsToRemove;
     private boolean isAttacking = false;
+    private int attackCooldown = 10;
+    private int attackCooldownElapsed = attackCooldown;
     private boolean isInvulnerable = false;
-    private boolean isRising = false;
-    private boolean isFalling = false;
     private double minFallSpeed;
-    private int fallingTime = 0;
-    private int fallingLinesTriggerTime = 60;
-    private boolean hasJumped; // for canceling repeat jumps by keeping the button pressed
-    private boolean hasAttack = true;
-    private boolean hasDoubleJump = false;
-    private boolean hasDash = false;
     private int currentFlinchTime = flinchTime;
     private int currentAttackTime = attackTime;
     private boolean isBlinking = false;
+    private boolean isFlinching = false;
     private boolean hitByEnemy;
+    private boolean hitEnemy;
 
     private int invulnerabilityTimer = invulnerabilityTime;
     private ArrayList<MapObject> mapObjects = new ArrayList<>();
-
-    private int stepSoundMaxTime = 20;
-    private int currentStepSoundTime = stepSoundMaxTime;
 
     public Player(TileMap tm)
     {
@@ -57,12 +52,8 @@ public class Player extends MovingObject
         width = FRAMEWIDTHS[0];
         height = FRAMEHEIGHTS[0];
         loadSprites("dusk_spritesheet_128.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
-        JukeBox.load("grass_step1.mp3", "grassstep1");
-        JukeBox.load("grass_step2.mp3", "grassstep2");
-        JukeBox.load("grass_step3.mp3", "grassstep3");
-        JukeBox.load("grass_step4.mp3", "grassstep4");
-        JukeBox.load("jump.mp3", "jump");
-        JukeBox.load("landing.mp3", "landing");
+
+        currentPlayerState = new IdleState(this);
     }
 
     public void initPlayer(Vector2 position)
@@ -80,7 +71,18 @@ public class Player extends MovingObject
         collisionBox.setHalfSize(new Vector2(tileSize / 3, tileSize / 3 - 18));
         collisionOffset = new Vector2(tileSize / 2 - 1, collisionBox.halfSize.y + 38);
         // set up attack collider
-        attackColliderOffset = new Vector2(tileSize + tileSize/3, tileSize / 2);
+        attackColliderOffset = new Vector2(tileSize + tileSize/8, tileSize / 2);
+        // load sound files
+        Thread t = new Thread(() ->
+        {
+            JukeBox.load("grass_step1.mp3", "grassstep1");
+            JukeBox.load("grass_step2.mp3", "grassstep2");
+            JukeBox.load("grass_step3.mp3", "grassstep3");
+            JukeBox.load("grass_step4.mp3", "grassstep4");
+            JukeBox.load("jump.mp3", "jump");
+            JukeBox.load("landing.mp3", "landing");
+        });
+        t.start();
     }
 
     @Override
@@ -109,68 +111,33 @@ public class Player extends MovingObject
     //---- State handling ---------------------------------------------------------------------------------
     private void handleInputs()
     {
-        switch (currentState)
+        if (isFlinching)
         {
-            case IDLE:
-                setVelocity(0, 0);
-                if (checkAndHandleInAir()) break;
-                if (checkAndHandleJumpReleased()) ;
-                if (checkAndHandleWalking()) break;
-                else if (checkAndHandlePlatformDrop()) ;
-                else if (checkAndHandleJump()) break;
-                break;
-            case WALKING:
-                if (checkAndHandleInAir()) break;
-                playWalkingSound();
-                if (checkAndHandleJumpReleased()) ;
-                if (checkAndHandleIdling()) break;
-                if (checkAndHandleWalls()) ;
-                if (checkAndHandlePlatformDrop()) ;
-                else if (checkAndHandleJump()) break;
-                break;
-            case JUMPING:
-                if (isOnGround)
-                {
-                    JukeBox.play("landing");
-                    JukeBox.play("grassstep4");
-                    if (checkAndHandleIdling()) ;
-                    else
-                    {
-                        setAnimation(WALKING);
-                        velocity.y = 0;
-                    }
-                    if (checkAndHandleJumpReleased()) ;
-                }
-                updateIsRising();
-                updateYVelocity();
-                checkForEarlyReleaseOfJump();
-                updateIsFalling();
-                updateFallingTime();
-                if (checkAndHandleJumpDirectionChange()) ;
-                if (checkAndHandleLeftAndRightPressed()) break;
-                else if (checkAndHandleWalls()) ;
-                break;
-            case FLINCHING:
-                if (checkAndHandleStillFlinching()) ;
-                else stopFlinching();
-                break;
-        }
-    }
-
-    private void playWalkingSound()
-    {
-        if (currentStepSoundTime < stepSoundMaxTime)
-        {
-            currentStepSoundTime++;
+            if (currentFlinchTime < flinchTime)
+            {
+                currentFlinchTime += Math.round(Time.deltaTime);
+            }
+            else
+            {
+                isBlinking = true;
+                rotation = 0;
+                isFlinching = false;
+                currentPlayerState.resetAnimation();
+            }
             return;
         }
-        String s = "grassstep" + (int)(Math.random()*4+1);
-        JukeBox.play(s);
-        currentStepSoundTime = 0;
+
+        PlayerState state = currentPlayerState.update();
+        if (state != null)
+        {
+            currentPlayerState.exit();
+            currentPlayerState = state;
+            state.enter();
+        }
     }
 
     @Override
-    void setAnimation(CharacterState state)
+    public void setAnimation(AnimationState state)
     {
         currentState = state;
         if (!isAttacking)
@@ -185,16 +152,13 @@ public class Player extends MovingObject
                     statenr = 1;
                     break;
                 case JUMPING:
-                    if (isFalling)
-                    {
-                        statenr = 5;
-                        if (fallingTime > fallingLinesTriggerTime)
-                        {
-                            statenr = 7;
-                            fallingTime = 0;
-                        }
-                    }
-                    else statenr = 4;
+                    statenr = 4;
+                    break;
+                case FALLING:
+                    statenr = 5;
+                    break;
+                case FALLING_LINES:
+                    statenr = 7;
                     break;
                 case FLINCHING:
                     statenr = 2;
@@ -210,22 +174,12 @@ public class Player extends MovingObject
         }
     }
 
-    private void setAnimation(int statenr)
+    private void setAnimationAttacking()
     {
-        animation.setFrames(sprites.get(statenr));
-        animation.setDelay(SPRITEDELAYS[statenr]);
-        width = FRAMEWIDTHS[statenr];
-        height = FRAMEHEIGHTS[statenr];
-    }
-
-    public boolean isInvulnerable()
-    {
-        return isInvulnerable;
-    }
-
-    public void setInvulnerable(boolean b)
-    {
-        isInvulnerable = b;
+        animation.setFrames(sprites.get(3));
+        animation.setDelay(SPRITEDELAYS[3]);
+        width = FRAMEWIDTHS[3];
+        height = FRAMEHEIGHTS[3];
     }
 
     private void updateAlpha()
@@ -238,13 +192,39 @@ public class Player extends MovingObject
         if (invulnerabilityTimer < invulnerabilityTime)
         {
             invulnerabilityTimer += Math.round(Time.deltaTime);
-        } else if (isInvulnerable)
+        }
+        else if (isInvulnerable)
         {
             setInvulnerable(false);
-            setAnimation(JUMPING);
             alpha = 1;
             isBlinking = false;
+            currentPlayerState.resetAnimation();
         }
+    }
+
+    public void walkInDirection(Vector2 dir)
+    {
+        if (dir == Vector2.LEFT)
+        {
+            setVelocityX(-walkSpeed);
+        }
+        else if (dir == Vector2.RIGHT)
+        {
+            setVelocityX(walkSpeed);
+        }
+    }
+
+    public void jump()
+    {
+        velocity.y = jumpSpeed;
+    }
+
+    public void fall()
+    {
+        position.y += 1;
+        framesPassedUntilDrop = 0;
+        isOnPlatform = false;
+        velocity.y = minFallSpeed;
     }
 
     //---- Collision handling ---------------------------------------------------------------------------------
@@ -265,7 +245,8 @@ public class Player extends MovingObject
             ArrayList<MapObject> list = new ArrayList<>();
             list.add(o);
             objectsToRemove = list;
-        } else
+        }
+        else
         {
             objectsToRemove.add(o);
         }
@@ -289,7 +270,15 @@ public class Player extends MovingObject
             if (attackCollider.overlaps(m.collisionBox))
             {
                 reactToAttackCollision(m);
-                addForce(new Vector2(-1, 0), 10);
+                if (m.getPosition().x > position.x)
+                {
+                    addForce(new Vector2(-4, 0), 1);
+                }
+                else
+                {
+                    addForce(new Vector2(4, 0), 1);
+                }
+                hitEnemy = true;
             }
         }
         if (objectsToRemove != null)
@@ -321,31 +310,30 @@ public class Player extends MovingObject
     {
         if (!isInvulnerable())
         {
-            Time.freeze(15);
             if (e.position.x < this.position.x)
             {
-                velocity.x = knockback;
+                addForce(new Vector2(knockback, 0), 10);
                 rotation = 45;
             } else
             {
-                velocity.x = -knockback;
+                addForce(new Vector2(-knockback, 0), 10);
                 rotation = -45;
             }
+            Time.freeze(15);
             setInvulnerable(true);
             --health;
 
-            //TODO System.out.println(health);
             setHitByEnemy(true);
             currentFlinchTime = 0;
             invulnerabilityTimer = 0;
+            isFlinching = true;
             setAnimation(FLINCHING);
         }
     }
 
-    //---- Helpers for state handling ---------------------------------------------------------------------------------
     private void checkAndHandleAttack()
     {
-        if (KeyHandler.hasJustBeenPressed(Keys.ATTACK) && !isAttacking && currentState != FLINCHING)
+        if (KeyHandler.hasJustBeenPressed(Keys.ATTACK) && !isAttacking && currentState != FLINCHING && attackCooldownElapsed >= attackCooldown)
         {
             if (isFacingRight)
             {
@@ -354,7 +342,7 @@ public class Player extends MovingObject
             {
                 attackCollider = new CollisionBox(position.add(attackColliderOffset).addX(attackColliderOffset.x * -2 + tileSize), new Vector2(tileSize / 3, tileSize / 3));
             }
-            setAnimation(3);
+            setAnimationAttacking();
             isAttacking = true;
             currentAttackTime = 0;
             checkAttackCollision();
@@ -363,182 +351,21 @@ public class Player extends MovingObject
         {
             checkAttackCollision();
             currentAttackTime++;
+            if (isFacingRight) attackCollider.center = position.add(attackColliderOffset);
+            else attackCollider.center = position.add(attackColliderOffset).addX(attackColliderOffset.x* -2 + tileSize);
             if (currentAttackTime == attackTime)
             {
                 isAttacking = false;
                 setAnimation(currentState);
                 attackCollider = null;
+                attackCooldownElapsed = 0;
             }
         }
-    }
-
-    private boolean checkAndHandleInAir()
-    {
-        if (!isOnGround)
-        {
-            setAnimation(JUMPING);
-            currentStepSoundTime = stepSoundMaxTime;
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkAndHandleWalking()
-    {
-        if (KeyHandler.isPressed(Keys.RIGHT) != KeyHandler.isPressed(Keys.LEFT))
-        {
-            setAnimation(WALKING);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkAndHandleIdling()
-    {
-        if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT))
-        {
-            setAnimation(IDLE);
-            setVelocity(0, 0);
-            currentStepSoundTime = stepSoundMaxTime;
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkAndHandlePlatformDrop()
-    {
-        if (KeyHandler.isPressed(Keys.DOWN) && KeyHandler.isPressed(Keys.JUMP))
-        {
-            if (isOnPlatform)
-            {
-                position.y += 1;
-                framesPassedUntilDrop = 0;
-                isOnPlatform = false;
-                velocity.y = minFallSpeed;
-                hasJumped = true;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean checkAndHandleJump()
-    {
-        if (KeyHandler.isPressed(Keys.JUMP) && !hasJumped)
-        {
-            JukeBox.play("jump");
-            velocity.y = jumpSpeed;
-            setAnimation(JUMPING);
-            hasJumped = true;
-            currentStepSoundTime = stepSoundMaxTime;
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkAndHandleWalls()
-    {
-        if (KeyHandler.isPressed(Keys.RIGHT))
-        {
-            if (isPushingRightWall) velocity.x = 0;
-            else velocity.x = walkSpeed;
-            if (!isAttacking) isFacingRight = true;
-            return true;
-        } else if (KeyHandler.isPressed(Keys.LEFT))
-        {
-            if (isPushingLeftWall) velocity.x = 0;
-            else velocity.x = -walkSpeed;
-            if (!isAttacking) isFacingRight = false;
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkAndHandleLeftAndRightPressed()
-    {
-        if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT))
-        {
-            velocity.x = 0;
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkAndHandleJumpDirectionChange()
-    {
-        if (isRising && isFalling)
-        {
-            setAnimation(JUMPING);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean checkAndHandleJumpReleased()
-    {
-        if (hasJumped && !KeyHandler.isPressed(Keys.JUMP))
-        {
-            hasJumped = false;
-            return true;
-        }
-        return false;
-    }
-
-    private void updateYVelocity()
-    {
-        velocity.y += gravity * Time.deltaTime;
-        velocity.y = Math.min(velocity.y, maxFallingSpeed);
-    }
-
-    private void checkForEarlyReleaseOfJump()
-    {
-        if (!KeyHandler.isPressed(Keys.JUMP) && velocity.y < 0)
-        {
-            velocity.y = Math.min(-velocity.y, -minJumpingSpeed);
-        }
-    }
-
-    private void updateIsRising()
-    {
-        boolean oldIsRising = isRising;
-        isRising = velocity.y < 0;
-        if (oldIsRising != isRising)
-            setAnimation(JUMPING);
-    }
-
-    private void updateIsFalling()
-    {
-        boolean oldIsFalling = isFalling;
-        isFalling = velocity.y > 0;
-        if (oldIsFalling != isFalling)
-            setAnimation(JUMPING);
-    }
-
-    private void updateFallingTime()
-    {
-        if (isRising) fallingTime = 0;
-        if (isFalling) fallingTime++;
-        if (fallingTime > fallingLinesTriggerTime) setAnimation(JUMPING);
-    }
-
-    private boolean checkAndHandleStillFlinching()
-    {
-        if (currentFlinchTime < flinchTime)
-        {
-            currentFlinchTime += Math.round(Time.deltaTime);
-            return true;
-        }
-        return false;
-    }
-
-    private void stopFlinching()
-    {
-        setAnimation(JUMPING);
-        isBlinking = true;
-        rotation = 0;
+        else if (attackCooldownElapsed < attackCooldown) attackCooldownElapsed++;
     }
 
     //---- Getters and setters ---------------------------------------------------------------------------------
+
     public int getHealth()
     {
         return health;
@@ -549,7 +376,7 @@ public class Player extends MovingObject
         this.health = health;
     }
 
-    public CharacterState getCharacterState()
+    public AnimationState getCharacterState()
     {
         return currentState;
     }
@@ -567,5 +394,60 @@ public class Player extends MovingObject
     public boolean isHitByEnemy()
     {
         return hitByEnemy;
+    }
+
+    public boolean isOnGround()
+    {
+        return isOnGround;
+    }
+
+    public boolean isOnPlatform()
+    {
+        return isOnPlatform;
+    }
+
+    public boolean isPushingRightWall()
+    {
+        return isPushingRightWall;
+    }
+
+    public boolean isPushingLeftWall()
+    {
+        return isPushingLeftWall;
+    }
+
+    public boolean isAttacking()
+    {
+        return isAttacking;
+    }
+
+    public boolean isFacingRight()
+    {
+        return isFacingRight;
+    }
+
+    public void setHitEnemy(boolean b)
+    {
+        hitEnemy = b;
+    }
+
+    public boolean getHitEnemy()
+    {
+        return hitEnemy;
+    }
+
+    public void setFacingRight(boolean b)
+    {
+        isFacingRight = b;
+    }
+
+    public boolean isInvulnerable()
+    {
+        return isInvulnerable;
+    }
+
+    public void setInvulnerable(boolean b)
+    {
+        isInvulnerable = b;
     }
 }

@@ -6,6 +6,7 @@ import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.Camera;
 import Main.GamePanel;
+import Main.Time;
 import TileMap.Background;
 import TileMap.TileMap;
 import TileMap.Vector2;
@@ -35,7 +36,7 @@ public class Level1State extends GameState implements EntityObserver
     private String[] pauseOptions = {"Resume", "Back to menu", "Exit"};
     private String[] gameOverOptions = {"Restart", "Back to menu", "Exit"};
     
-    private boolean pause;
+    private boolean pause = true;
     private int currentChoice = 0;
     private Font pauseTitle;
     private Font optionTitles;
@@ -66,13 +67,13 @@ public class Level1State extends GameState implements EntityObserver
     public void init()
     {
         JukeBox.close("titlemusic");
-        initBackground();
         initMap();
-        initPlayer();
         initHUD();
+        initPlayer();
         initCamera();
         initEnemies();
         initFonts();
+        initBackground();
 
         //HUD
         healthBar = 100;
@@ -223,8 +224,8 @@ public class Level1State extends GameState implements EntityObserver
     private void initMap()
     {
         tileMap = new TileMap(128);
-        tileMap.loadTiles("/Sprites/terrain_spritesheet_128_3.png");
         tileMap.loadMap("/Maps/duskmap.map");
+        tileMap.loadTiles("/Sprites/terrain_spritesheet_128_3.png");
         tileMap.setPosition(0, 0);
     }
 

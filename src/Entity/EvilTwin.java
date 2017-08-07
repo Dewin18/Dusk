@@ -4,8 +4,8 @@ import Main.Time;
 import TileMap.TileMap;
 import TileMap.Vector2;
 
-import static Entity.CharacterState.JUMPING;
-import static Entity.CharacterState.WALKING;
+import static Entity.AnimationState.JUMPING;
+import static Entity.AnimationState.WALKING;
 
 public class EvilTwin extends Enemy
 {
@@ -13,16 +13,13 @@ public class EvilTwin extends Enemy
     private final int[] FRAMEWIDTHS = {128, 128, 128};
     private final int[] FRAMEHEIGHTS = {128, 128, 128};
     private final int[] SPRITEDELAYS = {-1, 8, 6};
-    protected int currentInvulnerableTime = invulnerableTime = 9;
-    private double minFallSpeed;
-    private int currentFlinchTime, flinchTime = 30;
+    //protected int currentInvulnerableTime = invulnerableTime = 9;
 
     public EvilTwin(TileMap tm)
     {
         super(tm);
         health = 30;
         damage = 1;
-        minFallSpeed = 0.4;
         velocity = new Vector2(0, 0);
         isFacingRight = false;
     }
@@ -41,10 +38,9 @@ public class EvilTwin extends Enemy
         jumpSpeed = -6.5;
         walkSpeed = 2;
         minJumpingSpeed = -1;
-        maxFallingSpeed = 4;
+        maxFallingSpeed = 12;
         gravity = 0.3;
-        minFallSpeed = 2;
-
+        invulnerableTime = 9;
 
         animation.setFrames(sprites.get(0));
         animation.setDelay(SPRITEDELAYS[0]);
@@ -84,12 +80,10 @@ public class EvilTwin extends Enemy
                 if (isPushingLeftWall)
                 {
                     isFacingRight = true;
-                    //position.x += 5;
                     isPushingLeftWall = false;
                 } else if (isPushingRightWall)
                 {
                     isFacingRight = false;
-                    //position.x -= 5;
                     isPushingRightWall = false;
                 }
                 break;
@@ -97,21 +91,21 @@ public class EvilTwin extends Enemy
             case JUMPING:
                 velocity.y += gravity * Time.deltaTime;
                 velocity.y = Math.min(velocity.y, maxFallingSpeed);
+                velocity.x = velocity.x * 0.9;
                 if (isOnGround)
                 {
                     setAnimation(WALKING);
                     velocity.y = 0;
                 }
                 break;
+
             case FLINCHING:
-                //if (checkAndHandleStillFlinching()) ;
-                //else stopFlinching();
                 break;
         }
     }
 
     @Override
-    void setAnimation(CharacterState state)
+    void setAnimation(AnimationState state)
     {
         currentState = state;
         int statenr = 0;
@@ -137,18 +131,5 @@ public class EvilTwin extends Enemy
     @Override
     protected void die() {
         //TODO trigger death animation
-    }
-
-    private boolean checkAndHandleStillFlinching() {
-        if (currentFlinchTime < flinchTime) {
-            currentFlinchTime += Math.round(Time.deltaTime);
-            return true;
-        }
-        return false;
-    }
-
-    private void stopFlinching() {
-        setAnimation(JUMPING);
-        currentFlinchTime = 0;
     }
 }

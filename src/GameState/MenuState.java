@@ -10,7 +10,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class MenuState extends GameState
 {
@@ -29,7 +28,7 @@ public class MenuState extends GameState
         bg = new Background("menu bg.jpg");
 
         initFonts();
-        JukeBox.load("/Audio/title_music.mp3", "titlemusic");
+        JukeBox.load("title_music.mp3", "titlemusic");
         JukeBox.load("menu_pick.mp3", "menupick");
         JukeBox.load("menu_choice.mp3", "menuchoice");
         JukeBox.loop("titlemusic");

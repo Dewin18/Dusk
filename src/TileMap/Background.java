@@ -16,14 +16,14 @@ public class Background
 
     public Background(String s)
     {
-        try
-        {
-            image = ImageIO.read(getClass().getResourceAsStream("/Backgrounds/" + s));
-            dimension = new Vector2i(image.getWidth(), image.getHeight());
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+            try
+            {
+                image = ImageIO.read(getClass().getResourceAsStream("/Backgrounds/" + s));
+                dimension = new Vector2i(image.getWidth(), image.getHeight());
+            } catch (Exception e)
+            {
+                e.printStackTrace();
+            }
     }
 
     public void setPosition(Vector2 position)

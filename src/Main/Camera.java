@@ -1,11 +1,13 @@
 package Main;
 
 import Entity.Player;
+import Handlers.OpenSimplexNoise;
 import TileMap.TileMap;
 import TileMap.Vector2;
 import TileMap.Vector2i;
 
 import java.awt.*;
+import java.util.Random;
 
 public class Camera
 {
@@ -34,6 +36,17 @@ public class Camera
     private int numRowsToDraw;
     private int numColsToDraw;
 
+    // shake
+    private int duration = 10;
+    private int elapsed = duration;
+    private float magnitude = 1;
+    private OpenSimplexNoise noise;
+
+    // slice
+    private int durationSlice = 10;
+    private int elapsedSlice = durationSlice;
+    private float magnitudeSlice = 10;
+
     public Camera(TileMap tileMap, Player player)
     {
         this.tileMap = tileMap;
@@ -49,6 +62,8 @@ public class Camera
         numColsToDraw = size.x / tileSize + 2;
         numRows = tileMap.getNumRows();
         numCols = tileMap.getNumCols();
+
+        noise = new OpenSimplexNoise();
     }
 
     /**
@@ -63,6 +78,21 @@ public class Camera
         position.x += (x - position.x) * tween * Time.deltaTime;
         position.y += (y - position.y) * tween * Time.deltaTime;
         fixBounds();
+        colOffset = (int) -position.x / tileSize;
+        rowOffset = (int) -position.y / tileSize;
+    }
+
+    /**
+     * Set position of the camera and update the new column and row offset.
+     * Takes in account the tween, for smooth panning but ignores time slows etc.
+     *
+     * @param x new x position
+     * @param y new y position
+     */
+    public void setPositionNoDeltaTime(double x, double y)
+    {
+        position.x += (x - position.x) * tween;
+        position.y += (y - position.y) * tween;
         colOffset = (int) -position.x / tileSize;
         rowOffset = (int) -position.y / tileSize;
     }
@@ -119,8 +149,64 @@ public class Camera
     public void update()
     {
         setPosition(GamePanel.WIDTH / 2 - player.getPosition().x, GamePanel.HEIGHT / 2 - player.getPosition().y);
+        if (player.isHitByEnemy())
+        {
+            shake(50, 12);
+        }
+        if (player.getHitEnemy())
+        {
+            sliceAnim(18, 10);
+            player.setHitEnemy(false);
+        }
+        if (elapsed < duration)
+        {
+            float percentComplete = (float)elapsed/(float)duration;
+            float damper = 1.0f - Math.min(Math.max(4.0f * percentComplete - 3.0f, 0.0f), 1.0f);
+            double x = noise.eval(((double)Time.getCurrentTime()) * 0.0008, 0) * magnitude * damper;
+            double y = noise.eval(0, ((double)Time.getCurrentTime()) * 0.0009) * magnitude * damper;
+            setPositionNoDeltaTime(position.x + x, position.y + y);
+            elapsed++;
+        }
+        if (elapsedSlice < durationSlice)
+        {
+            float percentComplete = (float)elapsedSlice/(float)durationSlice;
+            double x = 2 * magnitudeSlice;
+            double y = Math.random() * -0.2 * magnitudeSlice;
+            if (percentComplete <= 0.5)
+            {
+                x *= percentComplete * 2;
+                y *= percentComplete * 2;
+            }
+            else
+            {
+                x *= 2 - percentComplete * 2;
+                y *= 2 - percentComplete * 2;
+            }
+            if (!player.isFacingRight())
+            {
+                setPositionNoDeltaTime(position.x + x, position.y - y);
+            }
+            else
+            {
+                setPositionNoDeltaTime(position.x - x, position.y - y);
+            }
+            elapsedSlice++;
+        }
         tileMap.cameraPos = this.position;
+    }
 
+    public void shake(float magnitude, int duration)
+    {
+        this.magnitude = magnitude;
+        this.duration = duration;
+        elapsed = 0;
+    }
+
+    public void sliceAnim(float magnitude, int duration)
+    {
+        this.magnitudeSlice = magnitude;
+        this.durationSlice = duration;
+        elapsedSlice = 0;
     }
 
     public Vector2 getPosition() {

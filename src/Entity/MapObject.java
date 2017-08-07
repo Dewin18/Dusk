@@ -32,7 +32,7 @@ public abstract class MapObject extends ObservableEntity
     protected Vector2 collisionOffset;
 
     // force stuff
-    protected int forceCurrentTime, forceTotalTime = 0;
+    protected int forceCurrentTime, forceMaxTime = 0;
     protected Vector2 forceToAdd = Vector2.ZERO;
 
     // animation
@@ -115,7 +115,7 @@ public abstract class MapObject extends ObservableEntity
      */
     void addForce(Vector2 force, int time) {
         forceCurrentTime = 0;
-        forceTotalTime = time;
+        forceMaxTime = time;
         forceToAdd = force;
     }
 
@@ -123,17 +123,10 @@ public abstract class MapObject extends ObservableEntity
      * Update the current force.
      */
     void updateForce() {
-        if (forceToAdd.x != 0) {
-            velocity.addToThis(forceToAdd);
-            if (forceToAdd.x < 0)
-            {
-                forceToAdd.x -= 1 / (forceToAdd.x) * 6;
-            } else
-            {
-                forceToAdd.x -= 1 / (forceToAdd.x) * 6;
-            }
-            if (Math.abs(forceToAdd.x) < 3) forceToAdd.x = 0;
+        if (forceCurrentTime < forceMaxTime)
+        {
             forceCurrentTime++;
+            velocity.addToThis(forceToAdd);
         }
     }
 

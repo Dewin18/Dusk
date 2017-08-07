@@ -23,7 +23,7 @@ public class JukeBox {
         if(clips.get(n) != null) return;
         Clip clip;
         try {
-            InputStream is = JukeBox.class.getResourceAsStream(s);
+            InputStream is = JukeBox.class.getResourceAsStream("/Sounds/" + s);
             AudioInputStream ais = AudioSystem.getAudioInputStream(is);
             AudioFormat baseFormat = ais.getFormat();
             AudioFormat decodeFormat = new AudioFormat(

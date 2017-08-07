@@ -2,12 +2,10 @@ package testing;
 
 import static org.junit.Assert.*;
 
-import java.lang.reflect.Method;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import Entity.CharacterState;
+import Entity.AnimationState;
 import Entity.Player;
 import TileMap.TileMap;
 import TileMap.Vector2;
@@ -63,7 +61,7 @@ public class PlayerTest
     @Test
     public void playerStateTest()
     {
-        CharacterState currentState = player.getCharacterState();
+        AnimationState currentState = player.getCharacterState();
         //Test the default player state at start
         assertEquals(currentState.toString(), "IDLE");
 
