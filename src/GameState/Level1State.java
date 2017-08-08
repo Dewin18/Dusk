@@ -324,14 +324,12 @@ public class Level1State extends GameState implements EntityObserver
                 || KeyHandler.hasJustBeenPressed(Keys.ESCAPE))
         {
             pause = true;
-            //hud.setHealthBlinking(true);
         }
         else if (pause)
         {
             if (KeyHandler.hasJustBeenPressed(Keys.ENTER))
             {
                 selectPause();
-                //hud.setHealthBlinking(false);
             }
             else
             {
@@ -373,6 +371,7 @@ public class Level1State extends GameState implements EntityObserver
         {
         case 0:
             gsm.setState(GameStateManager.LEVEL1STATE);
+            AnimationHandler.resetGameOverTextPosition();
             break;
         case 1:
             gsm.setState(GameStateManager.MENUSTATE);

@@ -69,4 +69,9 @@ public class AnimationHandler
     {
         gameOverTextPosition --;
     }
+    
+    public static void resetGameOverTextPosition()
+    {
+        gameOverTextPosition = 70;
+    }
 }
