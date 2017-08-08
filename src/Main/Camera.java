@@ -7,7 +7,6 @@ import TileMap.Vector2;
 import TileMap.Vector2i;
 
 import java.awt.*;
-import java.util.Random;
 
 public class Camera
 {
@@ -55,8 +54,6 @@ public class Camera
         tileSize = tileMap.getTileSize();
 
         setBounds(tileMap.getWidth() - tileSize, tileMap.getHeight() - tileSize, 0, 0);
-        System.out.println(tileMap.getHeight());
-        System.out.println(tileMap.getWidth());
 
         numRowsToDraw = size.y / tileSize + 2;
         numColsToDraw = size.x / tileSize + 2;
@@ -93,6 +90,15 @@ public class Camera
     {
         position.x += (x - position.x) * tween;
         position.y += (y - position.y) * tween;
+        colOffset = (int) -position.x / tileSize;
+        rowOffset = (int) -position.y / tileSize;
+    }
+
+    public void setPositionNoTween(double x, double y)
+    {
+        position.x += (x - position.x);
+        position.y += (y - position.y);
+        fixBounds();
         colOffset = (int) -position.x / tileSize;
         rowOffset = (int) -position.y / tileSize;
     }
@@ -193,6 +199,12 @@ public class Camera
             }
             elapsedSlice++;
         }
+        tileMap.cameraPos = this.position;
+    }
+
+    public void updateNoDeltaTime()
+    {
+        setPositionNoTween(GamePanel.WIDTH / 2 - player.getPosition().x, GamePanel.HEIGHT / 2 - player.getPosition().y);
         tileMap.cameraPos = this.position;
     }
 

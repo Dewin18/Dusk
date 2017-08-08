@@ -67,6 +67,13 @@ public class Level1State extends GameState implements EntityObserver
             setDifficutlyEasy();
             enableSound();
         }
+        player.update();
+        camera.updateNoDeltaTime();
+
+        bg1.setPosition(tileMap.cameraPos);
+        bg2.setPosition(tileMap.cameraPos);
+        bg3.setPosition(tileMap.cameraPos);
+        bg4.setPosition(tileMap.cameraPos);
     }
 
     private void initSound()
@@ -175,7 +182,7 @@ public class Level1State extends GameState implements EntityObserver
     private void initPlayer()
     {
         player = new Player(tileMap);
-        player.initPlayer(new Vector2(6000, 309));
+        player.initPlayer(new Vector2(6000, 681));
     }
 
     private void initCamera()
@@ -197,6 +204,7 @@ public class Level1State extends GameState implements EntityObserver
         if (!pause ^ player.isGameOver())
         {
             player.update();
+            System.out.println(player.getPosition());
 
             for (Enemy enemy : enemyList)
             {
