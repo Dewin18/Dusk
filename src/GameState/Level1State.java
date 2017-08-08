@@ -34,7 +34,7 @@ public class Level1State extends GameState implements EntityObserver
     private String[] pauseOptions = {"Resume", "Back to menu", "Exit"};
     private String[] gameOverOptions = {"Restart", "Back to menu", "Exit"};
     
-    private boolean pause = true;
+    private boolean pause = false;
     private int currentChoice = 0;
 
     //All Level1State enemies are stored in this list
@@ -204,7 +204,6 @@ public class Level1State extends GameState implements EntityObserver
         if (!pause ^ player.isGameOver())
         {
             player.update();
-            System.out.println(player.getPosition());
 
             for (Enemy enemy : enemyList)
             {

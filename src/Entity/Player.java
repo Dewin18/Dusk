@@ -29,7 +29,7 @@ public class Player extends MovingObject
     private int health = 100;
     private int exp;
     private int lives = 3;
-    private int dmg = 3;
+    private int dmg = 10;
     private ArrayList<MapObject> objectsToRemove;
     private boolean isAttacking = false;
     private int attackCooldown = 10;
@@ -86,6 +86,9 @@ public class Player extends MovingObject
             JukeBox.load("grass_step4.mp3", "grassstep4");
             JukeBox.load("jump.mp3", "jump");
             JukeBox.load("landing.mp3", "landing");
+            JukeBox.load("attack_woosh.mp3", "attack");
+            JukeBox.load("enemy_hit.mp3", "hit");
+            JukeBox.load("get_hit.mp3", "gethit");
         });
         t.start();
     }
@@ -304,6 +307,7 @@ public class Player extends MovingObject
                     addForce(new Vector2(4, 0), 1);
                 }
                 hitEnemy = true;
+                JukeBox.play("hit");
             }
         }
         if (objectsToRemove != null)
@@ -352,6 +356,7 @@ public class Player extends MovingObject
             invulnerabilityTimer = 0;
             isFlinching = true;
             setAnimation(FLINCHING);
+            JukeBox.play("gethit");
         }
     }
 
@@ -370,6 +375,7 @@ public class Player extends MovingObject
             isAttacking = true;
             currentAttackTime = 0;
             checkAttackCollision();
+            JukeBox.play("attack");
         }
         else if (currentAttackTime < attackTime)
         {
