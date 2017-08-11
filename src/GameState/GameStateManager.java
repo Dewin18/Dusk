@@ -6,7 +6,6 @@ public class GameStateManager
 {
     private GameState[] gameStates;
     private int currentState;
-    
 
     public static final int MENUSTATE = 0;
     public static final int LEVEL1STATE = 1;
@@ -28,7 +27,7 @@ public class GameStateManager
         loadState(currentState);
     }
 
-    private void loadState(int state)
+    public void loadState(int state)
     {
         if (state == MENUSTATE) gameStates[state] = new MenuState(this);
         else if (state == LEVEL1STATE) gameStates[state] = new Level1State(this);
@@ -50,4 +49,9 @@ public class GameStateManager
     {
         if (gameStates[currentState] != null) gameStates[currentState].draw(g);
     }
+    
+    public GameState getState(int stateNumber)
+    {
+        return gameStates[stateNumber];
+    }    
 }

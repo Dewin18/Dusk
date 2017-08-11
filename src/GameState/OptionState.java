@@ -25,9 +25,6 @@ public class OptionState extends GameState
     private final Color WARNING_COLOR = Color.RED;
     private final Color DEFAULT_COLOR = Color.LIGHT_GRAY;
     
-    //controls blink animation
-    private AnimationHandler animation;
-    
     //current choice 
     private int currentChoice;
     
@@ -65,7 +62,6 @@ public class OptionState extends GameState
 
     public void init()
     {
-        animation = new AnimationHandler();
         initChoiceAndStates();
         initStateList();
         initDefaultSettings();
@@ -231,7 +227,7 @@ public class OptionState extends GameState
             else 
             {
                 g.setColor(SELECT_COLOR);
-                animation.startBlinkAnimation(g);
+                AnimationHandler.startBlinkAnimation(g);
             } 
         } 
         else 

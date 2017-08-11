@@ -26,9 +26,9 @@ public class Player extends MovingObject
     private final int[] FRAMEHEIGHTS = {128, 128, 128, 128, 128, 128, 128, 128};
     private final int[] SPRITEDELAYS = {12, 7, -1, -1, 8, 8, 8, 8};
     private double knockback = 2;
-    private int health = 100;
+    private int health;
     private int exp;
-    private int lives = 3;
+    private int lives;
     private int dmg = 10;
     private ArrayList<MapObject> objectsToRemove;
     private boolean isAttacking = false;
@@ -59,18 +59,27 @@ public class Player extends MovingObject
         loadSprites("dusk_spritesheet_128.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
 
         currentPlayerState = new IdleState(this);
+        initSpeeds();
+    }
+
+    private void initSpeeds()
+    {
+        // set up health
+        health = 100;
+        lives = 3;
+        
+        // set up speeds
+        gravity = 0.5;
+        walkSpeed = 6;
+        jumpSpeed = -16;
+        minJumpSpeed = -2;
+        minFallSpeed = 3;
+        maxFallSpeed = 12;
     }
 
     public void initPlayer(Vector2 position)
     {
         setPosition(position);
-        // set up speeds
-        jumpSpeed = -16;
-        walkSpeed = 6;
-        minJumpingSpeed = -2;
-        maxFallingSpeed = 12;
-        gravity = 0.5;
-        minFallSpeed = 3;
         // set up collision box
         collisionBox.setCenter(position);
         collisionBox.setHalfSize(new Vector2(tileSize / 3, tileSize / 3 - 18));
@@ -395,20 +404,29 @@ public class Player extends MovingObject
     }
 
     //---- Getters and setters ---------------------------------------------------------------------------------
-
     public void setLives(int lives)
     {
         this.lives = lives;
     }
 
+    public int getLives()
+    {
+        return lives;
+    }
+    
+    public void setHealth(int health)
+    {
+        this.health = health;
+    }
+    
+    public int getHealth()
+    {
+        return health;
+    }
+    
     public AnimationState getCharacterState()
     {
         return currentState;
-    }
-
-    public double getMinFallSpeed()
-    {
-        return minFallSpeed;
     }
 
     public void setHitByEnemy(boolean b)
@@ -479,5 +497,35 @@ public class Player extends MovingObject
     public void setInvulnerable(boolean b)
     {
         isInvulnerable = b;
+    }
+    
+    public double getGravity()
+    {
+        return gravity;
+    }
+    
+    public double getWalkSpeed()
+    {
+        return walkSpeed;
+    }
+    
+    public double getJumpSpeed()
+    {
+        return jumpSpeed;
+    }
+    
+    public double getMinJumpSpeed()
+    {
+        return minJumpSpeed;
+    }
+    
+    public double getMinFallSpeed()
+    {
+        return minFallSpeed;
+    }
+    
+    public double getMaxFallSpeed()
+    {
+        return maxFallSpeed;
     }
 }

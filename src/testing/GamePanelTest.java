@@ -26,7 +26,13 @@ public class GamePanelTest
     @Test
     public void gamePanelSizeTest()
     {
-        assertEquals(1300, gamePanel.WIDTH);
-        assertEquals(600, gamePanel.HEIGHT);
+        assertEquals(1300, GamePanel.WIDTH);
+        assertEquals(600, GamePanel.HEIGHT);
+    }
+    
+    @Test
+    public void gameLoopIsRunning()
+    {
+        assertTrue(gamePanel.getGameLoopState());
     }
 }

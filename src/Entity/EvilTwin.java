@@ -37,8 +37,8 @@ public class EvilTwin extends Enemy
         height = FRAMEHEIGHTS[0];
         jumpSpeed = -6.5;
         walkSpeed = 2;
-        minJumpingSpeed = -1;
-        maxFallingSpeed = 12;
+        minJumpSpeed = -1;
+        maxFallSpeed = 12;
         gravity = 0.3;
         invulnerableTime = 9;
 
@@ -90,7 +90,7 @@ public class EvilTwin extends Enemy
 
             case JUMPING:
                 velocity.y += gravity * Time.deltaTime;
-                velocity.y = Math.min(velocity.y, maxFallingSpeed);
+                velocity.y = Math.min(velocity.y, maxFallSpeed);
                 velocity.x = velocity.x * 0.9;
                 if (isOnGround)
                 {

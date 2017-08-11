@@ -24,8 +24,8 @@ public class JumpingState extends PlayerState
         super(player);
         this.hasJustJumped = hasJustJumped;
         this.gravity = player.getGravity();
-        this.maxFallingSpeed = player.getMaxFallingSpeed();
-        this.minJumpingSpeed = player.getMinJumpingSpeed();
+        this.maxFallingSpeed = player.getMaxFallSpeed();
+        this.minJumpingSpeed = player.getMinJumpSpeed();
     }
 
     @Override

@@ -21,8 +21,8 @@ public abstract class MovingObject extends MapObject
     double jumpSpeed;
     double walkSpeed;
     double gravity = 0.5;
-    double maxFallingSpeed;
-    double minJumpingSpeed;
+    double maxFallSpeed;
+    double minJumpSpeed;
 
     // Attack collision
     CollisionBox attackCollider;
@@ -409,14 +409,14 @@ public abstract class MovingObject extends MapObject
         return gravity;
     }
 
-    public double getMaxFallingSpeed()
+    public double getMaxFallSpeed()
     {
-        return maxFallingSpeed;
+        return maxFallSpeed;
     }
 
-    public double getMinJumpingSpeed()
+    public double getMinJumpSpeed()
     {
-        return minJumpingSpeed;
+        return minJumpSpeed;
     }
 
     public CollisionBox getCollisionBox()

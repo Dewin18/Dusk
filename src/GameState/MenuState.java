@@ -122,5 +122,9 @@ public class MenuState extends GameState
     {
         handleInput();
     }
-
+    
+    public String toString()
+    {
+        return "MenuState";
+    }
 }

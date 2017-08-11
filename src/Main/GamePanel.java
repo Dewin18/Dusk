@@ -1,7 +1,6 @@
 package Main;
 
 import GameState.GameStateManager;
-import Handlers.FontHandler;
 import Handlers.KeyHandler;
 
 import javax.swing.*;
@@ -9,7 +8,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener
 {
@@ -24,11 +22,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     private Thread thread;
     private boolean isRunning;
     // image
-    private BufferedImage image;
     private Graphics2D g;
     // manager
     private GameStateManager gsm;
-    private FontHandler fh;
 
     public GamePanel()
     {
@@ -45,14 +41,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
         isRunning = true;
         thread = new Thread(this);
         addKeyListener(this);
-        fh = new FontHandler();
         thread.start();
     }
     
 
     public void run()
     {
-        gsm = new GameStateManager();
+        gsm = new GameStateManager();   
         long wait;
 
         // game loop
@@ -103,6 +98,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     public void keyReleased(KeyEvent key)
     {
         KeyHandler.keySet(key.getKeyCode(), false);
-       
+    }
+    
+    public boolean getGameLoopState()
+    {
+        return isRunning;
     }
 }
