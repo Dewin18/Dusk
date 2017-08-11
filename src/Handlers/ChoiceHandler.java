@@ -39,11 +39,14 @@ public class ChoiceHandler
     
     public static int getChoice(String mode)
     {
-        if(mode.equals("ON")) return 0;
-        else if(mode.equals("OFF")) return 1;
-        else if(mode.equals("EASY")) return 0;
-        else if(mode.equals("MEDIUM")) return 1;
-        else if(mode.equals("HARD")) return 2;
-        else return 0;
+        switch(mode)
+        {
+            case "ON"     : return 0;
+            case "OFF"    : return 1;
+            case "EASY"   : return 0;
+            case "MEDIUM" : return 1;
+            case "HARD"   : return 2;
+            default       : return 0;
+        }
     }
 }
