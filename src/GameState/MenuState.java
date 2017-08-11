@@ -9,7 +9,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import com.sun.glass.events.KeyEvent;
+
 import Audio.JukeBox;
+import Handlers.ChoiceHandler;
 import Handlers.FontHandler;
 import Handlers.KeyHandler;
 import Handlers.Keys;
@@ -19,7 +22,6 @@ import TileMap.Background;
 public class MenuState extends GameState
 {
     private Background bg;
-    private int currentChoice = 0;
     private String[] options = {"Start Game", "Options", "Exit"};
     private BufferedImage titleImage;
 
@@ -61,7 +63,7 @@ public class MenuState extends GameState
         
         for (int i = 0; i < options.length; i++)
         {
-            if (i == currentChoice) 
+            if (i == ChoiceHandler.getChoice()) 
             {
                 FontHandler.drawCenteredString(g,
                         " - " + options[i] + " - ",
@@ -75,20 +77,24 @@ public class MenuState extends GameState
                         FontHandler.getMenuStateFont());
             }
         }
+        
+//        goSelectionDown();
+//        confirmSelection();
+     
     }
 
     private void select()
     {
         JukeBox.play("menupick");
-        if (currentChoice == 0)
+        if (ChoiceHandler.getChoice() == 0)
         {
             gsm.setState(GameStateManager.LEVEL1STATE);
         }
-        if (currentChoice == 1)
+        if (ChoiceHandler.getChoice() == 1)
         {
            gsm.setState(GameStateManager.OPTIONSTATE);
         }
-        if (currentChoice == 2)
+        if (ChoiceHandler.getChoice() == 2)
         {
             System.exit(0);
         }
@@ -101,20 +107,12 @@ public class MenuState extends GameState
         if (KeyHandler.hasJustBeenPressed(Keys.UP))
         {
             JukeBox.play("menuchoice");
-            currentChoice--;
-            if (currentChoice == -1)
-            {
-                currentChoice = options.length - 1;
-            }
+            ChoiceHandler.selectNextUp(options.length);
         }
         if (KeyHandler.hasJustBeenPressed(Keys.DOWN))
         {
             JukeBox.play("menuchoice");
-            currentChoice++;
-            if (currentChoice == options.length)
-            {
-                currentChoice = 0;
-            }
+            ChoiceHandler.selectNextDown(options.length);
         }
     }
 

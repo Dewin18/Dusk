@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import Audio.JukeBox;
 import Handlers.AnimationHandler;
+import Handlers.ChoiceHandler;
 import Handlers.FontHandler;
 import Handlers.KeyHandler;
 import Handlers.Keys;
@@ -12,8 +13,6 @@ import Main.GamePanel;
 
 public class OptionState extends GameState
 {
-    private static boolean CHECK_INPUTS = false;
-    
     private final int NAVIGATION_VGAP_INTERVAL = 560; 
     
     //GAP starts at center (GamePanel / 2)
@@ -24,9 +23,6 @@ public class OptionState extends GameState
     private final Color SELECT_COLOR = Color.GREEN;
     private final Color WARNING_COLOR = Color.RED;
     private final Color DEFAULT_COLOR = Color.LIGHT_GRAY;
-    
-    //current choice 
-    private int currentChoice;
     
     //current key state (up, down, left, right) selected
     private int currentControl;
@@ -73,13 +69,13 @@ public class OptionState extends GameState
         {
             keyCodes = KeyHandler.getKeyCodes();
             selection = KeyHandler.getNewKeys();
-            currentChoice = KeyHandler.getStoredChoice(0);
+            ChoiceHandler.setChoice(KeyHandler.getStoredChoice(0));
         }
     }
 
     private void initChoiceAndStates()
     {
-        currentChoice = 0;
+        ChoiceHandler.setChoice(0);
         currentControl = 0;
         currentState = 0;
     }
@@ -126,7 +122,7 @@ public class OptionState extends GameState
         selection[4] = "←";
         selection[5] = "→";
         selection[6] = "SPACE";
-        selection[7] = "D";
+        selection[7] = "A";
     }
 
     public void draw(Graphics2D g)
@@ -194,7 +190,7 @@ public class OptionState extends GameState
         {
             if(selectionStates[8])
             {
-                if (i == currentChoice)  g.setColor(SELECT_COLOR);  
+                if (i == ChoiceHandler.getChoice())  g.setColor(SELECT_COLOR);  
                 else  g.setColor(DEFAULT_COLOR); 
             }
             else g.setColor(DEFAULT_COLOR);
@@ -267,7 +263,7 @@ public class OptionState extends GameState
 
     private void difficultySelector()
     {
-        switch (currentChoice)
+        switch (ChoiceHandler.getChoice())
         {
         case 0:
             selection[1] = "EASY";
@@ -303,7 +299,7 @@ public class OptionState extends GameState
     
     private void soundSelector()
     {
-        switch(currentChoice)
+        switch(ChoiceHandler.getChoice())
         {
         case 0: 
             selection[0] = "ON";
@@ -326,8 +322,8 @@ public class OptionState extends GameState
     
     private void handleCurrentChoice()
     {
-        if(selectionStates[0]) currentChoice = getChoice(selection[0]);
-        else if(selectionStates[1]) currentChoice = getChoice(selection[1]);
+        if(selectionStates[0]) ChoiceHandler.setChoice(ChoiceHandler.getChoice(selection[0]));
+        else if(selectionStates[1]) ChoiceHandler.setChoice(ChoiceHandler.getChoice(selection[1]));
         else if(selectionStates[9]) selectNavigation();
     }
 
@@ -400,7 +396,7 @@ public class OptionState extends GameState
         {
             duplicateWarning = false;
             keyCodeIndex ++;
-            currentChoice = 0;
+            ChoiceHandler.setChoice(0);
             selectDown();
         }
     }
@@ -418,36 +414,18 @@ public class OptionState extends GameState
 
         if (KeyHandler.hasJustBeenPressed(Keys.ENTER) || KeyHandler.hasJustBeenPressed(Keys.DOWN))
         {
-            if(currentState == 1) currentChoice = getChoice(selection[1]);
+            if(currentState == 1) ChoiceHandler.setChoice(ChoiceHandler.getChoice(selection[1]));
             selectDown();
         }
         else if (KeyHandler.hasJustBeenPressed(Keys.LEFT))
         {
             JukeBox.play("menuchoice");
-            selectNextLeft(selectionLength);
+            ChoiceHandler.selectNextUp(selectionLength);
         }
         else if (KeyHandler.hasJustBeenPressed(Keys.RIGHT))
         {
             JukeBox.play("menuchoice");
-            selectNextRight(selectionLength);
-        }
-    }
-    
-    private void selectNextLeft(int selectionLength)
-    {
-        currentChoice--;
-        if (currentChoice == -1)
-        {
-            currentChoice = selectionLength - 1;
-        }
-    }
-    
-    private void selectNextRight(int selectionLength)
-    {
-        currentChoice++;
-        if (currentChoice == selectionLength)
-        {
-            currentChoice = 0;
+            ChoiceHandler.selectNextDown(selectionLength);
         }
     }
 
@@ -455,7 +433,7 @@ public class OptionState extends GameState
     {
         keyCodeIndex = 0;
         
-        switch(currentChoice)
+        switch(ChoiceHandler.getChoice())
         {
         case 0: 
             backAndSave();
@@ -472,8 +450,8 @@ public class OptionState extends GameState
     private void backAndSave()
     {
       //save new selected choices
-        KeyHandler.storeChoice(getChoice(selection[0]), 0);
-        KeyHandler.storeChoice(getChoice(selection[1]), 1);
+        KeyHandler.storeChoice(ChoiceHandler.getChoice(selection[0]), 0);
+        KeyHandler.storeChoice(ChoiceHandler.getChoice(selection[1]), 1);
         
         //save new key bindings
         KeyHandler.setKeysChanged(true);
@@ -481,7 +459,6 @@ public class OptionState extends GameState
         KeyHandler.setKeyCodes(keyCodes);
         
         gsm.setState(GameStateManager.MENUSTATE);
-        if(CHECK_INPUTS) checkInputs(KeyHandler.getNewKeys());
     }
 
     private void resetSettings()
@@ -521,16 +498,6 @@ public class OptionState extends GameState
         selectionStates[0] = true;
     }
 
-    public int getChoice(String mode)
-    {
-        if(mode.equals("ON")) return 0;
-        else if(mode.equals("OFF")) return 1;
-        else if(mode.equals("EASY")) return 0;
-        else if(mode.equals("MEDIUM")) return 1;
-        else if(mode.equals("HARD")) return 2;
-        else return 0;
-    }
-    
     /**
      * Check if all user key inputs for the movement controls are different
      * 
@@ -553,16 +520,6 @@ public class OptionState extends GameState
             }
         }
         return containsDuplicates;
-    }
-    
-    //Helper method to print all array elements at standard output
-    private void checkInputs(String[] keyArray)
-    {
-        for (int i = 0; i < keyArray.length; i++)
-        {
-            System.out.print(keyArray[i] + " ");
-        }
-        System.out.println();
     }
     
     public String toString()

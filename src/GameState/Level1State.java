@@ -3,6 +3,7 @@ package GameState;
 import Audio.JukeBox;
 import Entity.*;
 import Handlers.AnimationHandler;
+import Handlers.ChoiceHandler;
 import Handlers.FontHandler;
 import Handlers.KeyHandler;
 import Handlers.Keys;
@@ -35,7 +36,6 @@ public class Level1State extends GameState implements EntityObserver
     private String[] gameOverOptions = {"Restart", "Back to menu", "Exit"};
     
     private boolean pause = false;
-    private int currentChoice = 0;
 
     //All Level1State enemies are stored in this list
     private ArrayList<Enemy> enemyList;
@@ -274,7 +274,7 @@ public class Level1State extends GameState implements EntityObserver
     {
         for (int i = 0; i < selections.length; i++)
         {
-            if (i == currentChoice)
+            if (i == ChoiceHandler.getChoice())
             {
                 FontHandler.drawCenteredString(g, "- " + selections[i] + " -",
                         new Rectangle(0,
@@ -356,25 +356,17 @@ public class Level1State extends GameState implements EntityObserver
     {
         if (KeyHandler.hasJustBeenPressed(Keys.UP))
         {
-            currentChoice--;
-            if (currentChoice == -1)
-            {
-                currentChoice = pauseOptions.length - 1;
-            }
+            ChoiceHandler.selectNextUp(pauseOptions.length);
         }
         else if (KeyHandler.hasJustBeenPressed(Keys.DOWN))
         {
-            currentChoice++;
-            if (currentChoice == pauseOptions.length)
-            {
-                currentChoice = 0;
-            }
+            ChoiceHandler.selectNextDown(pauseOptions.length);
         }
     }
 
     private void selectGameOver()
     {
-        switch (currentChoice)
+        switch (ChoiceHandler.getChoice())
         {
         case 0:
             gsm.setState(GameStateManager.LEVEL1STATE);
@@ -391,7 +383,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private void selectPause()
     {
-        switch (currentChoice)
+        switch (ChoiceHandler.getChoice())
         {
             case 0:
                 pause = false;
