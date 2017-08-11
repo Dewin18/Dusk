@@ -62,7 +62,6 @@ public class PlayerTest
         
         //Test the default player state at start
         assertEquals(currentState.toString(), "IDLE");
-
     }
 
     @Test

@@ -565,6 +565,11 @@ public class OptionState extends GameState
         System.out.println();
     }
     
+    public String toString()
+    {
+        return "OptionState";
+    }
+    
     public void handleInput()
     {
     }

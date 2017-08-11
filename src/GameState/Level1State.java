@@ -439,4 +439,9 @@ public class Level1State extends GameState implements EntityObserver
             player.addObjectToBeRemoved((MapObject) o);
         }
     }
+    
+    public String toString()
+    {
+        return "Level1State";
+    }
 }
