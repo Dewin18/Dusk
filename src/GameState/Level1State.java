@@ -42,13 +42,15 @@ public class Level1State extends GameState implements EntityObserver
 
     public Level1State(GameStateManager gsm)
     {
-        enemyList = new ArrayList<>();
         this.gsm = gsm;
         init();
     }
 
     public void init()
     {
+        enemyList = new ArrayList<>();
+        ChoiceHandler.setChoice(0);
+        
         JukeBox.close("titlemusic");
         initBackground();
         initMap();

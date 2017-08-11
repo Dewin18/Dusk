@@ -28,13 +28,7 @@ public class MenuState extends GameState
     public MenuState(GameStateManager gsm)
     {
         this.gsm = gsm;
-        bg = new Background("menu bg.jpg");
-
-        initTitleImage();
-        JukeBox.load("title_music.mp3", "titlemusic");
-        JukeBox.load("menu_pick.mp3", "menupick");
-        JukeBox.load("menu_choice.mp3", "menuchoice");
-        JukeBox.loop("titlemusic");
+        init();
     }
 
     private void initTitleImage()
@@ -48,6 +42,14 @@ public class MenuState extends GameState
 
     public void init()
     {
+        ChoiceHandler.setChoice(0);
+        bg = new Background("menu bg.jpg");
+
+        initTitleImage();
+        JukeBox.load("title_music.mp3", "titlemusic");
+        JukeBox.load("menu_pick.mp3", "menupick");
+        JukeBox.load("menu_choice.mp3", "menuchoice");
+        JukeBox.loop("titlemusic");
     }
 
     public void draw(Graphics2D g)
