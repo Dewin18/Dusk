@@ -2,9 +2,7 @@ package testing;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
-
 import GameState.GameStateManager;
 
 public class GameStateManagerTest
@@ -26,20 +24,31 @@ public class GameStateManagerTest
     // default state should be MenuState
     public void defaultStateIsMenuStateTest()
     {
+        assertTrue(gsm.getState(0) != null);
         assertEquals("MenuState", gsm.getState(0).toString());
     }
     
- //   @Test
+//    @Test
     // change states in GameStateManager
-    public void changeStateTest()
+    public void setMenuStateTest()
     {
-        assertTrue(gsm.getState(0) != null);
+     
+    }
+    
+    @Test
+    // change states in GameStateManager
+    public void setLevel1StateTest()
+    {
         assertTrue(gsm.getState(1) == null);
-        assertTrue(gsm.getState(2) == null);
-        
         gsm.setState(1);
         assertEquals("Level1State", gsm.getState(1).toString());
-        
+    }
+    
+    
+    @Test
+    public void setOptionStateTest()
+    {
+        assertTrue(gsm.getState(2) == null);
         gsm.setState(2);
         assertEquals("OptionState", gsm.getState(2).toString());
     }
