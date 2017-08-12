@@ -37,7 +37,7 @@ public class ChoiceHandler
         currentChoice = choice;
     }
     
-    public static int getChoice(String mode)
+    public static int getDifficultyChoice(String mode)
     {
         switch(mode)
         {

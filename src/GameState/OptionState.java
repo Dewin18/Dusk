@@ -322,8 +322,8 @@ public class OptionState extends GameState
     
     private void handleCurrentChoice()
     {
-        if(selectionStates[0]) ChoiceHandler.setChoice(ChoiceHandler.getChoice(selection[0]));
-        else if(selectionStates[1]) ChoiceHandler.setChoice(ChoiceHandler.getChoice(selection[1]));
+        if(selectionStates[0]) ChoiceHandler.setChoice(ChoiceHandler.getDifficultyChoice(selection[0]));
+        else if(selectionStates[1]) ChoiceHandler.setChoice(ChoiceHandler.getDifficultyChoice(selection[1]));
         else if(selectionStates[9]) selectNavigation();
     }
 
@@ -414,7 +414,7 @@ public class OptionState extends GameState
 
         if (KeyHandler.hasJustBeenPressed(Keys.ENTER) || KeyHandler.hasJustBeenPressed(Keys.DOWN))
         {
-            if(currentState == 1) ChoiceHandler.setChoice(ChoiceHandler.getChoice(selection[1]));
+            if(currentState == 1) ChoiceHandler.setChoice(ChoiceHandler.getDifficultyChoice(selection[1]));
             selectDown();
         }
         else if (KeyHandler.hasJustBeenPressed(Keys.LEFT))
@@ -450,8 +450,8 @@ public class OptionState extends GameState
     private void backAndSave()
     {
       //save new selected choices
-        KeyHandler.storeChoice(ChoiceHandler.getChoice(selection[0]), 0);
-        KeyHandler.storeChoice(ChoiceHandler.getChoice(selection[1]), 1);
+        KeyHandler.storeChoice(ChoiceHandler.getDifficultyChoice(selection[0]), 0);
+        KeyHandler.storeChoice(ChoiceHandler.getDifficultyChoice(selection[1]), 1);
         
         //save new key bindings
         KeyHandler.setKeysChanged(true);
