@@ -27,17 +27,12 @@ public class ChoiceHandler
         return currentChoice;
     }
     
-    public static int getChoiceAt(int[] choices, int index)
-    {
-        return choices[index];
-    }
-    
     public static void setChoice(int choice)
     {
         currentChoice = choice;
     }
     
-    public static int getChoice(String mode)
+    public static int getDifficultyChoice(String mode)
     {
         switch(mode)
         {
