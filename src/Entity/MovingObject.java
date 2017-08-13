@@ -2,7 +2,7 @@ package Entity;
 
 import Main.Time;
 import TileMap.TileMap;
-import TileMap.Vector2;
+import Helpers.Vector2;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

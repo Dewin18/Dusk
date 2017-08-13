@@ -8,7 +8,7 @@ import org.junit.Test;
 import Entity.AnimationState;
 import Entity.Player;
 import TileMap.TileMap;
-import TileMap.Vector2;
+import Helpers.Vector2;
 
 public class PlayerTest
 {

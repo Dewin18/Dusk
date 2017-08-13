@@ -11,43 +11,53 @@ import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.Time;
 import TileMap.TileMap;
-import TileMap.Vector2;
+import Helpers.Vector2;
 
 import static Entity.AnimationState.*;
 
 public class Player extends MovingObject
 {
+    // Active PlayerState
     private PlayerState currentPlayerState;
-    private final int flinchTime = 5;
-    private final int attackTime = 8;
-    private final int invulnerabilityTime = 80;
+
+    // Animation
     private final int[] NUMFRAMES = {4, 6, 1, 1, 1, 2, 2, 2};
     private final int[] FRAMEWIDTHS = {128, 128, 128, 256, 128, 128, 128, 128};
     private final int[] FRAMEHEIGHTS = {128, 128, 128, 128, 128, 128, 128, 128};
     private final int[] SPRITEDELAYS = {12, 7, -1, -1, 8, 8, 8, 8};
+
+    // Basic Values
     private double knockback = 2;
+    private double minFallSpeed;
     private int health;
     private int exp;
     private int lives;
     private int dmg = 10;
-    private ArrayList<MapObject> objectsToRemove;
+
+    // Attacking
     private boolean isAttacking = false;
-    private int attackCooldown = 10;
-    private int attackCooldownElapsed = attackCooldown;
-    private boolean isInvulnerable = false;
-    private double minFallSpeed;
-    private int currentFlinchTime = flinchTime;
-    private int currentAttackTime = attackTime;
-    private boolean isBlinking = false;
-    private boolean isFlinching = false;
     private boolean hitByEnemy;
     private boolean hitEnemy;
-    private boolean isGameOver = false;
+    private final int attackTime = 8;
+    private int currentAttackTime = attackTime;
+    private int attackCooldown = 10;
+    private int attackCooldownElapsed = attackCooldown;
+    private ArrayList<MapObject> objectsToRemove; // To remove the collider from a dead enemy
+    private ArrayList<MapObject> mapObjects = new ArrayList<>(); // MapObjects to check collision with
 
+    // Flinching
+    private boolean isInvulnerable = false;
+    private boolean isBlinking = false;
+    private boolean isFlinching = false;
+    private boolean isGameOver = false;
+    private final int invulnerabilityTime = 80;
+    private final int flinchTime = 5;
+    private int invulnerabilityTimer = invulnerabilityTime;
+    private int currentFlinchTime = flinchTime;
+
+    // HUD
     private HUD hud;
 
-    private int invulnerabilityTimer = invulnerabilityTime;
-    private ArrayList<MapObject> mapObjects = new ArrayList<>();
 
     public Player(TileMap tm)
     {
@@ -59,10 +69,10 @@ public class Player extends MovingObject
         loadSprites("dusk_spritesheet_128.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
 
         currentPlayerState = new IdleState(this);
-        initSpeeds();
+        initValues();
     }
 
-    private void initSpeeds()
+    private void initValues()
     {
         // set up health
         health = 100;

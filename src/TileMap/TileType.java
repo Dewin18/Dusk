@@ -1,6 +1,6 @@
 package TileMap;
 
-public enum TileType
+enum TileType
 {
     EMPTY, BLOCKED, ONEWAY
 }

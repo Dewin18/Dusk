@@ -1,10 +1,10 @@
 package Main;
 
 import Entity.Player;
-import Handlers.OpenSimplexNoise;
+import Helpers.OpenSimplexNoise;
 import TileMap.TileMap;
-import TileMap.Vector2;
-import TileMap.Vector2i;
+import Helpers.Vector2;
+import Helpers.Vector2i;
 
 import java.awt.*;
 

@@ -1,6 +1,6 @@
 package Entity;
 
-import TileMap.Vector2;
+import Helpers.Vector2;
 
 public class CollisionBox
 {

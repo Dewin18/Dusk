@@ -1,7 +1,7 @@
 package Entity;
 
 import TileMap.TileMap;
-import TileMap.Vector2;
+import Helpers.Vector2;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

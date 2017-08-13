@@ -2,7 +2,7 @@ package Entity;
 
 import Main.Time;
 import TileMap.TileMap;
-import TileMap.Vector2;
+import Helpers.Vector2;
 
 import java.awt.*;
 
@@ -13,22 +13,14 @@ import java.awt.*;
  */
 public abstract class Enemy extends MovingObject
 {
-    /**
-     * All enemies define their own Maximum health
-     */
     protected int health;
-
     protected int walkspeed;
-    
-    /**
-     * All enemies define their own Maximum damage
-     */
     protected int damage;
+    protected double knockback = 3;
 
     protected boolean isInvulnerable;
     protected int invulnerableTime;
     protected int currentInvulnerableTime;
-    protected double knockback = 3;
 
     public Enemy(TileMap tm)
     {
@@ -50,7 +42,8 @@ public abstract class Enemy extends MovingObject
      */
     public void getHit(int damage, double playerXPosition)
     {
-        if (!isInvulnerable) {
+        if (!isInvulnerable)
+        {
             setAnimation(AnimationState.FLINCHING);
             setInvulnerable(true);
             if (playerXPosition < position.x)
@@ -71,10 +64,14 @@ public abstract class Enemy extends MovingObject
     /**
      * Update the invulnerable state.
      */
-    private void updateInvulnerability() {
-        if (currentInvulnerableTime < invulnerableTime) {
+    private void updateInvulnerability()
+    {
+        if (currentInvulnerableTime < invulnerableTime)
+        {
             currentInvulnerableTime += Math.round(Time.deltaTime);
-        } else if (isInvulnerable) {
+        }
+        else if (isInvulnerable)
+        {
             setInvulnerable(false);
             setAnimation(AnimationState.JUMPING);
         }
@@ -85,7 +82,8 @@ public abstract class Enemy extends MovingObject
      *
      * @param b the invulnerability state
      */
-    public void setInvulnerable(boolean b) {
+    public void setInvulnerable(boolean b)
+    {
         isInvulnerable = b;
         if (b) {
             currentInvulnerableTime = 0;
@@ -103,7 +101,8 @@ public abstract class Enemy extends MovingObject
      * Should implement the enemy movements e.g. a private method moveAround();
      */
     @Override
-    public void update() {
+    public void update()
+    {
         updateInvulnerability();
         animation.update();
         super.update();
@@ -116,12 +115,12 @@ public abstract class Enemy extends MovingObject
      * @param g the graphic context to be drawn on
      */
     @Override
-    public void draw(Graphics2D g) {
+    public void draw(Graphics2D g)
+    {
         super.draw(g);
     }
     
-    //setter for all difficulty modes (easy, medium, hard)
-    
+    // Setters for all difficulty modes (easy, medium, hard)
     public void setWalkSpeed(int walkSpeed)
     {
         this.walkSpeed = walkSpeed;

@@ -1,5 +1,7 @@
 package TileMap;
 
+import Helpers.Vector2;
+import Helpers.Vector2i;
 import Main.GamePanel;
 
 import javax.imageio.ImageIO;
@@ -11,17 +13,15 @@ import java.io.InputStreamReader;
 
 public class TileMap
 {
-
-    public Vector2 cameraPos = new Vector2(0, 0);
     // position
+    public Vector2 cameraPos = new Vector2(0, 0);
     private Vector2 position = new Vector2(0, 0);
+
     // bounds
     private int xmin;
     private int ymin;
     private int xmax;
     private int ymax;
-
-    private double tween;
 
     // map
     private int[][] map;
@@ -47,7 +47,6 @@ public class TileMap
         this.tileSize = tileSize;
         numRowsToDraw = GamePanel.HEIGHT / tileSize + 2;
         numColsToDraw = GamePanel.WIDTH / tileSize + 2;
-        tween = 0.07;
     }
 
     public void loadTiles(String s)
@@ -230,8 +229,8 @@ public class TileMap
 
     public void setPosition(double x, double y)
     {
-        this.position.x += (x - this.position.x) * tween;
-        this.position.y += (y - this.position.y) * tween;
+        this.position.x += (x - this.position.x);
+        this.position.y += (y - this.position.y);
 
         fixBounds();
 

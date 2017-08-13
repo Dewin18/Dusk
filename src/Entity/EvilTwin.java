@@ -2,7 +2,7 @@ package Entity;
 
 import Main.Time;
 import TileMap.TileMap;
-import TileMap.Vector2;
+import Helpers.Vector2;
 
 import static Entity.AnimationState.JUMPING;
 import static Entity.AnimationState.WALKING;
@@ -13,7 +13,6 @@ public class EvilTwin extends Enemy
     private final int[] FRAMEWIDTHS = {128, 128, 128};
     private final int[] FRAMEHEIGHTS = {128, 128, 128};
     private final int[] SPRITEDELAYS = {-1, 8, 6};
-    //protected int currentInvulnerableTime = invulnerableTime = 9;
 
     public EvilTwin(TileMap tm)
     {

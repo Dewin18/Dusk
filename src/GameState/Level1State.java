@@ -9,16 +9,12 @@ import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.Camera;
 import Main.GamePanel;
-import Main.Time;
 import TileMap.Background;
 import TileMap.TileMap;
-import TileMap.Vector2;
+import Helpers.Vector2;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.imageio.ImageIO;
 
 public class Level1State extends GameState implements EntityObserver
 {

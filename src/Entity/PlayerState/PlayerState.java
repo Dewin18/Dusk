@@ -3,7 +3,7 @@ package Entity.PlayerState;
 import Entity.Player;
 import Handlers.KeyHandler;
 import Handlers.Keys;
-import TileMap.Vector2;
+import Helpers.Vector2;
 
 public abstract class PlayerState
 {

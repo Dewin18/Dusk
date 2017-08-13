@@ -1,5 +1,8 @@
 package TileMap;
 
+import Helpers.Vector2;
+import Helpers.Vector2i;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;

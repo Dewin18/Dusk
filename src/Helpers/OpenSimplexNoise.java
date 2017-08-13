@@ -1,4 +1,4 @@
-package Handlers;
+package Helpers;
 
 /*
  * OpenSimplex Noise in Java.
