@@ -27,11 +27,6 @@ public class ChoiceHandler
         return currentChoice;
     }
     
-    public static int getChoiceAt(int[] choices, int index)
-    {
-        return choices[index];
-    }
-    
     public static void setChoice(int choice)
     {
         currentChoice = choice;
