@@ -31,12 +31,6 @@ public class WalkingState extends PlayerState
             return new JumpingState(player, false);
         }
 
-        // Check if idle
-        else if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT))
-        {
-            return new IdleState(player);
-        }
-
         // Check if dropping from platform
         if (KeyHandler.isPressed(Keys.DOWN) && KeyHandler.isPressed(Keys.JUMP) && player.isOnPlatform())
         {
@@ -47,6 +41,12 @@ public class WalkingState extends PlayerState
         if (KeyHandler.hasJustBeenPressed(Keys.JUMP))
         {
             return new JumpingState(player, true);
+        }
+
+        // Check if idle
+        if (KeyHandler.isPressed(Keys.RIGHT) == KeyHandler.isPressed(Keys.LEFT))
+        {
+            return new IdleState(player);
         }
 
         playWalkingSound();
@@ -83,6 +83,4 @@ public class WalkingState extends PlayerState
         JukeBox.play(s);
         currentStepSoundTime = 0;
     }
-
-
 }

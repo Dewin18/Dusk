@@ -17,7 +17,7 @@ public class Game
         canvas.setBounds(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
         panel.add(canvas);
         window.setContentPane(panel);
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         window.setResizable(false);
         window.pack();
         window.setLocationRelativeTo(null);

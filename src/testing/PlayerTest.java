@@ -58,7 +58,7 @@ public class PlayerTest
     @Test
     public void playerStateTest()
     {
-        AnimationState currentState = player.getCharacterState();
+        AnimationState currentState = player.getAnimationState();
         
         //Test the default player state at start
         assertEquals(currentState.toString(), "IDLE");

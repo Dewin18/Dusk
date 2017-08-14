@@ -77,4 +77,14 @@ public class Vector2
     {
         return new Vector2(this.x + a, this.y);
     }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o instanceof Vector2)
+        {
+            return ((Vector2) o).x == this.x && ((Vector2) o).y == this.y;
+        }
+        return false;
+    }
 }

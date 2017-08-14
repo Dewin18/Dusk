@@ -24,7 +24,7 @@ public class HUD
         try
         {
             liveSymbol = ImageIO.read(
-                    getClass().getResourceAsStream("/Backgrounds/lsymbol.png"));
+                    getClass().getResourceAsStream("/HUD/lsymbol.png"));
 
             liveSymbol = liveSymbol.getScaledInstance(50, 40,
                     Image.SCALE_SMOOTH);

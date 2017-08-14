@@ -10,6 +10,7 @@ public class GameStateManager
     public static final int MENUSTATE = 0;
     public static final int LEVEL1STATE = 1;
     public static final int OPTIONSTATE = 2;
+    public static final int TESTSTATE = 3;
 
     public GameStateManager()
     {
@@ -18,7 +19,6 @@ public class GameStateManager
         currentState = MENUSTATE;
         loadState(currentState);
     }
-
 
     public void setState(int state)
     {
@@ -35,7 +35,7 @@ public class GameStateManager
         
     }
 
-    private void unloadState(int state)
+    public void unloadState(int state)
     {
         gameStates[state] = null;
     }
@@ -53,5 +53,10 @@ public class GameStateManager
     public GameState getState(int stateNumber)
     {
         return gameStates[stateNumber];
-    } 
+    }
+
+    public int getCurrentState()
+    {
+        return currentState;
+    }
 }

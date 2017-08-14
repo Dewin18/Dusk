@@ -99,7 +99,7 @@ public class Level1State extends GameState implements EntityObserver
 
     private void disableSound()
     {
-        // TODO DISABLE SOUND
+        JukeBox.setMute(true);
     }
 
     private void initDifficulty()
@@ -127,7 +127,6 @@ public class Level1State extends GameState implements EntityObserver
         for (Enemy enemy : enemyList)
         {
             enemy.setWalkSpeed(5);
-            //TODO
         }
     }
 
@@ -138,7 +137,6 @@ public class Level1State extends GameState implements EntityObserver
         for (Enemy enemy : enemyList)
         {
             enemy.setWalkSpeed(3);
-            //TODO
         }
     }
 
@@ -149,7 +147,6 @@ public class Level1State extends GameState implements EntityObserver
         for (Enemy enemy : enemyList)
         {
             enemy.setWalkSpeed(2);
-            //TODO
         }
     }
 
@@ -173,7 +170,7 @@ public class Level1State extends GameState implements EntityObserver
     {
         tileMap = new TileMap(128);
         tileMap.loadMap("/Maps/duskmap.map");
-        tileMap.loadTiles("/Sprites/terrain_spritesheet_128_3.png");
+        tileMap.loadTiles("/Tilesets/terrain_spritesheet_128_3.png");
         tileMap.setPosition(0, 0);
     }
 

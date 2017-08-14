@@ -66,7 +66,7 @@ public class Player extends MovingObject
 
         width = FRAMEWIDTHS[0];
         height = FRAMEHEIGHTS[0];
-        loadSprites("dusk_spritesheet_128.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
+        loadSprites("/Player/dusk_spritesheet_128.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
 
         currentPlayerState = new IdleState(this);
         initValues();
@@ -434,7 +434,7 @@ public class Player extends MovingObject
         return health;
     }
     
-    public AnimationState getCharacterState()
+    public AnimationState getAnimationState()
     {
         return currentState;
     }

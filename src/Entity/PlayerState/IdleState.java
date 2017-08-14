@@ -27,20 +27,20 @@ public class IdleState extends PlayerState
         {
             return new JumpingState(player, false);
         }
-        // Walking
-        else if (KeyHandler.isPressed(Keys.RIGHT) != KeyHandler.isPressed(Keys.LEFT))
-        {
-            return new WalkingState(player);
-        }
         // Platform drop
-        else if (KeyHandler.isPressed(Keys.DOWN) && KeyHandler.isPressed(Keys.JUMP) && player.isOnPlatform())
+        if (KeyHandler.isPressed(Keys.DOWN) && KeyHandler.isPressed(Keys.JUMP) && player.isOnPlatform())
         {
             return new JumpingState(player, false);
         }
         // Jump
-        else if (KeyHandler.hasJustBeenPressed(Keys.JUMP))
+        if (KeyHandler.hasJustBeenPressed(Keys.JUMP))
         {
             return new JumpingState(player, true);
+        }
+        // Walking
+        if (KeyHandler.isPressed(Keys.RIGHT) != KeyHandler.isPressed(Keys.LEFT))
+        {
+            return new WalkingState(player);
         }
         // Nothing
         player.setVelocity(0, 0);

@@ -101,4 +101,9 @@ public class JukeBox {
         clips.get(s).close();
     }
 
+    public static void setMute(boolean b)
+    {
+        mute = b;
+    }
+
 }

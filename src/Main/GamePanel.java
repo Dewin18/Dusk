@@ -16,13 +16,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     public static final int HEIGHT = 600;
     public static final int SCALE = 1;
     private static final long serialVersionUID = 1L;
-    public Canvas canvas;
     public BufferStrategy strategy;
+
     // game thread
     private Thread thread;
     private boolean isRunning;
+
     // image
     private Graphics2D g;
+
     // manager
     private GameStateManager gsm;
 
@@ -103,5 +105,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener
     public boolean getGameLoopState()
     {
         return isRunning;
+    }
+
+    public GameStateManager getGsm()
+    {
+        return gsm;
     }
 }
