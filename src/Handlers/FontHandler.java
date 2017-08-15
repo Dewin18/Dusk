@@ -143,7 +143,7 @@ public class FontHandler
          return gameOverTitleFont;
      }
 
-     public static Font getGameOverSelectionFont()
+     public static Font getEndingSelectionFont()
      {
          return gameOverSelectionFont;
      }

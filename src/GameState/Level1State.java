@@ -37,6 +37,7 @@ public class Level1State extends GameState implements EntityObserver
 
     //All Level1State enemies are stored in this list
     private ArrayList<Enemy> enemyList;
+    private boolean gameFinished = false;
 
     public Level1State(GameStateManager gsm)
     {
@@ -65,7 +66,7 @@ public class Level1State extends GameState implements EntityObserver
         }
         else
         {
-            setDifficutlyEasy();
+            setDifficultyEasy();
             enableSound();
         }
         player.update();
@@ -112,7 +113,7 @@ public class Level1State extends GameState implements EntityObserver
         switch (difficulty)
         {
             case "EASY":
-                setDifficutlyEasy();
+                setDifficultyEasy();
                 break;
             case "MEDIUM":
                 setDifficultyMedium();
@@ -143,7 +144,7 @@ public class Level1State extends GameState implements EntityObserver
         }
     }
 
-    private void setDifficutlyEasy()
+    private void setDifficultyEasy()
     {
         player.setLives(3);
 
@@ -238,6 +239,7 @@ public class Level1State extends GameState implements EntityObserver
         bg3.draw(g);
         bg2.draw(g);
         bg1.draw(g);
+        endingTrigger.draw(g);
         camera.draw(g);
         player.draw(g);
 
@@ -255,23 +257,29 @@ public class Level1State extends GameState implements EntityObserver
         }
         else if (player.isGameOver())
         {
-            drawGameOver(g);
+            if (gameFinished)
+            {
+                drawEndingOverlay(g, "FIN");
+            }
+            else
+            {
+                drawEndingOverlay(g, "GAME OVER");
+            }
         }
 
-        endingTrigger.draw(g);
     }
 
-    private void drawGameOver(Graphics2D g)
+    private void drawEndingOverlay(Graphics2D g, String message)
     {
-        AnimationHandler.drawGameOverText(g);
+        AnimationHandler.drawEndingText(g, message);
 
-        if (AnimationHandler.getGameOverTextPosition() > 0)
+        if (AnimationHandler.getEndingTextPosition() > 0)
         {
-            AnimationHandler.decreaseGameOverTextPosition();
+            AnimationHandler.decreaseEndingTextPosition();
         }
         else
         {
-            g.setFont(FontHandler.getGameOverSelectionFont());
+            g.setFont(FontHandler.getEndingSelectionFont());
             drawOptions(gameOverOptions, g);
         }
     }
@@ -439,6 +447,7 @@ public class Level1State extends GameState implements EntityObserver
         }
         if (o instanceof EndingTrigger)
         {
+            gameFinished = true;
             player.setGameOver(true);
         }
     }

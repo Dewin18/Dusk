@@ -47,25 +47,25 @@ public class AnimationHandler
                 AlphaComposite.getInstance(AlphaComposite.SRC_OVER, blinkScale));
     }
     
-    public static void drawGameOverText(Graphics2D g)
+    public static void drawEndingText(Graphics2D g, String message)
     {
         g.setColor(new Color(0, 0, 0, 80));
         g.fillRect(0, 0, GamePanel.WIDTH, GamePanel.HEIGHT);
 
         g.setColor(Color.WHITE);
-        FontHandler.drawCenteredString(g, "GAME OVER",
+        FontHandler.drawCenteredString(g, message,
                 new Rectangle(0,
                         GamePanel.HEIGHT / 2 + gameOverTextPosition - FontHandler.GAMEOVER_TITLE_SIZE,
                         GamePanel.WIDTH, FontHandler.GAMEOVER_TITLE_SIZE),
                 FontHandler.getGameOverFont());
     }
     
-    public static int getGameOverTextPosition()
+    public static int getEndingTextPosition()
     {
         return gameOverTextPosition;
     }
     
-    public static void decreaseGameOverTextPosition()
+    public static void decreaseEndingTextPosition()
     {
         gameOverTextPosition --;
     }
