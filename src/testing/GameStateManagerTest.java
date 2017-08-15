@@ -11,7 +11,7 @@ import Helpers.Vector2;
 
 public class GameStateManagerTest
 {
-    GameStateManager gsm;
+    private GameStateManager gsm;
 
     public GameStateManagerTest()
     {

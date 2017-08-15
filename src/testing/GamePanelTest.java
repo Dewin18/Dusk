@@ -9,7 +9,7 @@ import Main.GamePanel;
 
 public class GamePanelTest
 {
-    GamePanel gamePanel;
+    private GamePanel gamePanel;
 
     public GamePanelTest()
     {

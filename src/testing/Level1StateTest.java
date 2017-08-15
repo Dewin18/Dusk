@@ -11,8 +11,8 @@ import Helpers.Vector2;
 
 public class Level1StateTest
 {
-    GameStateManager gsm;
-    Level1State level1State;
+    private GameStateManager gsm;
+    private Level1State level1State;
     
     private final int DEFAULT_ENEMY_AMOUNT = 5;
     
