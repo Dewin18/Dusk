@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import GameState.GameStateManager;
 import GameState.Level1State;
+import Helpers.Vector2;
 
 public class Level1StateTest
 {
@@ -34,5 +35,9 @@ public class Level1StateTest
     public void enemyListTest()
     {
         assertTrue(level1State.getEnemyList().size() == DEFAULT_ENEMY_AMOUNT);
+        
+        level1State.createEnemy("EvilTwin", new Vector2(4540, 809), "enemy_spritesheet_128_2.png");
+        
+        assertTrue(level1State.getEnemyList().size() == DEFAULT_ENEMY_AMOUNT + 1);
     }
 }
