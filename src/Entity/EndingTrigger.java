@@ -1,5 +1,6 @@
 package Entity;
 
+import Handlers.FontHandler;
 import Helpers.Vector2;
 import TileMap.TileMap;
 
@@ -29,6 +30,8 @@ public class EndingTrigger extends MapObject
         g.setColor(Color.GREEN);
         int[] a = collisionBox.toXYWH();
         g.fillRect(a[0] + (int)tileMap.cameraPos.x, a[1] + (int)tileMap.cameraPos.y, a[2], a[3]);
+        g.setColor(Color.WHITE);
+        FontHandler.drawCenteredString(g, "> Goal! <", new Rectangle(a[0] + (int)tileMap.cameraPos.x, a[1] + (int)tileMap.cameraPos.y, a[2], a[3]), FontHandler.getHudFont());
         g.setColor(Color.WHITE);
     }
 
