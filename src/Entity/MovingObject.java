@@ -13,7 +13,7 @@ public abstract class MovingObject extends MapObject
 {
 
     // debugging
-    private final boolean debugging = true;
+    private final boolean debugging = false;
 
     // Movement
     Vector2 oldPosition;
