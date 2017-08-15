@@ -55,7 +55,7 @@ public class GameStateManager
         return gameStates[stateNumber];
     }
 
-    public int getCurrentState()
+    public int getCurrentStateNumber()
     {
         return currentState;
     }

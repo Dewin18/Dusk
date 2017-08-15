@@ -12,6 +12,9 @@ import Helpers.Vector2;
 
 public class PlayerTest
 {
+    // Damage
+    private final int dmg = 10;
+    
     // Player specific speeds
     private final double gravity = 0.5;
     private final double walkspeed = 6;
@@ -44,6 +47,9 @@ public class PlayerTest
     // Player constructor Test
     public void playerDefaultInitialisationTest()
     {
+        assertTrue(player.isFacingRight());
+       
+        assertEquals(dmg, player.getDamage()); 
         assertEquals((int) gravity, (int) player.getGravity());
         assertEquals((int) walkspeed, (int) player.getWalkSpeed());
         assertEquals((int) jumpSpeed, (int) player.getJumpSpeed());

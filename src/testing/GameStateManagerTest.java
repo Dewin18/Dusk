@@ -2,8 +2,12 @@ package testing;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Before;
 import org.junit.Test;
 import GameState.GameStateManager;
+import GameState.Level1State;
+import Helpers.Vector2;
 
 public class GameStateManagerTest
 {
@@ -15,7 +19,8 @@ public class GameStateManagerTest
         init();
     }
 
-    private void init()
+    @Before
+    public void init()
     {
         gsm = new GameStateManager();
     }
@@ -28,15 +33,8 @@ public class GameStateManagerTest
         assertEquals("MenuState", gsm.getState(0).toString());
     }
     
-//    @Test
-    // change states in GameStateManager
-    public void setMenuStateTest()
-    {
-     
-    }
-    
     @Test
-    // change states in GameStateManager
+    // change state in GameStateManager
     public void setLevel1StateTest()
     {
         assertTrue(gsm.getState(1) == null);
@@ -44,8 +42,8 @@ public class GameStateManagerTest
         assertEquals("Level1State", gsm.getState(1).toString());
     }
     
-    
     @Test
+    // change state in GameStateManager
     public void setOptionStateTest()
     {
         assertTrue(gsm.getState(2) == null);

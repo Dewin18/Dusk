@@ -549,4 +549,9 @@ public class Player extends MovingObject
     {
         return maxFallSpeed;
     }
+    
+    public int getDamage()
+    {
+        return dmg;
+    }
 }

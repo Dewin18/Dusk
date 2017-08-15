@@ -266,7 +266,6 @@ public class Level1State extends GameState implements EntityObserver
                 drawEndingOverlay(g, "GAME OVER");
             }
         }
-
     }
 
     private void drawEndingOverlay(Graphics2D g, String message)
@@ -455,5 +454,10 @@ public class Level1State extends GameState implements EntityObserver
     public String toString()
     {
         return "Level1State";
+    }
+    
+    public ArrayList<Enemy> getEnemyList()
+    {
+        return enemyList;
     }
 }
