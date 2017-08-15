@@ -352,6 +352,12 @@ public class Player extends MovingObject
     private void reactToCollision(MapObject m)
     {
         if (m instanceof Enemy) reactToCollision((Enemy) m);
+        else if (m instanceof EndingTrigger) reactToCollision((EndingTrigger) m);
+    }
+
+    private void reactToCollision(EndingTrigger e)
+    {
+        notifyObservers(e);
     }
 
     private void reactToCollision(Enemy e)
@@ -452,6 +458,11 @@ public class Player extends MovingObject
     public boolean isGameOver()
     {
         return isGameOver;
+    }
+
+    public void setGameOver(boolean b)
+    {
+        isGameOver = b;
     }
 
     public boolean isOnGround()

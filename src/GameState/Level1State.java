@@ -33,6 +33,8 @@ public class Level1State extends GameState implements EntityObserver
     
     private boolean pause = false;
 
+    private EndingTrigger endingTrigger;
+
     //All Level1State enemies are stored in this list
     private ArrayList<Enemy> enemyList;
 
@@ -53,6 +55,7 @@ public class Level1State extends GameState implements EntityObserver
         initPlayer();
         initCamera();
         initEnemies();
+        initEnding();
 
         //some keys have changed through the settings
         if (KeyHandler.keysChanged())
@@ -194,6 +197,12 @@ public class Level1State extends GameState implements EntityObserver
         createEnemy("EvilTwin", new Vector2(1566, 2729), "enemy_spritesheet_128_2.png");
     }
 
+    private void initEnding()
+    {
+        endingTrigger = new EndingTrigger(tileMap);
+        player.addCollisionCheck(endingTrigger);
+    }
+
     public void update()
     {
         if (!pause ^ player.isGameOver())
@@ -248,6 +257,8 @@ public class Level1State extends GameState implements EntityObserver
         {
             drawGameOver(g);
         }
+
+        endingTrigger.draw(g);
     }
 
     private void drawGameOver(Graphics2D g)
@@ -413,6 +424,7 @@ public class Level1State extends GameState implements EntityObserver
         assert enemy != null;
         enemy.initEnemy(position, spriteSheet);
         enemy.addObserver(this);
+        player.addObserver(this);
         enemyList.add(enemy);
         player.addCollisionCheck(enemy);
     }
@@ -424,6 +436,10 @@ public class Level1State extends GameState implements EntityObserver
         {
             enemyList.remove(o);
             player.addObjectToBeRemoved((MapObject) o);
+        }
+        if (o instanceof EndingTrigger)
+        {
+            player.setGameOver(true);
         }
     }
     

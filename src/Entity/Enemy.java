@@ -56,7 +56,7 @@ public abstract class Enemy extends MovingObject
             health -= damage;
             if (health <= 0) {
                 die();
-                notifyObservers();
+                notifyObservers(this);
             }
         }
     }

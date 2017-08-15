@@ -20,9 +20,9 @@ public abstract class ObservableEntity
         observers.remove(o);
     }
 
-    public void notifyObservers() {
+    public void notifyObservers(MapObject mapObject) {
         for (EntityObserver o : observers) {
-            o.reactToChange(this);
+            o.reactToChange(mapObject);
         }
     }
 }
