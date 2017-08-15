@@ -127,6 +127,16 @@ public class EvilTwin extends Enemy
         animation.setDelay(SPRITEDELAYS[statenr]);
     }
 
+    public int getHealth()
+    {
+        return health;
+    }
+    
+    public int getDamage()
+    {
+        return damage;
+    }
+    
     @Override
     protected void die()
     {
