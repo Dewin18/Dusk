@@ -1,5 +1,6 @@
 package testing;
 
+import Audio.JukeBox;
 import Entity.AnimationState;
 import Entity.Enemy;
 import Entity.EvilTwin;
@@ -28,6 +29,8 @@ public class EnemyInteractionTest
     @Before
     public void init()
     {
+        JukeBox.init();
+        JukeBox.setMute(true);
         tm = new TileMap(128);
         tm.loadMap("/Maps/duskmap.map");
         tm.loadTiles("/Tilesets/terrain_spritesheet_128_3.png");

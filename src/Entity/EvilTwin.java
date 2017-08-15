@@ -128,7 +128,8 @@ public class EvilTwin extends Enemy
     }
 
     @Override
-    protected void die() {
+    protected void die()
+    {
         //TODO trigger death animation
     }
 }

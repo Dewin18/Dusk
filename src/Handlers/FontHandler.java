@@ -74,7 +74,6 @@ public class FontHandler
         }
         catch (IOException | FontFormatException e)
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
