@@ -16,6 +16,14 @@ import Helpers.Vector2;
 import java.awt.*;
 import java.util.ArrayList;
 
+/** PTP 2017
+ * The state describing the first (and atm the only) level of the game.
+ * Handles all the various events that are level-driven.
+ *
+ * @author Dewin Bagci, Ali Popa
+ * @version 16.08.
+ * @since 31.05.
+ */
 public class Level1State extends GameState implements EntityObserver
 {
     //Pause Title

@@ -6,6 +6,13 @@ import Entity.Player;
 import Handlers.KeyHandler;
 import Handlers.Keys;
 
+/** PTP 2017
+ * PlayerState implementation that handles the Walking State of the Player.
+ *
+ * @author Ali Popa
+ * @version 14.08.
+ * @since 07.08.
+ */
 public class WalkingState extends PlayerState
 {
     private int stepSoundMaxTime = 20;

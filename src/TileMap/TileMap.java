@@ -11,6 +11,13 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+/** PTP 2017
+ * The class representing a level. Includes the position of tiles and their tileset.
+ *
+ * @author Ali Popa
+ * @version 13.08.
+ * @since 31.05.
+ */
 public class TileMap
 {
     // position

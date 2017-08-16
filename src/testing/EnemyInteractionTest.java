@@ -15,6 +15,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+/** PTP 2017
+ * Class for testing the awesome core mechanic of this awesome game, the player enemy interaction (hit, getHit).
+ *
+ * @author Ali Popa
+ * @version 15.08.
+ * @since 14.08.
+ */
 public class EnemyInteractionTest
 {
     private TileMap tm;

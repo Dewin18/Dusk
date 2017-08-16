@@ -7,6 +7,13 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.io.IOException;
 
+/** PTP 2017
+ * The class holding all of the custom fonts in the game.
+ *
+ * @author Dewin Bagci
+ * @version 16.08.
+ * @since 01.08.
+ */
 public class FontHandler
 {
     private static String Regular = "Berlin Sans FB Regular.ttf";

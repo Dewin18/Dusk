@@ -9,6 +9,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
 
+/** PTP 2017
+ * GamePanel including the main game loops, draw(g) and update().
+ *
+ * @author Dewin Bagci, Ali popa
+ * @version 14.08.
+ * @since 31.05.
+ */
 public class GamePanel extends JPanel implements Runnable, KeyListener
 {
     // dimensions

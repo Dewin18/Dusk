@@ -4,6 +4,13 @@ import Main.Time;
 
 import java.awt.image.BufferedImage;
 
+/** PTP 2017
+ * Class for handling Sprite Animations.
+ *
+ * @author Ali Popa
+ * @version 21.06.
+ * @since 10.06.
+ */
 public class Animation
 {
     private BufferedImage[] frames = {null};

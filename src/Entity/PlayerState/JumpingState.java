@@ -7,6 +7,13 @@ import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.Time;
 
+/** PTP 2017
+ * PlayerState implementation that handles the Jumping State of the Player.
+ *
+ * @author Ali Popa
+ * @version 11.08.
+ * @since 07.08.
+ */
 public class JumpingState extends PlayerState
 {
     private boolean hasJustJumped;

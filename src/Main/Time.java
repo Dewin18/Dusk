@@ -1,10 +1,17 @@
 package Main;
 
+/** PTP 2017
+ * Class for calculating the time spent enjoying this masterpiece of game.
+ *
+ * @author Ali Popa
+ * @version 21.06.
+ * @since 07.06.
+ */
 public class Time
 {
     public static double deltaTime;
-    public static double scale = 1;
 
+    private static double scale = 1;
     private static long currentTime;
     private static long lastLoopTime = System.nanoTime();
     private static long updateLength;

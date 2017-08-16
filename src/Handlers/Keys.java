@@ -1,5 +1,12 @@
 package Handlers;
 
+/** PTP 2017
+ * A class holding the order of the keys saved.
+ *
+ * @author Ali Popa, Dewin Bagci
+ * @version 04.07.
+ * @since 02.06.
+ */
 public class Keys
 {
     public static int UP = 0;                // ARROW UP

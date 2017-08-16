@@ -6,6 +6,13 @@ import TileMap.TileMap;
 
 import java.awt.*;
 
+/** PTP 2017
+ * The trigger for the dummy ending of the game.
+ *
+ * @author Ali Popa
+ * @version 16.08.
+ * @since 15.08.
+ */
 public class EndingTrigger extends MapObject
 {
     public EndingTrigger(TileMap tm)

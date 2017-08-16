@@ -10,6 +10,13 @@ import Entity.Player;
 import TileMap.TileMap;
 import Helpers.Vector2;
 
+/** PTP 2017
+ * Class for testing the planned perfectness of the awesome player.
+ *
+ * @author Dewin Bagci
+ * @version 16.08.
+ * @since 15.06.
+ */
 public class PlayerTest
 {
     // Damage

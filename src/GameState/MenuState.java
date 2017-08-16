@@ -19,6 +19,14 @@ import Handlers.Keys;
 import Main.GamePanel;
 import TileMap.Background;
 
+/** PTP 2017
+ * The default state when starting the game.
+ * Hold all the options of the main menu.
+ *
+ * @author Dewin Bagci
+ * @version 16.08.
+ * @since 31.05.
+ */
 public class MenuState extends GameState
 {
     private Background bg;

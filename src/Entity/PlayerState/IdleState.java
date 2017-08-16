@@ -5,6 +5,13 @@ import Entity.Player;
 import Handlers.KeyHandler;
 import Handlers.Keys;
 
+/** PTP 2017
+ * PlayerState implementation that handles the Idle State of the Player.
+ *
+ * @author Ali Popa
+ * @version 14.08.
+ * @since 07.08.
+ */
 public class IdleState extends PlayerState
 {
     public IdleState(Player player)

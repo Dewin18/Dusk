@@ -9,6 +9,13 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/** PTP 2017
+ * Main Entity class, extended by all the interactable objects on the map.
+ *
+ * @author Ali Popa
+ * @version 14.08.
+ * @since 01.06
+ */
 public abstract class MapObject extends ObservableEntity
 {
 

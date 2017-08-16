@@ -10,6 +10,13 @@ import org.junit.Test;
 import GameState.GameStateManager;
 import GameState.OptionState;
 
+/** PTP 2017
+ * Test for the handling of the option state.
+ *
+ * @author Dewin Bagci
+ * @version 16.08.
+ * @since 29.06.
+ */
 public class OptionStateTest
 {
     private GameStateManager gsm;

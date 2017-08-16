@@ -7,6 +7,13 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/** PTP 2017
+ * Class for normal (awesome) and parallax (even more awesome) backgrounds.
+ *
+ * @author Ali Popa
+ * @version 13.08.
+ * @since 31.05.
+ */
 public class Background
 {
     private BufferedImage image;

@@ -3,10 +3,12 @@ package Handlers;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
-/**
+/** PTP 2017
  * This Class handles all KeyEvents
  *
- * @author Ali & Dewin
+ * @author Ali Popa, Dewin Bagci
+ * @version 16.08.
+ * @since 01.06.
  */
 public class KeyHandler
 {

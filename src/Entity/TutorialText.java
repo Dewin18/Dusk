@@ -6,9 +6,14 @@ import Helpers.Vector2;
 import TileMap.TileMap;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.util.Locale;
 
+/**
+ * On-map appearing text that teaches the player which buttons to press.
+ *
+ * @author Ali Popa
+ * @version 16.08.
+ * @since 16.08.
+ */
 public class TutorialText extends MapObject
 {
     private Vector2 arrowPosition = new Vector2(5950, 570);

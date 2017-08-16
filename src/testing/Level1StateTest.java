@@ -11,6 +11,13 @@ import GameState.GameStateManager;
 import GameState.Level1State;
 import Helpers.Vector2;
 
+/** PTP 2017
+ * Test for the handling of the first level stuff.
+ *
+ * @author Dewin Bagci
+ * @version 16.08.
+ * @since 16.08.
+ */
 public class Level1StateTest
 {
     private GameStateManager gsm;

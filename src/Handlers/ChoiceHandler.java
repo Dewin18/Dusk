@@ -1,5 +1,12 @@
 package Handlers;
 
+/** PTP 2017
+ * The class managing the menu choice of the user.
+ *
+ * @author Dewin Bagci
+ * @version 13.08.
+ * @since 11.08.
+ */
 public class ChoiceHandler
 {
     private static int currentChoice = 0;

@@ -7,6 +7,13 @@ import Handlers.FontHandler;
 
 import java.awt.*;
 
+/** PTP 2017
+ * A UI element that shows relevant information about the Player.
+ *
+ * @author Dewin Bagci
+ * @version 14.08.
+ * @since 10.07.
+ */
 public class HUD
 {
     private float healthBar;

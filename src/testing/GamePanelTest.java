@@ -7,6 +7,13 @@ import org.junit.Test;
 
 import Main.GamePanel;
 
+/** PTP 2017
+ * Test for the handling the initialisation of the GamePanel.
+ *
+ * @author Dewin Bagci
+ * @version 16.08.
+ * @since 15.06.
+ */
 public class GamePanelTest
 {
     private GamePanel gamePanel;

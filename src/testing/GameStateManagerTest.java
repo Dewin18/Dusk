@@ -8,6 +8,13 @@ import org.junit.Test;
 import GameState.GameState;
 import GameState.GameStateManager;
 
+/** PTP 2017
+ * Test for the handling of the managing of the GameStates.
+ *
+ * @author Dewin Bagci
+ * @version 16.08.
+ * @since 11.08.
+ */
 public class GameStateManagerTest
 {
     private GameStateManager gsm;

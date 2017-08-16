@@ -6,10 +6,12 @@ import Helpers.Vector2;
 
 import java.awt.*;
 
-/**
+/** PTP 2017
  * All enemy subclasses inherit from this abstract class Enemy.
  *
- * @author Dewin & Ali
+ * @author Dewin Bagci
+ * @version 15.08.
+ * @since 01.06.
  */
 public abstract class Enemy extends MovingObject
 {

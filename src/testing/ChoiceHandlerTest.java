@@ -7,6 +7,13 @@ import org.junit.Test;
 
 import Handlers.ChoiceHandler;
 
+/** PTP 2017
+ * Test for the handling of choices.
+ *
+ * @author Dewin Bagci
+ * @version 16.08.
+ * @since 16.08.
+ */
 public class ChoiceHandlerTest
 {
     private int defaultChoice;

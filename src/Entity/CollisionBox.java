@@ -2,6 +2,13 @@ package Entity;
 
 import Helpers.Vector2;
 
+/** PTP 2017
+ * A dummy trigger for the ending of the game.
+ *
+ * @author Ali Popa
+ * @version 13.08.
+ * @since 06.06.
+ */
 public class CollisionBox
 {
     public Vector2 center;

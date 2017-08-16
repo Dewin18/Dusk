@@ -7,6 +7,13 @@ import java.awt.Rectangle;
 
 import Main.GamePanel;
 
+/** PTP 2017
+ * A class holding the most important non-sprite animations, like the blinking.
+ *
+ * @author Dewin Bagci
+ * @version 16.08.
+ * @since 06.08.
+ */
 public class AnimationHandler
 {
     //Game Over animation

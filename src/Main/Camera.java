@@ -8,6 +8,14 @@ import Helpers.Vector2i;
 
 import java.awt.*;
 
+/** PTP 2017
+ * The camera that draws the objects of the map in an area.
+ * Is able to shake.
+ *
+ * @author Ali Popa
+ * @version 13.08.
+ * @since 20.06.
+ */
 public class Camera
 {
     // references

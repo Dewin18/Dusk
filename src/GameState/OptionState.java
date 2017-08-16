@@ -11,6 +11,13 @@ import Handlers.KeyHandler;
 import Handlers.Keys;
 import Main.GamePanel;
 
+/** PTP 2017
+ * The state describing the options menu of the game.
+ *
+ * @author Dewin Bagci
+ * @version 16.08.
+ * @since 29.06.
+ */
 public class OptionState extends GameState
 {
     private final int NAVIGATION_VGAP_INTERVAL = 560; 

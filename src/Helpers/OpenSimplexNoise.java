@@ -15,7 +15,13 @@ package Helpers;
  *   of any particular randomization library, so results
  *   will be the same when ported to other languages.
  */
- 
+
+/**
+ * Class for generating smooth noise.
+ *
+ * @author Kurt Spencer
+ * @version 1.1 (October 5, 2015)
+ */
 public class OpenSimplexNoise {
 
 	private static final double STRETCH_CONSTANT_2D = -0.211324865405187;    //(1/Math.sqrt(2+1)-1)/2;

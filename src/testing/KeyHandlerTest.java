@@ -6,6 +6,13 @@ import org.junit.Test;
 
 import Handlers.KeyHandler;
 
+/** PTP 2017
+ * Test for the handling of KeyHandler.
+ *
+ * @author Dewin Bagci
+ * @version 16.08.
+ * @since 15.06.
+ */
 public class KeyHandlerTest
 {
     private final int UP = 38;

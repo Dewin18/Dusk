@@ -2,6 +2,13 @@ package GameState;
 
 import Audio.JukeBox;
 
+/** PTP 2017
+ * The Manager that handles all the GameStates (/scenes) in the game.
+ *
+ * @author Ali Popa
+ * @version 16.08.
+ * @since 31.05.
+ */
 public class GameStateManager
 {
     private GameState[] gameStates;
@@ -10,7 +17,6 @@ public class GameStateManager
     public static final int MENUSTATE = 0;
     public static final int LEVEL1STATE = 1;
     public static final int OPTIONSTATE = 2;
-    public static final int TESTSTATE = 3;
 
     public GameStateManager()
     {

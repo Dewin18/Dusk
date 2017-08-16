@@ -8,6 +8,13 @@ import org.junit.Test;
 import Entity.EvilTwin;
 import TileMap.TileMap;
 
+/** PTP 2017
+ * Test for the purpose of life of the evil twin.
+ *
+ * @author Dewin Bagci
+ * @version 16.08.
+ * @since 16.08.
+ */
 public class EvilTwinTest
 {
     private EvilTwin evilTwin;

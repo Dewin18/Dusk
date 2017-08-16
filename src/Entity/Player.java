@@ -15,6 +15,13 @@ import Helpers.Vector2;
 
 import static Entity.AnimationState.*;
 
+/** PTP 2017
+ * The player-controlled object and all of its logic (mostly).
+ *
+ * @author Ali Popa
+ * @version 16.08.
+ * @since 01.06.
+ */
 public class Player extends MovingObject
 {
     // Active PlayerState
@@ -66,7 +73,7 @@ public class Player extends MovingObject
 
         width = FRAMEWIDTHS[0];
         height = FRAMEHEIGHTS[0];
-        loadSprites("/Player/dusk_spritesheet_128.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
+        loadSprites("Player/dusk_spritesheet_128.png", NUMFRAMES, FRAMEWIDTHS, FRAMEHEIGHTS);
 
         currentPlayerState = new IdleState(this);
         initValues();

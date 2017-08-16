@@ -8,6 +8,13 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
+/** PTP 2017
+ * Static class for playing and looping sounds.
+ *
+ * @author Ali Popa
+ * @version 14.08.
+ * @since 12.07.
+ */
 public class JukeBox {
 
     private static HashMap<String, Clip> clips;

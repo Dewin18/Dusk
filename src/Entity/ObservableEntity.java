@@ -5,8 +5,12 @@ import GameState.EntityObserver;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
+/** PTP 2017
  * Observable class for the observer pattern.
+ *
+ * @author Ali Popa
+ * @version 15.08.
+ * @since 23.06.
  */
 public abstract class ObservableEntity
 {

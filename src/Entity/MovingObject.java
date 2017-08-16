@@ -9,6 +9,13 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
+/** PTP 2017
+ * The implementation of Map physics from which all moving entities extend.
+ *
+ * @author Ali Popa
+ * @version 15.08.
+ * @since 02.06.
+ */
 public abstract class MovingObject extends MapObject
 {
 

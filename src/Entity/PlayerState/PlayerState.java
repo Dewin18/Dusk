@@ -5,6 +5,14 @@ import Handlers.KeyHandler;
 import Handlers.Keys;
 import Helpers.Vector2;
 
+/** PTP 2017
+ * Interface to define how a PlayerState should handle inputs and some events.
+ * Transformed to abstract class to avoid code duplicates.
+ *
+ * @author Ali Popa
+ * @version 13.08.
+ * @since 07.08.
+ */
 public abstract class PlayerState
 {
     Player player;

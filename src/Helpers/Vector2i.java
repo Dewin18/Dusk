@@ -1,5 +1,12 @@
 package Helpers;
 
+/** PTP 2017
+ * Main struct of the project defining a 2D integer Vector and its operations.
+ *
+ * @author Ali Popa
+ * @version 13.08.
+ * @since 06.06.
+ */
 public class Vector2i
 {
     public int x = 0;

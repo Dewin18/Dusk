@@ -1,5 +1,12 @@
 package Helpers;
 
+/** PTP 2017
+ * Main struct of the project defining a 2D double Vector and its operations.
+ *
+ * @author Ali Popa
+ * @version 14.08.
+ * @since 06.06.
+ */
 public class Vector2
 {
     public static final Vector2 UP = new Vector2(0, -1);

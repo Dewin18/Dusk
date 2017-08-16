@@ -1,5 +1,12 @@
 package GameState;
 
+/** PTP 2017
+ * A GameState is used as a "scene" in the game, like the separate levels or the options menu.
+ *
+ * @author Ali Popa
+ * @version 01.08.
+ * @since 31.05.
+ */
 public abstract class GameState
 {
     protected GameStateManager gsm;

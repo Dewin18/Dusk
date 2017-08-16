@@ -3,6 +3,13 @@ package Main;
 import javax.swing.*;
 import java.awt.*;
 
+/** PTP 2017
+ * Main runnable class. Creates the window and the active buffering strategy.
+ *
+ * @author Ali Popa, Dewin Bagci
+ * @version 14.08.
+ * @since 31.05.
+ */
 public class Game
 {
     public static void main(String[] args)

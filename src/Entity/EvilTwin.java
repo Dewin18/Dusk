@@ -7,6 +7,13 @@ import Helpers.Vector2;
 import static Entity.AnimationState.JUMPING;
 import static Entity.AnimationState.WALKING;
 
+/** PTP 2017
+ * A simple implementation for an Enemy, excluding AI cases.
+ *
+ * @author Dewin Bagci
+ * @version 16.08.
+ * @since 16.06.
+ */
 public class EvilTwin extends Enemy
 {
     private final int[] NUMFRAMES = {1, 6, 3};
