@@ -30,7 +30,7 @@ public class Player extends MovingObject
     private double knockback = 2;
     private double minFallSpeed;
     private int health;
-    private int exp;
+    //private int exp;
     private int lives;
     private int dmg = 10;
 

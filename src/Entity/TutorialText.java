@@ -6,8 +6,6 @@ import Helpers.Vector2;
 import TileMap.TileMap;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.util.Locale;
 
 public class TutorialText extends MapObject
 {

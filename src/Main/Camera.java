@@ -17,7 +17,7 @@ public class Camera
     // position and size
     private Vector2 position = new Vector2(0, 0);
     private Vector2i size;
-    private double scale;
+    //private double scale;
     private double tween = 0.1;
     private int tileSize;
 
