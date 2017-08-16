@@ -5,11 +5,17 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import GameState.GameState;
 import GameState.GameStateManager;
+import GameState.Level1State;
+import GameState.MenuState;
+import GameState.OptionState;
 
 public class GameStateManagerTest
 {
     private GameStateManager gsm;
+    private GameState defaultState;
 
     public GameStateManagerTest()
     {
@@ -21,31 +27,31 @@ public class GameStateManagerTest
     public void init()
     {
         gsm = new GameStateManager();
+        defaultState = gsm.getState(gsm.getCurrentStateNumber());
     }
 
     @Test
     // default state should be MenuState
     public void defaultStateIsMenuStateTest()
     {
-        assertTrue(gsm.getState(0) != null);
-        assertEquals("MenuState", gsm.getState(0).toString());
+        assertEquals(defaultState, gsm.getState(GameStateManager.MENUSTATE));
     }
     
-    @Test
-    // change state in GameStateManager
+     @Test
+    // change state to Level1State in GameStateManager
     public void setLevel1StateTest()
     {
-        assertTrue(gsm.getState(1) == null);
         gsm.setState(1);
-        assertEquals("Level1State", gsm.getState(1).toString());
+        defaultState = gsm.getState(gsm.getCurrentStateNumber());
+        assertEquals(defaultState, gsm.getState(GameStateManager.LEVEL1STATE));
     }
     
     @Test
-    // change state in GameStateManager
+    // change state to OptionState in GameStateManager
     public void setOptionStateTest()
     {
-        assertTrue(gsm.getState(2) == null);
         gsm.setState(2);
-        assertEquals("OptionState", gsm.getState(2).toString());
+        defaultState = gsm.getState(gsm.getCurrentStateNumber());
+        assertEquals(defaultState, gsm.getState(GameStateManager.OPTIONSTATE));
     }
 }
