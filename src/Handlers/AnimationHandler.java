@@ -13,24 +13,22 @@ public class AnimationHandler
     private static  int gameOverTextPosition;
     
     //Blink animation
-    private static float BLINK_MAX_LIMIT = 1f;
-    private static float BLINK_MIN_LIMIT = 0.1f;
-    private static boolean isCompletelyVisible = true;
-    private static float blinkScale = 1f;
-    private static float BLINK_SPEED = 0.02f;
+    private static boolean isCompletelyVisible;
+    private static float BLINK_MAX_LIMIT; 
+    private static float BLINK_MIN_LIMIT; 
+    private static float blinkScale;
+    private static float BLINK_SPEED;
     
-
     static
     {
         gameOverTextPosition = 70;
         
+        isCompletelyVisible = true;
         BLINK_MAX_LIMIT = 1f;
         BLINK_MIN_LIMIT = 0.1f;
-        isCompletelyVisible = true;
         blinkScale = 1f;
         BLINK_SPEED = 0.02f;
     }
-
     
     public static void startBlinkAnimation(Graphics2D g)
     {

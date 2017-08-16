@@ -124,7 +124,7 @@ public class Level1State extends GameState implements EntityObserver
         }
     }
 
-    private void setDifficultyHard()
+    public void setDifficultyHard()
     {
         player.setLives(0);
 
@@ -134,7 +134,7 @@ public class Level1State extends GameState implements EntityObserver
         }
     }
 
-    private void setDifficultyMedium()
+    public void setDifficultyMedium()
     {
         player.setLives(2);
 
@@ -144,7 +144,7 @@ public class Level1State extends GameState implements EntityObserver
         }
     }
 
-    private void setDifficultyEasy()
+    public void setDifficultyEasy()
     {
         player.setLives(3);
 
@@ -459,5 +459,10 @@ public class Level1State extends GameState implements EntityObserver
     public ArrayList<Enemy> getEnemyList()
     {
         return enemyList;
+    }
+    
+    public Player getPlayer()
+    {
+        return player;
     }
 }

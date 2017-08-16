@@ -6,8 +6,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 import GameState.GameStateManager;
-import GameState.Level1State;
-import Helpers.Vector2;
 
 public class GameStateManagerTest
 {

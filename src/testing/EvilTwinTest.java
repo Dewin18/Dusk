@@ -16,6 +16,7 @@ public class EvilTwinTest
     
     public EvilTwinTest()
     {
+        super();
         initEvilTwin();
     }
 
@@ -27,12 +28,9 @@ public class EvilTwinTest
     }
     
     @Test
-    // EvilTwin constructor Test
     public void evilTwinDefaultInitialisationTest()
     {
         assertEquals(health, evilTwin.getHealth());
         assertEquals(damage, evilTwin.getDamage());
     }
-    
-    
 }

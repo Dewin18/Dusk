@@ -386,7 +386,7 @@ public class OptionState extends GameState
     //helper method to check for duplicates and enable duplicate warning string
     private void checkForDuplicates()
     {
-        boolean keyAlreadyDefined = duplicateCheck();
+        boolean keyAlreadyDefined = duplicateCheck(selection);
         
         if(keyAlreadyDefined)
         {
@@ -503,7 +503,7 @@ public class OptionState extends GameState
      * 
      * @return true if contains duplicates false otherwise
      */
-    public boolean duplicateCheck()
+    public boolean duplicateCheck(String[] selection)
     {
         boolean containsDuplicates = false;
         String noKey = "NOT ASSIGNED";
@@ -529,5 +529,10 @@ public class OptionState extends GameState
     
     public void handleInput()
     {
+    }
+    
+    public String[] getSelection()
+    {
+        return selection;
     }
 }

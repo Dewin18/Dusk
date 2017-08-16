@@ -142,4 +142,9 @@ public class EvilTwin extends Enemy
     {
         //TODO trigger death animation
     }
+    
+    public String toString()
+    {
+        return "EvilTwin";
+    }
 }

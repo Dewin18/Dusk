@@ -42,7 +42,6 @@ public class FontHandler
     //###### HUD FONT ######
     private static Font hudFont;
     public static final int HUD_TEXT_SIZE = 25; 
-  
     
     static
     {
@@ -69,7 +68,7 @@ public class FontHandler
             pauseTitleFont = loadFont(DemiBold, PAUSE_TITLE_SIZE);
             pauseSelectionFont = loadFont(Regular, PAUSE_SELECTION_SIZE);
             
-            //HUD FFONT
+            //HUD FONT
             hudFont = loadFont(Regular, HUD_TEXT_SIZE);
         }
         catch (IOException | FontFormatException e)
