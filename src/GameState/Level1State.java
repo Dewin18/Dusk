@@ -51,7 +51,7 @@ public class Level1State extends GameState implements EntityObserver
         enemyList = new ArrayList<>();
         ChoiceHandler.setChoice(0);
         
-        JukeBox.close("titlemusic");
+        JukeBox.stop("titlemusic");
         initBackground();
         initMap();
         initPlayer();

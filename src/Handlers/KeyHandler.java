@@ -183,4 +183,32 @@ public class KeyHandler
     {
         return keyCodes;
     }
+
+    /**
+     *
+     * @return String[] with names for the codes for up, down, left, right, jump, hit
+     */
+    public static String[] getKeyNames()
+    {
+        String[] names = new String[6];
+        for (int i = 0; i < 6; i++)
+        {
+            names[i] = toKeyName(keyCodes[i]);
+        }
+        return names;
+    }
+
+    private static String toKeyName(int keyCode)
+    {
+        switch (keyCode)
+        {
+            case 32: return "Space";
+            case 37: return "Left";
+            case 38: return "Up";
+            case 39: return "Right";
+            case 40: return "Down";
+            case 0: return "Not defined";
+            default: return "" + (char)keyCode;
+        }
+    }
 }

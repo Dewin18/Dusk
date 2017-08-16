@@ -28,10 +28,10 @@ public class TutorialText extends MapObject
 
     private void initKeys()
     {
-        arrowText = "> " + KeyEvent.getKeyText(KeyHandler.getKeyCodes()[2]) + ", " + KeyEvent.getKeyText(KeyHandler.getKeyCodes()[3]) + " <";
-        spaceText = "> " + KeyEvent.getKeyText(KeyHandler.getKeyCodes()[4]) + " <";
-        attackText = "> " + KeyEvent.getKeyText(KeyHandler.getKeyCodes()[5]) + " <";
-        fallText = "> " + KeyEvent.getKeyText(KeyHandler.getKeyCodes()[1]) + " + " + KeyEvent.getKeyText(KeyHandler.getKeyCodes()[4]) + " <";
+        arrowText = "> " + KeyHandler.getKeyNames()[2] + ", " + KeyHandler.getKeyNames()[3] + " <";
+        spaceText = "> " + KeyHandler.getKeyNames()[4] + " <";
+        attackText = "> " + KeyHandler.getKeyNames()[5] + " <";
+        fallText = "> " + KeyHandler.getKeyNames()[1] + " + " + KeyHandler.getKeyNames()[4] + " <";
     }
 
     @Override
