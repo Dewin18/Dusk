@@ -53,7 +53,7 @@ public abstract class MovingObject extends MapObject
     int framesPassedUntilDrop = framesToIgnoreGround;
     private double groundY, ceilingY, leftWallX, rightWallX;
     private int mapCollisionSensorDepth = 25;
-    private double triggerLineY, triggerLineX, triggerLineX2, triggerLineY2;
+    private double triggerLineY, triggerLineX; // triggerLineX2, triggerLineY2;
     private Rectangle drawRect = new Rectangle(0, 0, 0, 0);
     private Rectangle drawRect2 = new Rectangle(0, 0, 0, 0);
     private BufferedImage drawImg = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_ARGB);

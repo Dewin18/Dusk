@@ -9,8 +9,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import com.sun.glass.events.KeyEvent;
-
 import Audio.JukeBox;
 import Handlers.ChoiceHandler;
 import Handlers.FontHandler;
