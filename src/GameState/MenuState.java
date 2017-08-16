@@ -79,10 +79,6 @@ public class MenuState extends GameState
                         FontHandler.getMenuStateFont());
             }
         }
-        
-//        goSelectionDown();
-//        confirmSelection();
-     
     }
 
     private void select()
