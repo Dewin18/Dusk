@@ -34,6 +34,7 @@ public class Level1State extends GameState implements EntityObserver
     private boolean pause = false;
 
     private EndingTrigger endingTrigger;
+    private TutorialText tutorialText;
 
     //All Level1State enemies are stored in this list
     private ArrayList<Enemy> enemyList;
@@ -56,7 +57,6 @@ public class Level1State extends GameState implements EntityObserver
         initPlayer();
         initCamera();
         initEnemies();
-        initEnding();
 
         //some keys have changed through the settings
         if (KeyHandler.keysChanged())
@@ -72,6 +72,8 @@ public class Level1State extends GameState implements EntityObserver
         player.update();
         camera.updateNoDeltaTime();
 
+        initEnding();
+        initTutorial();
         bg1.setPosition(tileMap.cameraPos);
         bg2.setPosition(tileMap.cameraPos);
         bg3.setPosition(tileMap.cameraPos);
@@ -204,6 +206,11 @@ public class Level1State extends GameState implements EntityObserver
         player.addCollisionCheck(endingTrigger);
     }
 
+    private void initTutorial()
+    {
+        tutorialText = new TutorialText(tileMap);
+    }
+
     public void update()
     {
         if (!pause ^ player.isGameOver())
@@ -239,6 +246,7 @@ public class Level1State extends GameState implements EntityObserver
         bg3.draw(g);
         bg2.draw(g);
         bg1.draw(g);
+        tutorialText.draw(g);
         endingTrigger.draw(g);
         camera.draw(g);
         player.draw(g);
